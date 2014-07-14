@@ -1,0 +1,9 @@
+Django==1.6.5
+MySQL-python==1.2.5
+South==1.0
+parse-rest==0.2.20141004
+python-dateutil==2.2
+virtualenv==1.11.6
+wsgiref==0.1.2
+numpy==1.8.1
+scipy==0.14.0
