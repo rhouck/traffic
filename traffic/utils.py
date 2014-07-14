@@ -34,7 +34,7 @@ def pullEvents(location, date):
 	
 	# set date ranges
 	date = datetime.datetime(date.year, date.month, date.day, 0, 0, 0)
-	beg_date = date - datetime.timedelta(days=1)
+	beg_date = date - datetime.timedelta(days=0)
 	end_date = date + datetime.timedelta(days=5)
 	parse_beg_date = Date(beg_date)
 	parse_end_date = Date(end_date)
