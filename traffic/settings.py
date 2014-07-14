@@ -12,19 +12,20 @@ https://docs.djangoproject.com/en/1.6/ref/settings/
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
+# Use site-specific settings
+from socket import gethostname
+host = gethostname()
+if host == 'RYANs-MacBook-Air-3.local':
+    from settings_local import *
+else:
+    from settings_live import *
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'ouytirw%o-&fbs-hdf7db=m$hvd%w*_l9krmk^ic@i5j4js*ms'
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-TEMPLATE_DEBUG = True
-
-ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -53,21 +54,6 @@ ROOT_URLCONF = 'traffic.urls'
 WSGI_APPLICATION = 'traffic.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/1.6/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE':   'django.db.backends.mysql',
-        'NAME':     'traffic',
-        'USER':     'root',
-        'PASSWORD': 'root',
-        'OPTIONS':{
-          'unix_socket': '/Applications/MAMP/tmp/mysql/mysql.sock'
-        } 
-    }
-}
-
 # Internationalization
 # https://docs.djangoproject.com/en/1.6/topics/i18n/
 
@@ -86,6 +72,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = 'staticfiles'
 
 TEMPLATE_DIRS = [os.path.join(BASE_DIR, 'templates')]
 
@@ -93,7 +80,10 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "static"),
 )
 
+
 # register parse
 from parse_rest.connection import register
 register("DORr1RM1Gyv4UcoT9FRvMniO9A1CnTqxYJ1ty1m0", "QUs3gOoqhPvHUQpjeLYS3V1rW4N3YAtPMaW0vTKx")
+
+
 
