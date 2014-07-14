@@ -7,13 +7,28 @@ import urllib2
 import urllib
 import json
 import pprint
-from scipy.stats import percentileofscore
+#from scipy.stats import percentileofscore
 
 class TestEvent(Object):
     pass
 
 class EventSizePercentile(Object):
     pass
+
+def calc_percentile(bank, item):
+	
+	size = len(bank)
+	if size == 0:
+		return "--"
+	else:
+		point = size
+		sorted_bank = sorted(bank)
+		for ind, i in enumerate(bank):
+			if item <= i:
+				point = ind + 1
+				break
+		percentile = int((point * (100.0)) / size)
+		return percentile
 
 def pullEvents(location, date):
 	
@@ -73,14 +88,19 @@ def pullEvents(location, date):
 	# turn dic into sorted list for easy iteration on client side
 	percentiles = []
 	events_sorted = []
+	caps = []
 	for i in sorted_keys:
 		for k in events_split.iterkeys():
 			if i == k:
 				temp = [{'tag': "PPL: %s\nEnding: %s" % (t.Capacity, t.pretty_EndTime), 'lat': t.Lat, 'lng': t.Lng} for t in events_split[k]]
 				events_sorted.append(temp)
 				cap = sum([t.Capacity for t in events_split[k]])
-				percentiles.append(percentileofscore(capacities.Capacities, cap))
-				
+				caps.append(cap)
+				#percentiles.append(percentileofscore(capacities.Capacities, cap))
+				#percentiles.append(calc_percentile(capacities.Capacities, cap))
+	for i in caps:
+		percentiles.append(calc_percentile(caps, i))
+	
 	return (sorted_keys, events_sorted, events_split, percentiles)	
 
 
