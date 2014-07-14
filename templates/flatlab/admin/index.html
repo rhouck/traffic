@@ -351,13 +351,15 @@
                   <header class="panel-heading tab-bg-dark-navy-blue ">
                       <ul class="nav nav-tabs">
                             {% for i in dates %}
-                                {% if forloop.counter == 1 %}
-                                    <li class="active" id="date-tab-{{ forloop.counter }}">
-                                {% else %}      
-                                    <li class="" id="date-tab-{{ forloop.counter }}">
+                                {% if forloop.counter <= 5 %}
+                                    {% if forloop.counter == 1 %}
+                                        <li class="active" id="date-tab-{{ forloop.counter }}">
+                                    {% else %}      
+                                        <li class="" id="date-tab-{{ forloop.counter }}">
+                                    {% endif %}
+                                          <a data-toggle="tab" href="#date-{{ forloop.counter }}">{{i|date:'D'}}</a>
+                                      </li>
                                 {% endif %}
-                                      <a data-toggle="tab" href="#date-{{ forloop.counter }}">{{i|date:'D'}}</a>
-                                  </li>
                             {% endfor %}
                           
                       </ul>
@@ -366,165 +368,168 @@
                       <div class="tab-content">
 
                             {% for d in dates %}
-                                {% if forloop.counter == 1 %}
-                                    <div id="date-{{ forloop.counter }}" class="tab-pane active">
-                                {% else %}
-                                    <div id="date-{{ forloop.counter }}" class="tab-pane ">
-                                {% endif %}
-
-                                    <div class="text-center mbot30">
-                                          <p class="t-info"></p>
-                                          <h3 class="timeline-title">{{ d|date:'l' }}&nbsp&nbsp{{ d|date:'F, d' }}</h3>
-                                          <!--<p class="t-info">Here's what you need to know</p>-->
-
-                                    </div>      
+                                {% if forloop.counter <= 5 %}
                                 
-                                <div class="row state-overview">
-                                  <div class="col-lg-3 col-sm-6">
-                                      <section class="panel">
-                                          <div class="symbol red">
-                                              <i class="fa fa-user"></i>
-                                          </div>
-                                          <div class="value">
-                                              <p>Demand Forecast Score</p>
+                                    {% if forloop.counter == 1 %}
+                                        <div id="date-{{ forloop.counter }}" class="tab-pane active">
+                                    {% else %}
+                                        <div id="date-{{ forloop.counter }}" class="tab-pane ">
+                                    {% endif %}
 
-                                                <h1 class="count-{{ forloop.counter }}">
-                                                  - -
-                                              </h1>
-                                          </div>
-                                      </section>
-                                  </div>
-                                </div>
-                                
-                                <section class="panel">
-                                      <header class="tab-bg">
-                                          <ul class="nav nav-tabs nav-justified">
+                                        <div class="text-center mbot30">
+                                              <p class="t-info"></p>
+                                              <h3 class="timeline-title">{{ d|date:'l' }}&nbsp&nbsp{{ d|date:'F, d' }}</h3>
+                                              <!--<p class="t-info">Here's what you need to know</p>-->
+
+                                        </div>      
                                     
-                                            <li class="active">
-                                                <a data-toggle="tab" href="#date-{{ forloop.counter }}-timeline" >
-                                                    <i class="fa fa-calendar text-danger"></i>
-                                                    Timeline View
-                                                </a>
-                                            </li>
-                                            <li class="">
-                                              <a data-toggle="tab" href="#date-{{ forloop.counter }}-map" id="map-tab-{{ forloop.counter }}">
-                                                <i class="fa fa-map-marker text-primary"></i>
-                                                  Map View</a>
-                                            </li>
+                                    <div class="row state-overview">
+                                      <div class="col-lg-3 col-sm-6">
+                                          <section class="panel">
+                                              <div class="symbol red">
+                                                  <i class="fa fa-user"></i>
+                                              </div>
+                                              <div class="value">
+                                                  <p>Demand Forecast Score</p>
+
+                                                    <h1 class="count-{{ forloop.counter }}">
+                                                      - -
+                                                  </h1>
+                                              </div>
+                                          </section>
+                                      </div>
+                                    </div>
                                     
-                                          </ul>
-                                      </header>
-                                      
-                                      <div class="panel-body">
-                                          <div class="tab-content">
-                                                
-                                                <!-- this is the timeline view -->
-                                                <div id="date-{{ forloop.counter }}-timeline" class="tab-pane active">
+                                    <section class="panel">
+                                          <header class="tab-bg">
+                                              <ul class="nav nav-tabs nav-justified">
+                                        
+                                                <li class="active">
+                                                    <a data-toggle="tab" href="#date-{{ forloop.counter }}-timeline" >
+                                                        <i class="fa fa-calendar text-danger"></i>
+                                                        Timeline View
+                                                    </a>
+                                                </li>
+                                                <li class="">
+                                                  <a data-toggle="tab" href="#date-{{ forloop.counter }}-map" id="map-tab-{{ forloop.counter }}">
+                                                    <i class="fa fa-map-marker text-primary"></i>
+                                                      Map View</a>
+                                                </li>
+                                        
+                                              </ul>
+                                          </header>
+                                          
+                                          <div class="panel-body">
+                                              <div class="tab-content">
                                                     
-                                            
-                                                    <div class="timeline">
+                                                    <!-- this is the timeline view -->
+                                                    <div id="date-{{ forloop.counter }}-timeline" class="tab-pane active">
                                                         
-                                                        {% for k, v in events_timeline.items %}
-                                                            {% if k == d %}
-                                                                {% for i in v %}
-                                                                    
-                                                                    {% if i.index == 1 %}
-                                                                      <article class="timeline-item">
-                                                                          <div class="timeline-desk">
-                                                                              <div class="panel">
-                                                                                  <div class="panel-body">
-                                                                                      <span class="arrow"></span>
-                                                                                      <span class="timeline-icon red"></span>
-                                                                                      <span class="timeline-date">{{ i.pretty_full_Time }}</span>
-                                                                                      <h1 class="red">{{ i.Capacity }} PPL</h1>
-                                                                                      <p><span><a href="#" class="red">{{ i.Address }}</a></span></p>
-                                                                                      <p>{{ i.Name }}</p>
+                                                
+                                                        <div class="timeline">
+                                                            
+                                                            {% for k, v in events_timeline.items %}
+                                                                {% if k == d %}
+                                                                    {% for i in v %}
+                                                                        
+                                                                        {% if i.index == 1 %}
+                                                                          <article class="timeline-item">
+                                                                              <div class="timeline-desk">
+                                                                                  <div class="panel">
+                                                                                      <div class="panel-body">
+                                                                                          <span class="arrow"></span>
+                                                                                          <span class="timeline-icon red"></span>
+                                                                                          <span class="timeline-date">{{ i.pretty_full_Time }}</span>
+                                                                                          <h1 class="red">{{ i.Capacity }} PPL</h1>
+                                                                                          <p><span><a href="#" class="red">{{ i.Address }}</a></span></p>
+                                                                                          <p>{{ i.Name }}</p>
+                                                                                      </div>
                                                                                   </div>
                                                                               </div>
-                                                                          </div>
-                                                                      </article>
-                                                                    {% endif %}
+                                                                          </article>
+                                                                        {% endif %}
 
-                                                                    {% if i.index == 2 %}
-                                                                      <article class="timeline-item alt">
-                                                                          <div class="timeline-desk">
-                                                                              <div class="panel">
-                                                                                  <div class="panel-body">
-                                                                                      <span class="arrow-alt"></span>
-                                                                                      <span class="timeline-icon green"></span>
-                                                                                      <span class="timeline-date">{{ i.pretty_full_Time }}</span>
-                                                                                      <h1 class="green">{{ i.Capacity }} PPL</h1>
-                                                                                      <p><span><a href="#" class="green">{{ i.Address }}</a></span></p>
-                                                                                      <p>{{ i.Name }}</p>
+                                                                        {% if i.index == 2 %}
+                                                                          <article class="timeline-item alt">
+                                                                              <div class="timeline-desk">
+                                                                                  <div class="panel">
+                                                                                      <div class="panel-body">
+                                                                                          <span class="arrow-alt"></span>
+                                                                                          <span class="timeline-icon green"></span>
+                                                                                          <span class="timeline-date">{{ i.pretty_full_Time }}</span>
+                                                                                          <h1 class="green">{{ i.Capacity }} PPL</h1>
+                                                                                          <p><span><a href="#" class="green">{{ i.Address }}</a></span></p>
+                                                                                          <p>{{ i.Name }}</p>
+                                                                                      </div>
                                                                                   </div>
                                                                               </div>
-                                                                          </div>
-                                                                      </article>
-                                                                    {% endif %}
+                                                                          </article>
+                                                                        {% endif %}
 
-                                                                    {% if i.index == 3 %}
-                                                                      <article class="timeline-item">
-                                                                          <div class="timeline-desk">
-                                                                              <div class="panel">
-                                                                                  <div class="panel-body">
-                                                                                      <span class="arrow"></span>
-                                                                                      <span class="timeline-icon blue"></span>
-                                                                                      <span class="timeline-date">{{ i.pretty_full_Time }}</span>
-                                                                                      <h1 class="blue">{{ i.Capacity }} PPL</h1>
-                                                                                      <p><span><a href="#" class="blue">{{ i.Address }}</a></span></p>
-                                                                                      <p>{{ i.Name }}</p>
-                                                                                      
+                                                                        {% if i.index == 3 %}
+                                                                          <article class="timeline-item">
+                                                                              <div class="timeline-desk">
+                                                                                  <div class="panel">
+                                                                                      <div class="panel-body">
+                                                                                          <span class="arrow"></span>
+                                                                                          <span class="timeline-icon blue"></span>
+                                                                                          <span class="timeline-date">{{ i.pretty_full_Time }}</span>
+                                                                                          <h1 class="blue">{{ i.Capacity }} PPL</h1>
+                                                                                          <p><span><a href="#" class="blue">{{ i.Address }}</a></span></p>
+                                                                                          <p>{{ i.Name }}</p>
+                                                                                          
+                                                                                      </div>
                                                                                   </div>
                                                                               </div>
-                                                                          </div>
-                                                                      </article>
-                                                                    {% endif %}
+                                                                          </article>
+                                                                        {% endif %}
 
-                                                                    {% if i.index == 4 %}
-                                                                      <article class="timeline-item alt">
-                                                                        <div class="timeline-desk">
-                                                                            <div class="panel">
-                                                                                <div class="panel-body">
-                                                                                      <span class="arrow-alt"></span>
-                                                                                      <span class="timeline-icon purple"></span>
-                                                                                      <span class="timeline-date">{{ i.pretty_full_Time }}</span>
-                                                                                      <h1 class="purple">{{ i.Capacity }} PPL</h1>
-                                                                                      <p><span><a href="#" class="purple">{{ i.Address }}</a></span></p>
-                                                                                      <p>{{ i.Name }}</p>
+                                                                        {% if i.index == 4 %}
+                                                                          <article class="timeline-item alt">
+                                                                            <div class="timeline-desk">
+                                                                                <div class="panel">
+                                                                                    <div class="panel-body">
+                                                                                          <span class="arrow-alt"></span>
+                                                                                          <span class="timeline-icon purple"></span>
+                                                                                          <span class="timeline-date">{{ i.pretty_full_Time }}</span>
+                                                                                          <h1 class="purple">{{ i.Capacity }} PPL</h1>
+                                                                                          <p><span><a href="#" class="purple">{{ i.Address }}</a></span></p>
+                                                                                          <p>{{ i.Name }}</p>
 
+                                                                                    </div>
                                                                                 </div>
                                                                             </div>
-                                                                        </div>
-                                                                      </article>
-                                                                    {% endif %}
-                                                                  
-                                                                {% endfor %}
-                                                            {% endif %}
-                                                        {% endfor %}
-                                                            
-                                                    </div>
-                                                    
-                                                    <div class="clearfix">&nbsp;</div>
-                                                </div>
-                                            
-                                                <!-- this loads the map view -->
-                                                <div id="date-{{ forloop.counter }}-map" class="tab-pane">
-                                                        
-                                                        <div class="row">
-                                                          <div class="col-lg-12">
-                                                                <div id="gmap_marker-{{ forloop.counter }}" class="gmaps"></div> 
-                                                          </div>
-                                                          
+                                                                          </article>
+                                                                        {% endif %}
+                                                                      
+                                                                    {% endfor %}
+                                                                {% endif %}
+                                                            {% endfor %}
+                                                                
                                                         </div>
+                                                        
+                                                        <div class="clearfix">&nbsp;</div>
+                                                    </div>
+                                                
+                                                    <!-- this loads the map view -->
+                                                    <div id="date-{{ forloop.counter }}-map" class="tab-pane">
+                                                            
+                                                            <div class="row">
+                                                              <div class="col-lg-12">
+                                                                    <div id="gmap_marker-{{ forloop.counter }}" class="gmaps"></div> 
+                                                              </div>
+                                                              
+                                                            </div>
 
-                                                </div>
-                                          </div>
-                                    </div>
-                                </section>
-                                                             
-                               
-                                       
-                               </div>       
+                                                    </div>
+                                              </div>
+                                        </div>
+                                    </section>
+                                                                 
+                                   
+                                           
+                                   </div>       
+                                {% endif %}
                             {% endfor %}
                       </div>
                   </div>
@@ -756,11 +761,7 @@
             mapMarker('gmap_marker-5', events[4]);      
         }); 
     }
-    if (events.length >= 6) {
-        $("#map-tab-6").on('shown.bs.tab', function() {
-            mapMarker('gmap_marker-6', events[5]);      
-        }); 
-    }
+    
 
     
     // initializes maps
@@ -809,11 +810,7 @@
             countUpCust({{percentiles.4}}, '5');      
         }); 
     }
-    if (events.length >= 6) {
-        $("#date-tab-6").on('shown.bs.tab', function() {
-            countUpCust({{percentiles.5}}, '6');      
-        }); 
-    }
+    
 
     function countUpCust(count, name)
     {

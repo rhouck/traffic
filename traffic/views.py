@@ -16,7 +16,7 @@ def home(request):
 	current_time = datetime.datetime.now()
 	current_date = current_time.date()
 	dates, events_maps, events_timeline, percentiles = pullEvents('San Francisco', current_time)
-	#return HttpResponse(json.dumps(dates), content_type="application/json")
+	#return HttpResponse(json.dumps(percentiles), content_type="application/json")
 	
 	data = {'dates': dates, 'events_maps': events_maps, 'events_timeline': events_timeline, 'percentiles': percentiles}
 	return render_to_response('flatlab/admin/index.html', data, context_instance=RequestContext(request))
