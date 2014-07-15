@@ -1,0 +1,99 @@
+{% extends 'flatlab/admin/base.html' %}
+{% load staticfiles %}
+
+{% block head %}
+<!-- coming soon styles -->
+    <link href={% static "flatlab/admin/css/soon.css"%} rel="stylesheet" >
+<style>
+    .taxi {
+     margin: 0;
+     background: url({% static "taxi.jpg"%});
+     background-size: 1440px 800px;
+     background-repeat:no-repeat;
+    display: compact;
+     font: 13px/18px "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+</style>
+{% endblock %}
+
+{% block bodytype %}
+<body class="cs-bg taxi">
+{% endblock %}
+
+{% block body %}
+
+    <!-- START HEADER -->
+    <section id="header">
+        <div class="container">
+            <header>
+                <!-- HEADLINE -->
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+                <a class="logo floatless" href="">Drivers<span>Wanted</span></a>
+                <br/>
+                <h1 >The best way to find your customers</h1>
+                <!--
+                <br/>
+                <p>No more cruising to find people looking for rides.</p>
+                <p>Drivers Wanted provides you a curated list of the local events along with their size, location, and time so you can always be where the action is.</p>
+                <p>Users can comment on specific event listings to let other drivers know any relevant information.</p>
+                -->
+            </header>
+            <!--
+            
+            <div id="timer" data-animated="FadeIn">
+                <p id="message"></p>
+                <div id="days" class="timer_box"></div>
+                <div id="hours" class="timer_box"></div>
+                <div id="minutes" class="timer_box"></div>
+                <div id="seconds" class="timer_box"></div>
+            </div>
+            
+            <div class="col-lg-4 col-lg-offset-4 mt centered">
+            	<h4> LET ME KNOW WHEN YOU LAUNCH</h4>
+				<form class="form-inline" role="form">
+				  <div class="form-group">
+				    <label class="sr-only" for="exampleInputEmail2">Email address</label>
+				    <input type="email" class="form-control" id="exampleInputEmail2" placeholder="Enter email">
+				  </div>
+				  <button type="submit" class="btn btn-danger">Submit</button>
+				</form>            
+			</div>
+            -->
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+        </div>
+
+    </section>
+    <!-- END HEADER -->
+{% endblock %}
+
+{% block jsfoot %}
+<!-- Placed at the end of the document so the pages load faster -->
+<script type="text/javascript" src={% static "flatlab/admin/js/modernizr.custom.js" %}></script>
+<script src={% static "flatlab/admin/js/soon/plugins.js" %}></script>
+<script src={% static "flatlab/admin/js/soon/custom.js" %}></script>
+{% endblock %}
+

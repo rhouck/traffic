@@ -72,6 +72,9 @@ def pullEvents(location, date):
 				pretty_StartTime = parse(k.StartTime).strftime("%I:%M %p")
 				if pretty_StartTime[0] == "0":
 					pretty_StartTime = pretty_StartTime[1:] 
+				#k.pretty_full_Time = "%s - %s" % (pretty_StartTime, pretty_EndTime)
+				k.pretty_StartTime = pretty_StartTime
+				k.pretty_EndTime = pretty_EndTime
 				k.pretty_full_Time = "%s - %s" % (pretty_StartTime, pretty_EndTime)
 				
 				# add item to events list
@@ -86,7 +89,6 @@ def pullEvents(location, date):
 		capacities = c
 	
 	# turn dic into sorted list for easy iteration on client side
-	percentiles = []
 	events_sorted = []
 	caps = []
 	for i in sorted_keys:
@@ -98,10 +100,24 @@ def pullEvents(location, date):
 				caps.append(cap)
 				#percentiles.append(percentileofscore(capacities.Capacities, cap))
 				#percentiles.append(calc_percentile(capacities.Capacities, cap))
-	for i in caps:
-		percentiles.append(calc_percentile(caps, i))
 	
-	return (sorted_keys, events_sorted, events_split, percentiles)	
+	# select category from percentiles
+	categories = []
+	for i in caps:
+		percentile = calc_percentile(caps, i)
+		category = 1
+		if percentile >= 25:
+			category = 2
+		elif percentile >= 75:
+			category = 3
+		categories.append(category)
+
+	#combine percentiles/categories and dates
+	dates = []
+	for ind, i in enumerate(sorted_keys):
+		dates.append([i, categories[ind]])
+
+	return (dates, events_sorted, events_split)	
 
 
 def daily_event_size(location):
