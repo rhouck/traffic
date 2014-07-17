@@ -34,6 +34,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'south',
+    'widget_tweaks',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -43,7 +44,18 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
 )
+
+TEMPLATE_CONTEXT_PROCESSORS = (
+    "django.contrib.auth.context_processors.auth",
+    "django.core.context_processors.debug",
+    "django.core.context_processors.i18n",
+    "django.core.context_processors.media",
+    "django.core.context_processors.static",
+    "django.core.context_processors.tz",
+    "django.contrib.messages.context_processors.messages",
+    'django.core.context_processors.request')
 
 ROOT_URLCONF = 'traffic.urls'
 
@@ -86,4 +98,17 @@ if host == 'RYANs-MacBook-Air-3.local':
 else:
     from settings_live import *
 
+# eventbrite api credentials
+EVENTBRITEKEYS = {'app_key':  'EI4VUH4QE3OIQVG27O', 'access_code': 'FSYRI7NFSSVWUV3MTVU5'}
 
+#highrise cms API
+HIGHRISE_CONFIG = {'server': 'levelskies', 'auth': 'e8ad8213477f275724c8a90a38bc1f28', 'email': 'dropbox@85120397.levelskies.highrisehq.com'}
+
+
+# email setup
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'info.driverswanted@gmail.com'
+EMAIL_HOST_PASSWORD = 'buttwatercruises'
+DEFAULT_FROM_EMAIL = 'info.driverswanted@gmail.com'

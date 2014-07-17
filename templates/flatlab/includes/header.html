@@ -1,0 +1,56 @@
+{% load staticfiles %}
+<!--header start-->
+      <header class="header white-bg">
+              
+            <!--logo start-->
+            <a href="{% url 'splash' %}" class="logo">drivers<span>wanted</span></a>
+            <!--logo end-->
+            {% if request.session.username %}
+              <div class="sidebar-toggle-box">
+                  {% if selected %}
+                    <div class="fa fa-bars" data-placement="right"> ({{ selected }})</div>
+                  {% else %}
+                    <div class="fa fa-bars" data-placement="right"></div>
+                  {% endif %}
+                  
+              </div>
+            {% endif %}      
+            <div class="top-nav ">
+                <!--search & user info start-->
+                <ul class="nav pull-right top-menu">
+                    
+                    <!-- user login dropdown start-->
+                    <li class="dropdown">
+                        <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+                            <!--<img alt="" src={% static "flatlab/admin/img/avatar1_small.jpg" %}>-->
+                            <span class="username">
+                              {% if request.session.username %}
+                                {{ request.session.username }}
+                              {% else %}
+                                Sign In
+                              {% endif %}
+                            </span>
+                            <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <div class="log-arrow-up"></div>
+                            {% if request.session.username %}
+                                <li><a href="{% url 'logout' %}"><i class="fa fa-key"></i> Log Out</a></li>
+                              {% else %}
+                                <li><a href="{% url 'login' %}"><i class="fa fa-key"></i> Log In</a></li>
+                                <li><a href="{% url 'signup' %}"><i class="fa fa-key"></i> Sign Up</a></li>
+                              {% endif %}
+
+                        </ul>
+                    </li>
+                    <!--
+                    <li class="sb-toggle-right">
+                        <i class="fa  fa-align-right"></i>
+                    </li>
+                    -->
+                    <!-- user login dropdown end -->
+                </ul>
+                <!--search & user info end-->
+            </div>
+      </header>
+      <!--header end-->

@@ -1,0 +1,26 @@
+{% load staticfiles %}
+      <!--sidebar start-->
+      <aside>
+          <div id="sidebar"  class="nav-collapse ">
+              
+              <ul class="sidebar-menu" id="nav-accordion">
+                  {% for k, v in locations.items %}
+                  
+                    <li>
+                        {% if selected == k %}
+                          <a class="active" href="{% url 'eventsList' k %}">
+                        {% else %}
+                          <a class="" href="{% url 'eventsList' k %}">
+                        {% endif %}
+                            <i class="fa"></i>
+                            <span>{{ v }}</span>
+                        </a>
+                    </li>
+                  {% endfor %}
+
+              </ul>
+              
+          </div>
+      </aside>
+      <!--sidebar end-->
+      

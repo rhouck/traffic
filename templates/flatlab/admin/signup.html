@@ -1,0 +1,57 @@
+{% extends 'flatlab/admin/base.html' %}
+{% load staticfiles %}
+{% load widget_tweaks %}
+
+{% block bodytype %}
+ <body class="login-body">
+{% endblock %}
+
+
+{% block body %}
+
+<div class="container">
+    
+    {% if form %}
+        <form class="form-signin" action="" method="post">
+            <h2 class="form-signin-heading">registration</h2>
+            <div class="login-wrap">
+                <p> Enter your account details below</p>
+                {% csrf_token %}
+                
+                {% for error in form.non_field_errors %}
+                    {{error}}
+                {% endfor %}
+                
+                {{ form.email.errors }}
+                {{ form.email|add_class:"form-control"}}
+                {{ form.username.errors }}
+                {{ form.username|add_class:"form-control"}}
+                {{ form.password.errors }}
+                {{ form.password|add_class:"form-control"}}
+                {{ form.password2.errors }}
+                {{ form.password2|add_class:"form-control"}}
+                {{ form.company.errors }}
+                {{ form.company|add_class:"form-control"}}
+                {{ form.tos.errors }}
+                <label class="checkbox">
+                {{ form.tos}}I agree to the Terms of Service and Privacy Policy
+                </label>
+                <button class="btn btn-lg btn-login btn-block" type="submit">Submit</button>
+
+            <div class="registration">
+                Already Registered.
+                <a href="{% url 'login' %}">Login</a></br>
+            </div>
+            </div>
+        </form>
+    {% endif %}
+</div>
+<div class="row">
+<br/><br/>
+</div>
+    
+
+
+{% endblock %}
+
+

@@ -1,0 +1,39 @@
+{% extends 'flatlab/admin/base.html' %}
+{% load staticfiles %}
+{% load widget_tweaks %}
+
+
+{% block body %}
+
+<div class="container">
+
+      <form class="form-signin" action="index.html">
+        <h2 class="form-signin-heading">registration</h2>
+        <div class="login-wrap">
+            
+            <p> Enter your account details below</p>
+            <input type="text" class="form-control" placeholder="Email" autofocus>
+            <input type="text" class="form-control" placeholder="User Name" autofocus>
+            <input type="password" class="form-control" placeholder="Password">
+            <input type="password" class="form-control" placeholder="Re-type Password">
+            <label class="checkbox">
+                <input type="checkbox" value="agree this condition"> I agree to the Terms of Service and Privacy Policy
+            </label>
+            <button class="btn btn-lg btn-login btn-block" type="submit">Submit</button>
+
+            <div class="registration">
+                Already Registered.
+                <a href="{% url 'login' %}">Login</a></br>
+            </div>
+
+        </div>
+
+      </form>
+
+    </div>
+
+
+
+{% endblock %}
+
+

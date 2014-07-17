@@ -13,6 +13,18 @@
     display: compact;
      font: 13px/18px "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
+    .splash {
+        background: rgba(0,0,0,.4);
+        padding: 3em 1em;
+        color: #fff;
+    }
+    .splash>h2 {
+        font-weight: normal;
+        margin: 0;
+    }
+    .pad-top-200{
+        padding-top:200px;
+    }
 </style>
 {% endblock %}
 
@@ -21,71 +33,25 @@
 {% endblock %}
 
 {% block body %}
-
+    
     <!-- START HEADER -->
     <section id="header">
-        <div class="container">
-            <header>
+        <header class="text-center pad-top-200">
                 <!-- HEADLINE -->
-                <br/>
-                <br/>
-                <br/>
-                <br/>
-                <br/>
-                <br/>
-                <br/>
-                <br/>
-                <br/>
-                <br/>
-                <br/>
-                <br/>
-                <br/>
-                <br/>
-                <br/>
-                <a class="logo floatless" href="">Drivers<span>Wanted</span></a>
-                <br/>
-                <h1 >The best way to find your customers</h1>
+                <div class="splash">
+                    <br/>
+                    <a class="logo floatless" href="{% url 'splash' %}">Drivers<span>Wanted</span></a>
+                    <br/><br/><br/>
+                    <h2 >The best way to find your customers</h2>
+                    <br/>
+                </div>
                 <!--
                 <br/>
                 <p>No more cruising to find people looking for rides.</p>
                 <p>Drivers Wanted provides you a curated list of the local events along with their size, location, and time so you can always be where the action is.</p>
                 <p>Users can comment on specific event listings to let other drivers know any relevant information.</p>
                 -->
-            </header>
-            <!--
-            
-            <div id="timer" data-animated="FadeIn">
-                <p id="message"></p>
-                <div id="days" class="timer_box"></div>
-                <div id="hours" class="timer_box"></div>
-                <div id="minutes" class="timer_box"></div>
-                <div id="seconds" class="timer_box"></div>
-            </div>
-            
-            <div class="col-lg-4 col-lg-offset-4 mt centered">
-            	<h4> LET ME KNOW WHEN YOU LAUNCH</h4>
-				<form class="form-inline" role="form">
-				  <div class="form-group">
-				    <label class="sr-only" for="exampleInputEmail2">Email address</label>
-				    <input type="email" class="form-control" id="exampleInputEmail2" placeholder="Enter email">
-				  </div>
-				  <button type="submit" class="btn btn-danger">Submit</button>
-				</form>            
-			</div>
-            -->
-            <br/>
-            <br/>
-            <br/>
-            <br/>
-            <br/>
-            <br/>
-            <br/>
-            <br/>
-            <br/>
-            <br/>
-            <br/>
-        </div>
-
+        </header>
     </section>
     <!-- END HEADER -->
 {% endblock %}

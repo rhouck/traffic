@@ -1,0 +1,83 @@
+{% extends 'flatlab/admin/base.html' %}
+{% load staticfiles %}
+{% load widget_tweaks %}
+
+{% block bodytype %}
+ <body class="login-body">
+{% endblock %}
+
+{% block body %}
+
+<div class="container">
+    
+    {% if form %}
+        <form class="form-signin" action="" method="post">
+            <h2 class="form-signin-heading">sign in now</h2>
+            <div class="login-wrap">
+                <p> Enter your account details below</p>
+                {% csrf_token %}
+                
+                {% for error in form.non_field_errors %}
+                    {{error}}
+                {% endfor %}
+                
+                {{ form.username.errors }}
+                {{ form.username|add_class:"form-control"}}
+                {{ form.password.errors }}
+                {{ form.password|add_class:"form-control"}}
+                
+                <!--
+                <label class="checkbox">
+                <input type="checkbox" value="remember-me"> Remember me
+                <span class="pull-right">
+                    <a data-toggle="modal" href="#myModal"> Forgot Password?</a>
+
+                    </span>
+                </label>
+                -->
+                <button class="btn btn-lg btn-login btn-block" type="submit">Sign in</button>
+                
+            <div class="registration">
+                New User.
+                <a href="{% url 'signup' %}">Signup</a></br>
+            </div>
+            
+            </div>
+             <!-- Modal -->
+              <div aria-hidden="true" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="myModal" class="modal fade">
+                  <div class="modal-dialog">
+                      <div class="modal-content">
+                          <div class="modal-header">
+                              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                              <h4 class="modal-title">Forgot Password ?</h4>
+                          </div>
+                          <div class="modal-body">
+                              <p>Enter your e-mail address below to reset your password.</p>
+                              <input type="text" name="email" placeholder="Email" autocomplete="off" class="form-control placeholder-no-fix">
+
+                          </div>
+                          <div class="modal-footer">
+                              <button data-dismiss="modal" class="btn btn-default" type="button">Cancel</button>
+                              <button class="btn btn-success" type="button">Submit</button>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+              <!-- modal -->
+        </form>
+    {% endif %}
+</div>
+<div class="row">
+<br/><br/>
+</div>
+
+
+
+
+
+    
+
+
+{% endblock %}
+
+
