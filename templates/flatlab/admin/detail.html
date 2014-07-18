@@ -1,6 +1,6 @@
 {% extends 'flatlab/admin/base.html' %}
 {% load staticfiles %}
-
+{% load widget_tweaks %}
 
 {% block body %}
       <!--main content start-->
@@ -8,39 +8,48 @@
           <section class="wrapper">
               
             <section class="panel">
+                          
+                          <div class="text-right">
+                            <a class="back" href="#"><i class="fa fa-angle-double-left"></i> Back</a>                          
+                          </div>
                           <header class="panel-heading summary-head">
-                              <h4>Day summary</h4>
-                              <p>12 August 2013</p>
+                              
+                              
+                              <h4>{{ event.Name }}</h4>
+                              
+                              
+                              {% if event.StartDate == event.EndDate %}
+                                <p>{{ event.StartDate|date }}</p>
+                              {% else %}
+                                <p>{{ event.StartDate|date }} - {{ event.EndDate|date }}</p>
+                              {% endif %}
+                              
                           </header>
                           
                           <div class="panel-body">
                               <div class="panel-body bio-graph-info">
-                              <h1>Bio Graph</h1>
+                              <h1>Details</h1>
                               <div class="row">
                                   <div class="bio-row">
-                                      <p><span>First Name </span>: Jonathan</p>
+                                      <p><span>Venue:</span></p><p> {{ event.VenueName }}</p>
                                   </div>
                                   <div class="bio-row">
-                                      <p><span>Last Name </span>: Smith</p>
+                                      <p><span>Exp. Size:</span></p><p> {{ event.Capacity }} ppl</p>
                                   </div>
                                   <div class="bio-row">
-                                      <p><span>Country </span>: Australia</p>
+                                      <p><span>Address:</span></p><p> {{ event.Address }}</p>
                                   </div>
                                   <div class="bio-row">
-                                      <p><span>Birthday</span>: 13 July 1983</p>
+                                      <p><span>Start Time:</span></p><p> {{ event.pretty_StartTime }}</p>
                                   </div>
                                   <div class="bio-row">
-                                      <p><span>Occupation </span>: UI Designer</p>
+                                      <p><span>City:</span></p><p> {{ event.City }}</p>
                                   </div>
                                   <div class="bio-row">
-                                      <p><span>Email </span>: jsmith@flatlab.com</p>
+                                      <p><span>End Time:</span></p><p> {{ event.pretty_EndTime }}</p>
                                   </div>
-                                  <div class="bio-row">
-                                      <p><span>Mobile </span>: (12) 03 4567890</p>
-                                  </div>
-                                  <div class="bio-row">
-                                      <p><span>Phone </span>: 88 (02) 123456</p>
-                                  </div>
+                                  
+                                  
                               </div>
                           </div>
 
@@ -49,11 +58,11 @@
             
             <section class="panel">
               <!-- this loads the map view -->
-              <div id="date-{{ forloop.counter }}-map" class="tab-pane">
+              <div id="date-1-map" class="tab-pane">
                       
                       <div class="row">
                         <div class="col-lg-12">
-                              <div id="gmap_marker-{{ forloop.counter }}" class="gmaps"></div> 
+                              <div id="gmap_marker-1" class="gmaps"></div> 
                         </div>
                         
                       </div>
@@ -61,120 +70,54 @@
                       </div>
             </section>
 
+            {% if form %}
             <section class="panel profile-info">
-                          <form>
-                              <textarea class="form-control input-lg p-text-area" rows="2" placeholder="Whats in your mind today?"></textarea>
-                          </form>
+                          <form action="" method="post">
+                              {% csrf_token %}
+                              {{ form.message.errors }}
+                              {{ form.message|add_class:"form-control input-lg p-text-area"}}
+                              
+                          
                           <footer class="panel-footer">
-                              <button class="btn btn-danger pull-right">Post</button>
+                              <button class="btn btn-danger pull-right" type="submit">Post</button>
                               <ul class="nav nav-pills">
-                                  <li>
-                                      <a href="#"><i class="fa fa-map-marker"></i></a>
-                                  </li>
-                                  <li>
-                                      <a href="#"><i class="fa fa-camera"></i></a>
-                                  </li>
-                                  <li>
-                                      <a href="#"><i class=" fa fa-film"></i></a>
-                                  </li>
-                                  <li>
-                                      <a href="#"><i class="fa fa-microphone"></i></a>
-                                  </li>
+                                  
                               </ul>
                           </footer>
+                          </form>
             </section>   
-
+            {% endif %}
+            
+           
             <section class="panel">
-                          <div class="panel-body">
-                              <div class="fb-user-thumb">
-                                  <img src="img/pro-ac-1.png" alt="">
-                              </div>
-                              <div class="fb-user-details">
-                                  <h3><a href="#" class="#">Margarita Elina</a></h3>
-                                  <p>7 minutes ago near Alaska, USA</p>
-                              </div>
-                              <div class="clearfix"></div>
-                              <p class="fb-user-status">John is world famous professional photographer.  with forward thinking clients to create beautiful, honest and amazing things that bring positive results. John is world famous professional photographer.  with forward thinking clients to create beautiful, honest and amazing things that bring positive results.
-                              </p>
-                              <div class="fb-status-container fb-border">
-                                  <div class="fb-time-action">
-                                      <a href="#" title="Like this">Like</a>
-                                      <span>-</span>
-                                      <a href="#" title="Leave a comment">Comments</a>
-                                      <span>-</span>
-                                      <a href="#" title="Send this to friend or post it on your time line">Share</a>
+              <div class="panel-body">
+                          <div class="panel-body profile-activity">
+                              <h5 class="pull-left">Comments</h5>
+                              {% for i in comments %}
+                              <div class="activity blue">
+                                  
+                                  <span>
+                                      <i class="fa fa-bullhorn"></i>
+                                  </span>
+                                  
+                                  <div class="activity-desk">
+                                      <div class="panel">
+                                          <div class="panel-body">
+                                              <div class="arrow"></div>
+                                              <i class=" fa fa-time"></i>
+                                              <h4>{{ i.user }}</h4>
+                                              <p>{{ i.message }}</p>
+                                              <p>{{ i.pretty_time }}</p>
+                                          </div>
+                                      </div>
                                   </div>
                               </div>
-
-
-                              <div class="fb-status-container fb-border fb-gray-bg">
-                                  <div class="fb-time-action like-info">
-                                      <a href="#">Jhon Due,</a>
-                                      <a href="#">Danieal Kalion</a>
-                                      <span>and</span>
-                                      <a href="#">40 more</a>
-                                      <span>like this</span>
-                                  </div>
-
-                                  <ul class="fb-comments">
-                                      <li>
-                                          <a href="#" class="cmt-thumb">
-                                              <img src="img/mail-avatar.jpg" alt="">
-                                          </a>
-                                          <div class="cmt-details">
-                                              <a href="#">Jhone due</a>
-                                              <span> is world famous professional photographer.  with forward thinking clients to create beautiful, </span>
-                                              <p>40 minutes ago - <a href="#" class="like-link">Like</a></p>
-                                          </div>
-                                      </li>
-                                      <li>
-                                          <a href="#" class="cmt-thumb">
-                                              <img src="img/follower-avatar.jpg" alt="">
-                                          </a>
-                                          <div class="cmt-details">
-                                              <a href="#">Tawseef</a>
-                                              <span> is world famous professional photographer.  with forward thinking clients to create beautiful, </span>
-                                              <p>34 minutes ago - <a href="#" class="like-link">Like</a></p>
-                                          </div>
-                                      </li>
-
-                                      <li>
-                                          <a href="#" class="cmt-thumb">
-                                              <img src="img/mail-avatar.jpg" alt="">
-                                          </a>
-                                          <div class="cmt-details">
-                                              <a href="#">Jhone due</a>
-                                              <span> is world famous professional photographer.   </span>
-                                              <p>15 minutes ago - <a href="#" class="like-link">Like</a></p>
-                                          </div>
-                                      </li>
-                                      <li>
-                                          <a href="#" class="cmt-thumb">
-                                              <img src="img/follower-avatar.jpg" alt="">
-                                          </a>
-                                          <div class="cmt-details">
-                                              <a href="#">Tawseef</a>
-                                              <span> thinking clients to create beautiful world famous professional photographer.  </span>
-                                              <p>2 minutes ago - <a href="#" class="like-link">Like</a></p>
-                                          </div>
-                                      </li>
-                                      <li>
-                                          <a href="#" class="cmt-thumb">
-                                              <img src="img/follower-avatar.jpg" alt="">
-                                          </a>
-                                          <div class="cmt-form">
-                                              <textarea class="form-control" placeholder="Write a comment..." name=""  ></textarea>
-                                          </div>
-                                      </li>
-                                  </ul>
-
-                                  <div class="clearfix"></div>
-
-                              </div>
-
+                              {% endfor %}
                           </div>
-            </section>      
-
+                        </div>
+                      </section>
+            
+            
           </section>
       </section>
 
@@ -217,6 +160,47 @@
     <script src={% static "flatlab/admin/js/count.js" %}></script>
     <script src={% static "flatlab/admin/js/gritter.js" %} type="text/javascript"></script>
     <script src={% static "flatlab/admin/js/pulstate.js" %} type="text/javascript"></script>
+
+    <script>
+      
+    var events = {{ events_map|safe }};  
+    // initializes maps
+    var mapMarker = function (element, events) {
+    
+        var map = new GMaps({
+            div: "#" + element,
+            lat: events[0]["lat"],
+            lng: events[0]["lng"]
+        });
+        
+        for (i = 0; i < events.length; i++) { 
+                map.addMarker({
+                lat: events[i]["lat"],
+                lng: events[i]["lng"],
+                title: events[i]["tag"],
+                infoWindow: {
+                    content: events[i]["tag"]
+                }
+            });
+            Point = new GMaps.maps.LatLng( events[i]["lat"],events[i]["lng"]);
+            markerBounds.extend(Point);
+        }
+
+    }
+
+    $(document).ready(function() {
+        
+        mapMarker('gmap_marker-1', events);  
+               
+      });
+
+    $(document).ready(function(){
+        $('a.back').click(function(){
+            parent.history.back();
+            return false;
+        });
+    });
+    </script>
 
 {% endblock %}
 

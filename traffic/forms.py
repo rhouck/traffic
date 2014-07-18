@@ -19,7 +19,7 @@ class ContactForm(forms.Form):
     message = forms.CharField(min_length=1, widget=forms.Textarea(attrs={'placeholder': 'Message'}))
 
 class CommentForm(forms.Form):
-    message = forms.CharField(min_length=1, widget=forms.Textarea(attrs={'placeholder': 'Message'}))
+    message = forms.CharField(required=True, min_length=2, widget=forms.Textarea(attrs={'placeholder': 'Any tips on this event?', 'rows': 2}))
 
     
 

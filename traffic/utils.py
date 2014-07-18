@@ -35,8 +35,27 @@ class Event(Object):
 class EventSizePercentile(Object):
     pass
 
-def getParseUseryUsername(username):
-	
+class Comment(Object):
+    pass
+
+def post_parse_comment(user, message, event):
+	comment = Comment(user=user, message=message, event=event)
+	comment.save()
+	return comment
+	#return True
+
+
+def pull_parse_comments_by_event(event):
+	comments = Comment.Query.all().filter(event=event)
+	comments = comments.order_by("createdAt")
+	comments = comments.limit(100)
+	comments = [c for c in comments]
+	return comments
+
+def get_parse_user_by_username(username):
+	user = User.Query.get(username=str(username))
+	return user
+	"""
 	if not username:
 		raise Exception("No username submitted")
 	
@@ -49,6 +68,7 @@ def getParseUseryUsername(username):
 		raise Exception("Returned multiple users")
 	else:
 		return users[0]
+	"""
 
 def calc_percentile(bank, item):
 	
@@ -64,6 +84,10 @@ def calc_percentile(bank, item):
 				break
 		percentile = int((point * (100.0)) / size)
 		return percentile
+
+def get_parse_event_by_id(objectId):
+	event = TestEvent.Query.get(objectId=str(objectId))
+	return event
 
 def pullEvents(location, date):
 	
@@ -152,7 +176,7 @@ def pullEvents(location, date):
 		categories.append(category)
 		"""
 		categories.append(2)
-		
+
 	#combine percentiles/categories and dates
 	dates = []
 	for ind, i in enumerate(sorted_keys):

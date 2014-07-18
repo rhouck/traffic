@@ -10,6 +10,7 @@ from django.forms.util import ErrorList
 import datetime
 import json
 import ast
+from dateutil.parser import parse
 
 from utils import *
 from forms import *
@@ -37,7 +38,6 @@ def eventsList(request, loc=None):
 		return render_to_response('flatlab/admin/main.html', data, context_instance=RequestContext(request))	
 	else:
 		return HttpResponseRedirect(reverse('splash'))
-		
 
 def logout(request):
 	
@@ -133,8 +133,57 @@ def tos(request):
 
 
 def eventDetail(request, id):
-	data = {'locations': locations}
-	return render_to_response('flatlab/admin/detail.html', data, context_instance=RequestContext(request))	
+	
+	try:
+		event = get_parse_event_by_id(id)
+	except:
+		raise Http404
+
+	if 'username' in request.session:		
+
+		data = {'locations': locations}
+		#format event object
+		pretty_EndTime = parse(event.EndTime).strftime("%I:%M %p")
+		event.pretty_EndTime = pretty_EndTime
+		if pretty_EndTime[0] == "0":
+			pretty_EndTime = pretty_EndTime[1:]
+		pretty_StartTime = parse(event.StartTime).strftime("%I:%M %p")
+		if pretty_StartTime[0] == "0":
+			pretty_StartTime = pretty_StartTime[1:] 
+
+		event.pretty_StartTime = pretty_StartTime
+		event.pretty_EndTime = pretty_EndTime
+
+		map_data = [{'tag': "PPL: %s\nEnding: %s" % (t.Capacity, t.pretty_EndTime), 'lat': t.Lat, 'lng': t.Lng} for t in [event,]]
+		
+
+		# update comments if provided
+		inputs = request.POST if request.POST else None
+		form = CommentForm(inputs)	
+		if (inputs) and form.is_valid():
+			cd = form.cleaned_data
+			# post comment
+			posted_message = post_parse_comment(request.session['username'], cd['message'], event)
+			
+		# clear comment form
+		form = CommentForm(None)
+		
+		# pull comments
+		comments = pull_parse_comments_by_event(event)
+		for c in comments:
+			pretty_time = c.createdAt.strftime("%I:%M %p")
+			short_date = c.createdAt.strftime("%b %d")
+			if pretty_time[0] == "0":
+				pretty_time = pretty_time[1:]	
+			c.pretty_time = "%s, %s" % (short_date, pretty_time)
+		data['comments'] = comments
+		data['form']= form 
+		data['events_map'] = map_data
+		data['event'] = event.__dict__
+		return render_to_response('flatlab/admin/detail.html', data, context_instance=RequestContext(request))	
+
+	else:
+		return HttpResponseRedirect(reverse('splash'))
 
 def contact(request):
 	inputs = request.POST if request.POST else None
