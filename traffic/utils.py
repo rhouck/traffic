@@ -13,12 +13,10 @@ import urllib2
 import urllib
 import json
 import pprint
-#from scipy.stats import percentileofscore
-#import eventbrite
 import pyrise
 
 
-from settings import EVENTBRITEKEYS, HIGHRISE_CONFIG, DEFAULT_FROM_EMAIL
+from settings import EVENTBRITEKEYS, HIGHRISE_CONFIG, DEFAULT_FROM_EMAIL, LIVE
 
 locations = {'SF': 'San Francisco',
 			 'BER': 'Berkeley',
@@ -38,18 +36,31 @@ class EventSizePercentile(Object):
 class Comment(Object):
     pass
 
+class TestComment(Object):
+    pass
+
 def post_parse_comment(user, message, event):
-	comment = Comment(user=user, message=message, event=event)
+	if LIVE:
+		comment = Comment(user=user, message=message, event=event)
+	else:
+		comment = TestComment(user=user, message=message, event=event)
+	
 	comment.save()
 	return comment
-	#return True
+	
 
 
 def pull_parse_comments_by_event(event):
-	comments = Comment.Query.all().filter(event=event)
-	comments = comments.order_by("createdAt")
+	
+	if LIVE:
+		comments = Comment.Query.all().filter(event=event)
+	else:
+		comments = TestComment.Query.all().filter(event=event)
+	
+	comments = comments.order_by("-createdAt")
 	comments = comments.limit(100)
 	comments = [c for c in comments]
+	comments.reverse()
 	return comments
 
 def get_parse_user_by_username(username):
