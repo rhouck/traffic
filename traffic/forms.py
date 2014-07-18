@@ -16,8 +16,10 @@ class UserSignup(forms.Form):
     
 class ContactForm(forms.Form):
     email = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Email'}))
-    message = forms.CharField(min_length=1, widget=forms.TextInput(attrs={'placeholder': 'Message'}))
+    message = forms.CharField(min_length=1, widget=forms.Textarea(attrs={'placeholder': 'Message'}))
 
-  
+class CommentForm(forms.Form):
+    message = forms.CharField(min_length=1, widget=forms.Textarea(attrs={'placeholder': 'Message'}))
+
     
 

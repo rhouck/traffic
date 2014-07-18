@@ -132,8 +132,8 @@ def tos(request):
 	return render_to_response('flatlab/admin/tos.html', data, context_instance=RequestContext(request))	
 
 
-def eventDetail(request):
-	data = []
+def eventDetail(request, id):
+	data = {'locations': locations}
 	return render_to_response('flatlab/admin/detail.html', data, context_instance=RequestContext(request))	
 
 def contact(request):
@@ -153,7 +153,8 @@ def contact(request):
 			user.username = cd['email']
 			create_highrise_account(user, 'contact')
 			
-			send_email('info.driverswanted@gmail.com', 'Contact Form', cd['message'])
+			message = "From %s:\n\n%s" % (cd['email'], cd['message'])
+			send_email('info.driverswanted@gmail.com', 'Contact Form', message)
 
 			if 'city' in request.session: 
 				loc = request.session['city']

@@ -96,14 +96,17 @@
                                           
                                           <div class="panel-body">
                                               <div class="tab-content">
-
-
-                                                    <!-- this is the timeline view -->
+                                                  <div class="text-right">
+                                                    <p>Click listings for detail</p>
+                                                    </br>
+                                                  </div>
+                                                  <!-- this is the timeline view -->
+                                                    
                                                     <div id="date-{{ forloop.counter }}-timeline" class="tab-pane active">
                                                         
-                                                
+                                                      
                                                         <div class="timeline">
-                                                        
+                                                            
                                                             {% for k, v in events_timeline.items %}
                                                                 {% if k == d.0 %}
                                                                     {% for i in v %}
@@ -112,19 +115,17 @@
                                                                           <article class="timeline-item">
                                                                               <div class="timeline-desk">
                                                                                   <div class="panel">
-                                                                                    <a class="event-link" href="#myModal" data-toggle="modal" data-detail="{{ i.ajax_string}}">      
+                                                                                      
                                                                                       <div class="panel-body" >
                                                                             
                                                                                           <span class="arrow"></span>
-                                                                                          <span class="timeline-icon red"></span>
-                                                                                          
+                                                                                          <span class="timeline-icon red"></span> 
                                                                                           <span class="timeline-date">{{ i.pretty_EndTime }}</span>
-                                                                                          <h1 class="red">{{ i.Capacity }} PPL</h1>
-                                                                                          
-                                                                                            <p><span>{{ i.Address }}</span></p>
-                                                                                          
+                                                                                          <h1 class="red"><span><a href="{% url 'event-detail' i.objectId %}" class="red">{{ i.Capacity }} PPL</a></span></h1>
+                                                                                          <p><span><a href="{% url 'event-detail' i.objectId %}"  class="red">{{ i.Address }}</a></span></p>
+
                                                                                       </div>
-                                                                                    </a>
+                                                                                    
                                                                                   </div>
                                                                               </div>
                                                                           </article>
@@ -138,8 +139,8 @@
                                                                                           <span class="arrow-alt"></span>
                                                                                           <span class="timeline-icon green"></span>
                                                                                           <span class="timeline-date">{{ i.pretty_EndTime }}</span>
-                                                                                          <h1 class="green">{{ i.Capacity }} PPL</h1>
-                                                                                          <p><span><a href="#" class="green">{{ i.Address }}</a></span></p>
+                                                                                          <h1 class="green"><span><a href="{% url 'event-detail' i.objectId %}"  class="green">{{ i.Capacity }} PPL</a></span></h1>
+                                                                                          <p><span><a href="{% url 'event-detail' i.objectId %}"  class="green">{{ i.Address }}</a></span></p>
                                                                                           
                                                                                       </div>
                                                                                   </div>
@@ -151,15 +152,17 @@
                                                                           <article class="timeline-item">
                                                                               <div class="timeline-desk">
                                                                                   <div class="panel">
+                                                                                        
                                                                                       <div class="panel-body">
                                                                                           <span class="arrow"></span>
                                                                                           <span class="timeline-icon blue"></span>
                                                                                           <span class="timeline-date">{{ i.pretty_EndTime }}</span>
-                                                                                          <h1 class="blue">{{ i.Capacity }} PPL</h1>
-                                                                                          <p><span><a href="#" class="blue">{{ i.Address }}</a></span></p>
+                                                                                          <h1 class="blue"><span><a href="{% url 'event-detail' i.objectId %}" class="blue">{{ i.Capacity }} PPL</a></span></h1>
+                                                                                          <p><span><a href="{% url 'event-detail' i.objectId %}"  class="blue">{{ i.Address }}</a></span></p>
                                                                                           
                                                                                           
                                                                                       </div>
+                                                                                    
                                                                                   </div>
                                                                               </div>
                                                                           </article>
@@ -173,11 +176,12 @@
                                                                                           <span class="arrow-alt"></span>
                                                                                           <span class="timeline-icon purple"></span>
                                                                                           <span class="timeline-date">{{ i.pretty_EndTime }}</span>
-                                                                                          <h1 class="purple">{{ i.Capacity }} PPL</h1>
-                                                                                          <p><span><a href="#" class="purple">{{ i.Address }}</a></span></p>
+                                                                                          <h1 class="purple"><span><a href="{% url 'event-detail' i.objectId %}" class="purple">{{ i.Capacity }} PPL</a></span></h1>
+                                                                                          <p><span><a href="{% url 'event-detail' i.objectId %}"  class="purple">{{ i.Address }}</a></span></p>
                                                                                           
 
                                                                                     </div>
+                                                                                  
                                                                                 </div>
                                                                             </div>
                                                                           </article>
@@ -310,7 +314,10 @@
                     content: events[i]["tag"]
                 }
             });
+            Point = new GMaps.maps.LatLng( events[i]["lat"],events[i]["lng"]);
+            markerBounds.extend(Point);
         }
+
     }
 
     

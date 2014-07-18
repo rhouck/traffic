@@ -142,6 +142,7 @@ def pullEvents(location, date):
 	# select category from percentiles
 	categories = []
 	for i in caps:
+		"""
 		percentile = calc_percentile(caps, i)
 		category = 1
 		if percentile >= 25:
@@ -149,7 +150,9 @@ def pullEvents(location, date):
 		elif percentile >= 75:
 			category = 3
 		categories.append(category)
-
+		"""
+		categories.append(2)
+		
 	#combine percentiles/categories and dates
 	dates = []
 	for ind, i in enumerate(sorted_keys):
