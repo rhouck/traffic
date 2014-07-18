@@ -43,10 +43,12 @@ def logout(request):
 	
 	# save final city view
 	if 'city' in request.session:
-		user = User.login(request.session['username'], request.session['password'])
-		user.CityPref = request.session['city']
-		user.save()
-	
+		try:
+			user = User.login(request.session['username'], request.session['password'])
+			user.CityPref = request.session['city']
+			user.save()
+		except:
+			pass
 	request.session.flush()
 	return HttpResponseRedirect(reverse('splash'))
 
