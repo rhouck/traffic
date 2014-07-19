@@ -50,11 +50,19 @@ def current_time_aware():
 def conv_to_js_date(date):
     return 1000 * time.mktime(date.timetuple())
 
+def get_local_datetime(location, cur_utc=current_time_aware(), locations=locations):
+	for k, v in locations.iteritems():
+		if v['name'] == location:
+			timezone = tz.gettz(v['timezone'])
+	
+	date = cur_utc.astimezone(timezone)
+	return date
+
 def post_parse_comment(user, message, event):
 	if LIVE:
-		comment = Comment(user=user, message=message, event=event)
+		comment = Comment(user=user, message=message, event=event, city=event.City, event_end_date=event.EndDate)
 	else:
-		comment = TestComment(user=user, message=message, event=event)
+		comment = TestComment(user=user, message=message, event=event, city=event.City, event_end_date=event.EndDate)
 	
 	comment.save()
 	return comment
@@ -71,6 +79,22 @@ def pull_parse_comments_by_event(event):
 	comments = comments.limit(100)
 	comments = [c for c in comments]
 	comments.reverse()
+	return comments
+
+
+def pull_recent_parse_comments_by_location(location):
+	
+	date = get_local_datetime(location)
+	date = datetime.datetime(date.year, date.month, date.day, 0, 0, 0)
+	
+	if LIVE:
+		comments = Comment.Query.all().filter(city=location, event_end_date__gte=date)
+	else:
+		comments = TestComment.Query.all().filter(city=location, event_end_date__gte=date)
+	
+	comments = comments.order_by("-createdAt")
+	comments = comments.limit(200)
+	comments = [c for c in comments]
 	return comments
 
 def get_parse_user_by_username(username):
@@ -110,13 +134,9 @@ def get_parse_event_by_id(objectId):
 	event = TestEvent.Query.get(objectId=str(objectId))
 	return event
 
-def pullEvents(location, date, locations=locations):
+def pullEvents(location, date=current_time_aware()):
 	
-	for k, v in locations.iteritems():
-		if v['name'] == location:
-			timezone = tz.gettz(v['timezone'])
-	
-	date = date.astimezone(timezone)
+	date = get_local_datetime(location,cur_utc=date)
 
 	# set date ranges
 	date = datetime.datetime(date.year, date.month, date.day, 0, 0, 0)

@@ -28,13 +28,28 @@ def eventsList(request, loc=None):
 	if loc and loc not in locations.keys():	
 		raise Http404
 	
-	elif loc and 'username' in request.session:		
-		request.session['city'] = loc
-		current_time = current_time_aware()
-		dates, events_maps, events_timeline = pullEvents(locations[loc]['name'], current_time)
-		#return HttpResponse(json.dumps(percentiles), content_type="application/json")
+	elif loc and 'username' in request.session:	
 		
-		data = {'dates': dates, 'events_maps': events_maps, 'events_timeline': events_timeline, 'locations': locations, 'selected': loc}
+		# set session variable
+		request.session['city'] = loc
+		# pull event listings and locations
+		dates, events_maps, events_timeline = pullEvents(locations[loc]['name'])
+		
+		# pull recent comments
+		binned_comments = {}
+		for i in dates:
+			binned_comments[i[0]] = []	
+		total_comments = pull_recent_parse_comments_by_location(locations[loc]['name'])
+		
+		for i in total_comments:
+			i.js_time = conv_to_js_date(i.createdAt)
+			for k in binned_comments.iterkeys():
+				date = datetime.datetime(k.year, k.month, k.day, 0, 0, 0)
+				if i.event.StartDate >= date and i.event.EndDate <= date:
+					binned_comments[k].append(i)
+		
+		data = {'dates': dates, 'events_maps': events_maps, 'events_timeline': events_timeline, 
+				'locations': locations, 'selected': loc, 'comments': binned_comments}
 		return render_to_response('flatlab/admin/main.html', data, context_instance=RequestContext(request))	
 	else:
 		return HttpResponseRedirect(reverse('splash'))

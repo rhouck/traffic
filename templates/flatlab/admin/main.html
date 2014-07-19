@@ -43,14 +43,14 @@
                                               <!--<p class="t-info">Here's what you need to know</p>-->
 
                                         </div>      
-                                    
+                                    {% comment %} 
                                     <div class="row">
                                         <div class='col-lg-12 col-sm-12'>
                                             {% if d.1 == 1 %}
                                                 <div class="alert alert-warning fade in">   
                                                   <h4>
                                                       <i class="fa fa-ok-sign"></i>
-                                                      Expected Demand: Below Average
+                                                      Below Average Demand
                                                   </h4>
                                                   <p>Fewer or smaller events than average</p>
                                               </div>
@@ -58,7 +58,7 @@
                                               <div class="alert alert-success fade in">   
                                                   <h4>
                                                       <i class="fa fa-ok-sign"></i>
-                                                      Expected Demand: Average
+                                                      Average Demand
                                                   </h4>
                                                   <p>Normal number and size of events</p>
                                               </div>
@@ -66,14 +66,14 @@
                                                 <div class="alert alert-info fade in">   
                                                   <h4>
                                                       <i class="fa fa-ok-sign"></i>
-                                                      Expected Demand: Above Average
+                                                      Above Average Demand
                                                   </h4>
                                                   <p>We see more and bigger events than average</p>
                                               </div>
                                             {% endif %}
                                         </div>
                                     </div>
-
+                                    {% endcomment %}
   
                                     <section class="panel">
                                           <header class="tab-bg">
@@ -81,29 +81,35 @@
                                         
                                                 <li class="active">
                                                     <a data-toggle="tab" href="#date-{{ forloop.counter }}-timeline" >
-                                                        <i class="fa fa-calendar text-danger"></i>
+                                                        <i class="fa fa-calendar text-primary"></i>
                                                         Timeline View
                                                     </a>
                                                 </li>
+                                                
                                                 <li class="">
                                                   <a data-toggle="tab" href="#date-{{ forloop.counter }}-map" id="map-tab-{{ forloop.counter }}">
                                                     <i class="fa fa-map-marker text-primary"></i>
                                                       Map View</a>
                                                 </li>
-                                        
+                                                <li class="">
+                                                  <a data-toggle="tab" href="#recent-activity-{{ forloop.counter }}">
+                                                    <i class="fa fa-comment text-primary"></i>
+                                                      Recent Activity
+                                                    </a>
+                                                </li>
                                               </ul>
                                           </header>
                                           
                                           <div class="panel-body">
                                               <div class="tab-content">
-                                                  <div class="text-right">
-                                                    <p>Click listings for detail</p>
-                                                    </br>
-                                                  </div>
+                                                  
                                                   <!-- this is the timeline view -->
-                                                    
                                                     <div id="date-{{ forloop.counter }}-timeline" class="tab-pane active">
                                                         
+                                                        <div class="text-right">
+                                                          <p>(click listings for detail)</p>
+                                                          </br>
+                                                        </div>      
                                                       
                                                         <div class="timeline">
                                                             
@@ -209,6 +215,60 @@
                                                             </div>
 
                                                     </div>
+
+                                                    <!-- this loads the recent activity view -->
+                                                    <div id="recent-activity-{{ forloop.counter }}" class="tab-pane">
+                                                            
+                                                            <div class="row">
+                                                              <div class="col-lg-12">
+                                                                {% comment %}
+                                                                  <div class="chat-room-head">
+                                                                  <h3>Comments</h3>
+                                                                  </div>                                    
+                                                                  {% endcomment %}
+                                                                  <div class="room-desk">
+                                                                  {% comment %}
+                                                                  <h4 class="pull-left">Comments</h4>
+                                                                  {% endcomment %}
+                                                                  {% for k, v in comments.items %}
+
+                                                                    {% if k == d.0 %}
+                                                                        {% for i in v %}
+                                                                        <div class="room-box">
+                                                                          <h5 class="text-primary"><a href="{% url 'event-detail' i.event.objectId %}">{{ i.event.Capacity }} ppl - {{ i.event.Address }}</a></h5>
+                                                                          <p>{{ i.message }}</p>
+                                                                          <p><span class="text-muted">User :</span> {{i.user }} | <span class="text-muted">Posted: </span>
+                                                                            <script>
+                                                                              var date = new Date({{ i.js_time }});
+                                                                              function formatAMPM(date) {
+                                                                                var hours = date.getHours();
+                                                                                var minutes = date.getMinutes();
+                                                                                var ampm = hours >= 12 ? 'pm' : 'am';
+                                                                                hours = hours % 12;
+                                                                                hours = hours ? hours : 12; // the hour '0' should be '12'
+                                                                                minutes = minutes < 10 ? '0'+minutes : minutes;
+                                                                                var strTime = hours + ':' + minutes + ' ' + ampm;
+                                                                                return strTime;
+                                                                              }
+                                                                              document.write(formatAMPM(date));
+                                                                            </script>
+                                                                           </p>
+                                                                        </div>
+                                                                          
+                                                                        {% endfor %}
+                                                                    {% endif %}
+                                                                  {% endfor %}
+                                                                  
+                                                                  
+                                                                  
+                                                                </div>
+
+
+                                                              </div>
+                                                              
+                                                            </div>
+
+                                                    </div>
                                               </div>
                                         </div>
                                     </section>
@@ -307,7 +367,8 @@
         var map = new GMaps({
             div: "#" + element,
             lat: events[0]["lat"],
-            lng: events[0]["lng"]
+            lng: events[0]["lng"],
+            zoom: 11,
         });
         
         for (i = 0; i < events.length; i++) { 
