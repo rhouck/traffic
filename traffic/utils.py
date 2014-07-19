@@ -126,8 +126,8 @@ def pullEvents(location, date, locations=locations):
 	parse_end_date = Date(end_date)
 
 	# run Parse query
-	events = TestEvent.Query.all().filter(City=location, StartDate__gte=parse_beg_date, EndDate__lte=parse_end_date, Lat__gte=-10000000, Lng__gte=-100000000)
-	
+	#events = TestEvent.Query.all().filter(City=location, StartDate__gte=parse_beg_date, EndDate__lte=parse_end_date, Lat__gte=-10000000, Lng__gte=-100000000)
+	events = TestEvent.Query.all().filter(City=location, StartDate__lte=parse_end_date, EndDate__gte=parse_beg_date, Lat__gte=-10000000, Lng__gte=-100000000)
 	events = events.order_by("EndTime")
 	events = events.limit(500)
 	events = [e for e in events if (e.Address)]
