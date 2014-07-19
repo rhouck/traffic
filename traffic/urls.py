@@ -23,4 +23,6 @@ urlpatterns = patterns('',
     url(r'^tos/$', 'traffic.views.tos', name='tos'),
     
     url(r'^events/update/$', 'traffic.views.updateEventsDB'),
+
+   
 )

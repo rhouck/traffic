@@ -50,7 +50,7 @@
                                                 <div class="alert alert-warning fade in">   
                                                   <h4>
                                                       <i class="fa fa-ok-sign"></i>
-                                                      Slow Day
+                                                      Expected Demand: Below Average
                                                   </h4>
                                                   <p>Fewer or smaller events than average</p>
                                               </div>
@@ -58,7 +58,7 @@
                                               <div class="alert alert-success fade in">   
                                                   <h4>
                                                       <i class="fa fa-ok-sign"></i>
-                                                      Average Day
+                                                      Expected Demand: Average
                                                   </h4>
                                                   <p>Normal number and size of events</p>
                                               </div>
@@ -66,7 +66,7 @@
                                                 <div class="alert alert-info fade in">   
                                                   <h4>
                                                       <i class="fa fa-ok-sign"></i>
-                                                      Busy Day
+                                                      Expected Demand: Above Average
                                                   </h4>
                                                   <p>We see more and bigger events than average</p>
                                               </div>
@@ -295,6 +295,11 @@
             mapMarker('gmap_marker-5', events[4]);      
         }); 
     }
+    if (events.length >= 6) {
+        $("#map-tab-6").on('shown.bs.tab', function() {
+            mapMarker('gmap_marker-6', events[4]);      
+        }); 
+    }
     
     // initializes maps
     var mapMarker = function (element, events) {
@@ -314,8 +319,7 @@
                     content: events[i]["tag"]
                 }
             });
-            Point = new GMaps.maps.LatLng( events[i]["lat"],events[i]["lng"]);
-            markerBounds.extend(Point);
+            
         }
 
     }
@@ -344,14 +348,7 @@
       $(function(){
           $('select.styled').customSelect();
       });
-    /*
-    $('.event-link').on({
-      click: function() {
-        var that = this;
-        that.data('datail')
-      }
-    })
-    */
+    
   </script>
 
 {% endblock %}

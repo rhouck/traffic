@@ -35,6 +35,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'south',
     'widget_tweaks',
+
 )
 
 MIDDLEWARE_CLASSES = (
@@ -44,6 +45,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
 
 )
 
@@ -99,7 +101,7 @@ if host == 'RYANs-MacBook-Air-3.local':
 else:
     from settings_live import *
     LIVE = True
-    
+
 # eventbrite api credentials
 EVENTBRITEKEYS = {'app_key':  'EI4VUH4QE3OIQVG27O', 'access_code': 'FSYRI7NFSSVWUV3MTVU5'}
 

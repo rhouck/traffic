@@ -5,24 +5,28 @@ from parse_rest.connection import ParseBatcher
 from django.template.loader import render_to_string
 from django.views.generic.base import TemplateView
 from django.core.mail import send_mail
-
+from django.utils.timezone import utc
 
 import datetime
 from dateutil.parser import parse
+from dateutil import tz
 import urllib2
 import urllib
 import json
 import pprint
 import pyrise
+import time
+
 
 
 from settings import EVENTBRITEKEYS, HIGHRISE_CONFIG, DEFAULT_FROM_EMAIL, LIVE
 
-locations = {'SF': 'San Francisco',
-			 'BER': 'Berkeley',
-			 'LA': 'Los Angeles',
-			 'OAK': 'Oakland'
+locations = {'SF': {'name': 'San Francisco', 'timezone': 'America/Los_Angeles'},
+			 'BER': {'name': 'Berkeley', 'timezone': 'America/Los_Angeles'},
+			 'LA': {'name': 'Los Angeles', 'timezone': 'America/Los_Angeles'},
+			 'OAK': {'name': 'Oakland', 'timezone': 'America/Los_Angeles'},
 			 }
+
 
 class TestEvent(Object):
     pass
@@ -39,6 +43,13 @@ class Comment(Object):
 class TestComment(Object):
     pass
 
+
+def current_time_aware():
+    return datetime.datetime.utcnow().replace(tzinfo=utc)
+
+def conv_to_js_date(date):
+    return 1000 * time.mktime(date.timetuple())
+
 def post_parse_comment(user, message, event):
 	if LIVE:
 		comment = Comment(user=user, message=message, event=event)
@@ -48,7 +59,6 @@ def post_parse_comment(user, message, event):
 	comment.save()
 	return comment
 	
-
 
 def pull_parse_comments_by_event(event):
 	
@@ -100,8 +110,14 @@ def get_parse_event_by_id(objectId):
 	event = TestEvent.Query.get(objectId=str(objectId))
 	return event
 
-def pullEvents(location, date):
+def pullEvents(location, date, locations=locations):
 	
+	for k, v in locations.iteritems():
+		if v['name'] == location:
+			timezone = tz.gettz(v['timezone'])
+	
+	date = date.astimezone(timezone)
+
 	# set date ranges
 	date = datetime.datetime(date.year, date.month, date.day, 0, 0, 0)
 	beg_date = date - datetime.timedelta(days=0)
@@ -111,6 +127,7 @@ def pullEvents(location, date):
 
 	# run Parse query
 	events = TestEvent.Query.all().filter(City=location, StartDate__gte=parse_beg_date, EndDate__lte=parse_end_date, Lat__gte=-10000000, Lng__gte=-100000000)
+	
 	events = events.order_by("EndTime")
 	events = events.limit(500)
 	events = [e for e in events if (e.Address)]

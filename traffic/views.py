@@ -24,14 +24,14 @@ def splash(request):
 
 def eventsList(request, loc=None):
 	
-	#return HttpResponse(json.dumps(loc), content_type="application/json")
+	
 	if loc and loc not in locations.keys():	
 		raise Http404
 	
 	elif loc and 'username' in request.session:		
 		request.session['city'] = loc
-		current_time = datetime.datetime.now()
-		dates, events_maps, events_timeline = pullEvents(locations[loc], current_time)
+		current_time = current_time_aware()
+		dates, events_maps, events_timeline = pullEvents(locations[loc]['name'], current_time)
 		#return HttpResponse(json.dumps(percentiles), content_type="application/json")
 		
 		data = {'dates': dates, 'events_maps': events_maps, 'events_timeline': events_timeline, 'locations': locations, 'selected': loc}
@@ -178,6 +178,8 @@ def eventDetail(request, id):
 			if pretty_time[0] == "0":
 				pretty_time = pretty_time[1:]	
 			c.pretty_time = "%s, %s" % (short_date, pretty_time)
+			c.js_time = conv_to_js_date(c.createdAt)
+
 		data['comments'] = comments
 		data['form']= form 
 		data['events_map'] = map_data
