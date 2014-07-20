@@ -2,64 +2,165 @@
 {% load staticfiles %}
 
 {% block head %}
-<!-- coming soon styles -->
-    <link href={% static "flatlab/admin/css/soon.css"%} rel="stylesheet" >
-<style>
-    .taxi {
-     margin: 0;
-     background: url({% static "taxi.jpg"%});
-     background-size: 1440px 800px;
-     background-repeat:no-repeat;
-    display: compact;
-     font: 13px/18px "Helvetica Neue", Helvetica, Arial, sans-serif;
-}
-    .splash {
-        background: rgba(0,0,0,.4);
-        padding: 3em 1em;
-        color: #fff;
-    }
-    .splash>h2 {
-        font-weight: normal;
-        margin: 0;
-    }
-    .pad-top-200{
-        padding-top:200px;
-    }
-</style>
+<!-- Bootstrap core CSS -->
+    <link href={% static "flatlab/frontend/css/bootstrap.min.css" %} rel="stylesheet"> 
+    <link href={% static "flatlab/frontend/css/theme.css" %} rel="stylesheet">
+    <!--external css-->
+    <link rel="stylesheet" href={% static "flatlab/frontend/css/flexslider.css" %}/>
+    <link rel="stylesheet" href={% static "flatlab/frontend/assets/revolution_slider/css/rs-style.css" %} media="screen">
+    <link rel="stylesheet" href={% static "flatlab/frontend/assets/revolution_slider/rs-plugin/css/settings.css" %} media="screen">
+
+    <!-- Custom styles for this template -->
+    <link href={% static "flatlab/frontend/css/style.css" %} rel="stylesheet">
+    <link href={% static "flatlab/frontend/css/style-responsive.css" %} rel="stylesheet" />
+
+
 {% endblock %}
 
-{% block bodytype %}
-<body class="cs-bg taxi">
-{% endblock %}
-
-{% block body %}
+  {% block body %}
     
-    <!-- START HEADER -->
-    <section id="header">
-        <header class="text-center pad-top-200">
-                <!-- HEADLINE -->
-                <div class="splash">
-                    <br/>
-                    <a class="logo floatless" href="{% url 'splash' %}">Slow<span>Night</span></a>
-                    <br/><br/><br/>
-                    <h2 >The best way to find your customers</h2>
-                    <br/>
+     <!-- revolution slider start -->
+     <div class="fullwidthbanner-container main-slider">
+         <div class="fullwidthabnner">
+             <ul id="revolutionul" style="display:none;">
+                 <!-- 1st slide -->
+                 <li data-transition="fade" data-slotamount="8" data-masterspeed="700" data-delay="9400" data-thumb="">
+                     <div class="caption lfl slide_item_left"
+                          data-x="10"
+                          data-y="70"
+                          data-speed="400"
+                          data-start="1500"
+                          data-easing="easeOutBack">
+                         <img src={% static "flatlab/frontend/img/banner/ban2.png" %} alt="Image 1">
+                     </div>
+                     <div class="caption lfr slide_title"
+                          data-x="670"
+                          data-y="120"
+                          data-speed="400"
+                          data-start="1000"
+                          data-easing="easeOutExpo">
+                         Customer Inteligence for Drivers
+                     </div>
+
+                     <div class="caption lfr slide_subtitle dark-text"
+                          data-x="670"
+                          data-y="190"
+                          data-speed="400"
+                          data-start="2000"
+                          data-easing="easeOutExpo">
+                         Find customers before they find you.
+                     </div>
+                     <div class="caption lfr slide_desc"
+                          data-x="670"
+                          data-y="260"
+                          data-speed="400"
+                          data-start="2500"
+                          data-easing="easeOutExpo">
+                         Slow night helps drivers get to their customers faster <br>
+                         by showing them where demand will be.<br>
+                       
+                     </div>
+                     
+
+                 </li>
+            </ul>
+        </div>
+    </div>
+     <!-- revolution slider end -->
+
+
+    <!--container start-->
+    <div class="container">
+        <div class="row">
+            <!--feature start-->
+            <div class="text-center feature-head">
+                <h1>welcome to Slow Night</h1>
+                <p>Get a leg-up when cruising for your next customer</p>
+            </div>
+            <div class="col-lg-4 col-sm-4">
+                <section>
+                    <div class="f-box">
+                        <i class=" fa fa-search"></i>
+                        <h2>Find major events</h2>
+                    </div>
+                    <p class="f-text">Get a clean easy-to-read list of all major events in your area. Each listing shows the expected size of the event and its location so you won't waste time driving to small events unless they are nearby.</p>
+                </section>
+            </div>
+            <div class="col-lg-4 col-sm-4">
+                <section>
+                    <div class="f-box">
+                        <i class=" fa fa-comments-o"></i>
+                        <h2>Interact with other drivers</h2>
+                    </div>
+                    <p class="f-text">Each event has it's own page so drivers can share inteligence in case an event gets out early and people are already waiting or turned out to be bigger than expected.</p>
+                </section>
+            </div>
+            <div class="col-lg-4 col-sm-4">
+                <section>
+                    <div class="f-box">
+                        <i class="fa fa-list-ul"></i>
+                        <h2>Get the scoop</h2>
+                    </div>
+                    <p class="f-text">Get a highlevel view of all the activity in your area without selecting a particular event so you can quickly decide where most of the action is before you look at individual event listings.</p>
+                </section>
+            </div>
+            <!--feature end-->
+        </div>
+        <div class="row">
+            <!--quote start-->
+            <div class="quote">
+                <div class="col-lg-12 col-sm-12">
+                    <div class="quote-info">
+                        <h1>Have suggestions?</h1>
+                        <p>Let us know what features you want to see and which new cities we should cover <a style="color: white;" href="{% url 'contact' %}">here</a>.</p>
+                    </div>
                 </div>
-                <!--
-                <br/>
-                <p>No more cruising to find people looking for rides.</p>
-                <p>Drivers Wanted provides you a curated list of the local events along with their size, location, and time so you can always be where the action is.</p>
-                <p>Users can comment on specific event listings to let other drivers know any relevant information.</p>
-                -->
-        </header>
-    </section>
-    <!-- END HEADER -->
+                
+            </div>
+            <!--quote end-->
+        </div>
+    </div>
 {% endblock %}
 
-{% block jsfoot %}
-<!-- Placed at the end of the document so the pages load faster -->
-<script type="text/javascript" src={% static "flatlab/admin/js/modernizr.custom.js" %}></script>
-<script src={% static "flatlab/admin/js/soon/plugins.js" %}></script>
-<script src={% static "flatlab/admin/js/soon/custom.js" %}></script>
-{% endblock %}
+{% block jsfoot %}  
+    <!-- js placed at the end of the document so the pages load faster -->
+    
+    <script type="text/javascript" src={% static "flatlab/frontend/assets/revolution_slider/rs-plugin/js/jquery.themepunch.plugins.min.js" %}></script>
+    <script type="text/javascript" src={% static "flatlab/frontend/assets/revolution_slider/rs-plugin/js/jquery.themepunch.revolution.min.js" %}></script>
 
+    <script src={% static "flatlab/frontend/js/revulation-slide.js" %}></script>
+
+
+  <script>
+
+      RevSlide.initRevolutionSlider();
+
+      $(window).load(function() {
+          $('[data-zlname = reverse-effect]').mateHover({
+              position: 'y-reverse',
+              overlayStyle: 'rolling',
+              overlayBg: '#fff',
+              overlayOpacity: 0.7,
+              overlayEasing: 'easeOutCirc',
+              rollingPosition: 'top',
+              popupEasing: 'easeOutBack',
+              popup2Easing: 'easeOutBack'
+          });
+      });
+
+      $(window).load(function() {
+          $('.flexslider').flexslider({
+              animation: "slide",
+              start: function(slider) {
+                  $('body').removeClass('loading');
+              }
+          });
+      });
+
+      //    fancybox
+      jQuery(".fancybox").fancybox();
+
+
+
+  </script>
+{% endblock %}

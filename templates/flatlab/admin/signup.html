@@ -2,6 +2,17 @@
 {% load staticfiles %}
 {% load widget_tweaks %}
 
+{% block head %}
+<style>
+    html,body {
+      height:100%;
+    }
+    #container {
+      min-height: 100%;
+    }
+  </style>
+{% endblock %}
+
 {% block bodytype %}
  <body class="login-body">
 {% endblock %}
@@ -32,7 +43,11 @@
                 {{ form.password2|add_class:"form-control"}}
                 {{ form.company.errors }}
                 {{ form.company|add_class:"form-control"}}
+                <p>Primary location</p>
+                {{ form.location.errors }}
+                {{ form.location|add_class:"form-control input-sm m-bot15" }}
                 {{ form.tos.errors }}
+                </br>
                 <label class="checkbox">
                 {{ form.tos}}I agree to the Terms of Service and Privacy Policy
                 </label>

@@ -99,7 +99,10 @@ def login(request):
 def signup(request):
 
 	inputs = request.POST if request.POST else None
-	form = UserSignup(inputs)
+	if inputs:
+		form = UserSignup(inputs)
+	else:
+		form = UserSignup(initial={'location': 'SF'})
 	
 	try:
 		if (inputs) and form.is_valid():
@@ -113,7 +116,7 @@ def signup(request):
 			
 			# create user in Parse and check for parse errors
 			try:
-				user = User.signup(cd['username'], cd['password'], email=cd['email'], CityPref="SF", company=cd['company'], highrise_id=None)
+				user = User.signup(cd['username'], cd['password'], email=cd['email'], CityPref=cd['location'], company=cd['company'], highrise_id=None)
 			except Exception as err:
 				form.errors['__all__'] = form.error_class([ast.literal_eval(err[0])['error']])
 				raise Exception()
