@@ -202,6 +202,7 @@ def eventDetail(request, id):
 		data['form']= form 
 		data['events_map'] = map_data
 		data['event'] = event.__dict__
+		data['selected'] = request.session['city']
 		return render_to_response('flatlab/admin/detail.html', data, context_instance=RequestContext(request))	
 
 	else:
