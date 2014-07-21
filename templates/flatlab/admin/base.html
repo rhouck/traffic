@@ -1,5 +1,5 @@
 {% load staticfiles %}
-
+{% url 'splash' as splash_page %} 
 
 
 <!DOCTYPE html>
@@ -52,10 +52,9 @@
       
       {% include 'flatlab/includes/header.html' %}
       
-      {% if request.session.username %}
+      {% if request.session.username and request.get_full_path != splash_page %}      
         {% include 'flatlab/includes/sidebar.html' %}
       {% endif %}
-      
       {% block body %}
       {% endblock %}
 

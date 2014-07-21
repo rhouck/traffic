@@ -5,8 +5,11 @@
 <!-- Bootstrap core CSS -->
     <link href={% static "flatlab/frontend/css/bootstrap.min.css" %} rel="stylesheet"> 
     <link href={% static "flatlab/frontend/css/theme.css" %} rel="stylesheet">
+    <link href={% static "flatlab/frontend/css/bootstrap-reset.css" %} rel="stylesheet">
     <!--external css-->
     <link rel="stylesheet" href={% static "flatlab/frontend/css/flexslider.css" %}/>
+    <link href={% static "flatlab/frontend/assets/bxslider/jquery.bxslider.css" %} rel="stylesheet" />
+    <link href={% static "flatlab/frontend/assets/fancybox/source/jquery.fancybox.css" %} rel="stylesheet" />
     <link rel="stylesheet" href={% static "flatlab/frontend/assets/revolution_slider/css/rs-style.css" %} media="screen">
     <link rel="stylesheet" href={% static "flatlab/frontend/assets/revolution_slider/rs-plugin/css/settings.css" %} media="screen">
 
@@ -18,8 +21,7 @@
 {% endblock %}
 
   {% block body %}
-    <section id="main-content">
-          <section class="wrapper">
+
      <!-- revolution slider start -->
      <div class="fullwidthbanner-container main-slider">
          <div class="fullwidthabnner">
@@ -32,7 +34,8 @@
                           data-speed="400"
                           data-start="1500"
                           data-easing="easeOutBack">
-                         <img src={% static "flatlab/frontend/img/banner/ban2.png" %} alt="Image 1">
+                         <!--<img src={% static "flatlab/frontend/img/banner/ban2.png" %} alt="Image 1">-->
+                         <img src={% static "site_screenshot_3.png" %} alt="Image 1">
                      </div>
                      <div class="caption lfr slide_title"
                           data-x="670"
@@ -121,16 +124,23 @@
             <!--quote end-->
         </div>
     </div>
-</section>
-</section>
+
+
+
 {% endblock %}
 
 {% block jsfoot %}  
     <!-- js placed at the end of the document so the pages load faster -->
-    
+    <script src={% static "flatlab/frontend/js/jquery-migrate-1.2.1.min.js" %}></script>
+    <script defer src={% static "flatlab/frontend/js/jquery.flexslider.js" %}></script>
+    <script type="text/javascript" src={% static "flatlab/frontend/assets/bxslider/jquery.bxslider.js" %}></script>
+
     <script type="text/javascript" src={% static "flatlab/frontend/assets/revolution_slider/rs-plugin/js/jquery.themepunch.plugins.min.js" %}></script>
     <script type="text/javascript" src={% static "flatlab/frontend/assets/revolution_slider/rs-plugin/js/jquery.themepunch.revolution.min.js" %}></script>
 
+    <script src={% static "flatlab/frontend/assets/fancybox/source/jquery.fancybox.pack.js" %}></script>
+    <script src={% static "flatlab/frontend/js/common-scripts.js" %}></script>
+    
     <script src={% static "flatlab/frontend/js/revulation-slide.js" %}></script>
 
 

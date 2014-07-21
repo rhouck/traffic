@@ -1,24 +1,31 @@
 {% load staticfiles %}
+
 <!--header start-->
       <header class="header white-bg">
-              
-            {% if request.session.username %}
-              <!--logo start-->
-              <a href="{% url 'eventsList' loc=request.session.city %}" class="logo">s<span>n</span></a>
-              <!--logo end-->
-              <div class="sidebar-toggle-box">
-                  {% if selected %}
-                    <div class="fa fa-bars" data-placement="right">({{ selected }})</div> 
-                  {% else %}
-                    <div class="fa fa-bars" data-placement="right"></div>
-                  {% endif %}
-                  
-              </div>
+            
+            {% if request.get_full_path = splash_page and request.session.username%}
+                <a href="{% url 'eventsList' loc=request.session.city %}" class="logo">slow<span>night</span></a>
+                
+            {% elif request.session.username %}
+                
+                <!--logo start-->
+                <a href="{% url 'eventsList' loc=request.session.city %}" class="logo">s<span>n</span></a>
+                <!--logo end-->
+                <div class="sidebar-toggle-box">
+                    {% if selected %}
+                      <div class="fa fa-bars" data-placement="right">({{ selected }})</div> 
+                    {% else %}
+                      <div class="fa fa-bars" data-placement="right"></div>
+                    {% endif %}
+                    
+                </div>
             {% else %}
               <!--logo start-->
               <a href="{% url 'splash' %}" class="logo">slow<span>night</span></a>
               <!--logo end-->
-            {% endif %}      
+                
+            {% endif %}
+                  
             <div class="top-nav ">
                 <!--search & user info start-->
                 <ul class="nav pull-right top-menu">
