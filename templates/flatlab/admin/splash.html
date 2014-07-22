@@ -10,71 +10,82 @@
     <link rel="stylesheet" href={% static "flatlab/frontend/css/flexslider.css" %}/>
     <link href={% static "flatlab/frontend/assets/bxslider/jquery.bxslider.css" %} rel="stylesheet" />
     <link href={% static "flatlab/frontend/assets/fancybox/source/jquery.fancybox.css" %} rel="stylesheet" />
-    <link rel="stylesheet" href={% static "flatlab/frontend/assets/revolution_slider/css/rs-style.css" %} media="screen">
-    <link rel="stylesheet" href={% static "flatlab/frontend/assets/revolution_slider/rs-plugin/css/settings.css" %} media="screen">
-
+    
     <!-- Custom styles for this template -->
     <link href={% static "flatlab/frontend/css/style.css" %} rel="stylesheet">
     <link href={% static "flatlab/frontend/css/style-responsive.css" %} rel="stylesheet" />
-
+    <style>
+    /**
+     * Extra large button extensions. Extends `.btn`.
+     */
+    .btn-xlarge {
+        padding: 18px 28px;
+        font-size: 22px;
+        line-height: normal;
+        -webkit-border-radius: 8px;
+           -moz-border-radius: 8px;
+                border-radius: 8px;
+        }
+    </style>
 
 {% endblock %}
 
   {% block body %}
+    
+  
+    
+     <!--breadcrumbs start-->
+    
+    <div class="breadcrumbs">
+        <div class="container">
+            <div class="row">
+                
+                <div class="col-lg-9 col-sm-9">
+                    <div class="row">
+                        <div class="col-lg-8 col-sm-8">
+                        <div class="caption lfr slide_title">
+                        <br>
+                        Be there when customers need a cab
+                        </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-lg-8 col-sm-8">
+                        <div class="caption lfr slide_desc">   
+                         <br>
+                         Slow night helps cab drivers get to their customers faster <br>
+                         by showing them when and where people will likely be waiting.
+                        </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-8 col-sm-8">
+                        <br><br>
+                        <input value="Get Started, It's Free" type="button" class="btn btn-primary btn-xlarge btn-block"  onClick="javascript:location.href = '{% url 'signup' %}';" />
+                        </div>
+                        
+                    </div>
 
-     <!-- revolution slider start -->
-     <div class="fullwidthbanner-container main-slider">
-         <div class="fullwidthabnner">
-             <ul id="revolutionul" style="display:none;">
-                 <!-- 1st slide -->
-                 <li data-transition="fade" data-slotamount="8" data-masterspeed="700" data-delay="9400" data-thumb="">
-                     <div class="caption lfl slide_item_left"
-                          data-x="10"
-                          data-y="70"
-                          data-speed="400"
-                          data-start="1500"
-                          data-easing="easeOutBack">
-                         <!--<img src={% static "flatlab/frontend/img/banner/ban2.png" %} alt="Image 1">-->
-                         <img src={% static "site_screenshot_3.png" %} alt="Image 1">
-                     </div>
-                     <div class="caption lfr slide_title"
-                          data-x="670"
-                          data-y="120"
-                          data-speed="400"
-                          data-start="1000"
-                          data-easing="easeOutExpo">
-                         Customer Inteligence for Drivers
-                     </div>
+                </div>
 
-                     <div class="caption lfr slide_subtitle dark-text"
-                          data-x="670"
-                          data-y="190"
-                          data-speed="400"
-                          data-start="2000"
-                          data-easing="easeOutExpo">
-                         Find customers before they find you.
-                     </div>
-                     <div class="caption lfr slide_desc"
-                          data-x="670"
-                          data-y="260"
-                          data-speed="400"
-                          data-start="2500"
-                          data-easing="easeOutExpo">
-                         Slow night helps drivers get to their customers faster <br>
-                         by showing them where demand will be.<br>
-                       
-                     </div>
-                     
+                <div class="col-lg-3 col-sm-3">
+                    <br>
+                    <img src={% static "site_screenshot.png" %} alt="Image 1">
+               
+                </div>
 
-                 </li>
-            </ul>
+
+                
+            </div>
         </div>
     </div>
-     <!-- revolution slider end -->
+    <!--breadcrumbs end-->     
 
 
     <!--container start-->
     <div class="container">
+        
         <div class="row">
             <!--feature start-->
             <div class="text-center feature-head">
@@ -133,47 +144,20 @@
     <!-- js placed at the end of the document so the pages load faster -->
     <script src={% static "flatlab/frontend/js/jquery-migrate-1.2.1.min.js" %}></script>
     <script defer src={% static "flatlab/frontend/js/jquery.flexslider.js" %}></script>
+    <script type="text/javascript" src={% static "flatlab/frontend/js/hover-dropdown.js" %}></script>
     <script type="text/javascript" src={% static "flatlab/frontend/assets/bxslider/jquery.bxslider.js" %}></script>
 
-    <script type="text/javascript" src={% static "flatlab/frontend/assets/revolution_slider/rs-plugin/js/jquery.themepunch.plugins.min.js" %}></script>
-    <script type="text/javascript" src={% static "flatlab/frontend/assets/revolution_slider/rs-plugin/js/jquery.themepunch.revolution.min.js" %}></script>
-
+    
     <script src={% static "flatlab/frontend/assets/fancybox/source/jquery.fancybox.pack.js" %}></script>
     <script src={% static "flatlab/frontend/js/common-scripts.js" %}></script>
     
-    <script src={% static "flatlab/frontend/js/revulation-slide.js" %}></script>
+    
+     <script src={% static "flatlab/frontend/js/jquery.easing.min.js" %}></script>
+    <script src={% static "flatlab/frontend/js/link-hover.js" %}></script>
 
 
-  <script>
+    <!--common script for all pages-->
+    <script src={% static "flatlab/frontend/js/common-scripts.js" %}></script>
 
-      RevSlide.initRevolutionSlider();
-
-      $(window).load(function() {
-          $('[data-zlname = reverse-effect]').mateHover({
-              position: 'y-reverse',
-              overlayStyle: 'rolling',
-              overlayBg: '#fff',
-              overlayOpacity: 0.7,
-              overlayEasing: 'easeOutCirc',
-              rollingPosition: 'top',
-              popupEasing: 'easeOutBack',
-              popup2Easing: 'easeOutBack'
-          });
-      });
-
-      $(window).load(function() {
-          $('.flexslider').flexslider({
-              animation: "slide",
-              start: function(slider) {
-                  $('body').removeClass('loading');
-              }
-          });
-      });
-
-      //    fancybox
-      jQuery(".fancybox").fancybox();
-
-
-
-  </script>
+  
 {% endblock %}
