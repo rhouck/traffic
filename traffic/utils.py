@@ -28,11 +28,19 @@ locations = {'SF': {'name': 'San Francisco', 'timezone': 'America/Los_Angeles'},
 			 }
 
 
+
 class TestEvent(Object):
     pass
 
-class Event(Object):
+class LiveEvent(Object):
     pass
+
+def get_event_type():
+	if LIVE:
+		return LiveEvent
+	else:
+		return TestEvent
+
 
 class EventSizePercentile(Object):
     pass
@@ -42,7 +50,6 @@ class Comment(Object):
 
 class TestComment(Object):
     pass
-
 
 def current_time_aware():
     return datetime.datetime.utcnow().replace(tzinfo=utc)
@@ -131,7 +138,8 @@ def calc_percentile(bank, item):
 		return percentile
 
 def get_parse_event_by_id(objectId):
-	event = TestEvent.Query.get(objectId=str(objectId))
+	parse_event = get_event_type()
+	event = parse_event.Query.get(objectId=str(objectId))
 	return event
 
 def pullEvents(location, date=current_time_aware()):
@@ -147,7 +155,8 @@ def pullEvents(location, date=current_time_aware()):
 
 	# run Parse query
 	#events = TestEvent.Query.all().filter(City=location, StartDate__gte=parse_beg_date, EndDate__lte=parse_end_date, Lat__gte=-10000000, Lng__gte=-100000000)
-	events = TestEvent.Query.all().filter(City=location, StartDate__lte=parse_end_date, EndDate__gte=parse_beg_date, Lat__gte=-10000000, Lng__gte=-100000000)
+	parse_event = get_event_type()
+	events = parse_event.Query.all().filter(City=location, StartDate__lte=parse_end_date, EndDate__gte=parse_beg_date, Lat__gte=-10000000, Lng__gte=-100000000)
 	events = events.order_by("EndTime")
 	events = events.limit(500)
 	events = [e for e in events if (e.Address)]
@@ -239,7 +248,8 @@ def searchEventbrite(location, date):
 	end_date = date + datetime.timedelta(days=6)
 	
 	# run Parse query
-	events = TestEvent.Query.all().filter(City=location)
+	parse_event = get_event_type()
+	events = parse_event.Query.all().filter(City=location)
 	events = events.order_by("createdAt")
 	events = events.limit(1)
 	events = [e for e in events]
@@ -363,7 +373,8 @@ def daily_event_size(location):
 	# run Parse query
 	date = datetime.datetime.now()
 	date = Date(datetime.datetime(date.year, date.month, date.day, 0, 0, 0))
-	events_query = TestEvent.Query.all().filter(StartDate__lte=date)
+	parse_event = get_event_type()
+	events_query = parse_event.Query.all().filter(StartDate__lte=date)
 	events_query = events_query.limit(5000)
 	events = []
 	for e in events_query:

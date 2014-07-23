@@ -14,9 +14,9 @@ from dateutil.parser import parse
 
 from utils import *
 from forms import *
+from settings import LIVE
 
 from parse_rest.user import User
-
 
 def splash(request):
 	return render_to_response('flatlab/admin/splash.html', {'locations': locations}, context_instance=RequestContext(request))
@@ -116,7 +116,10 @@ def signup(request):
 			
 			# create user in Parse and check for parse errors
 			try:
-				user = User.signup(cd['username'], cd['password'], email=cd['email'], CityPref=cd['location'], company=cd['company'], highrise_id=None)
+				if LIVE:
+					user = User.signup(cd['username'], cd['password'], email=cd['email'], CityPref=cd['location'], company=cd['company'], highrise_id=None, type="live")
+				else:
+					user = User.signup(cd['username'], cd['password'], email=cd['email'], CityPref=cd['location'], company=cd['company'], highrise_id=None, type="test")
 			except Exception as err:
 				form.errors['__all__'] = form.error_class([ast.literal_eval(err[0])['error']])
 				raise Exception()
@@ -131,7 +134,8 @@ def signup(request):
 				raise Exception()	
 			
 			# add to highrise
-			create_highrise_account(user, 'user')
+			if LIVE:
+				create_highrise_account(user, 'user')
 			user.save()
 			
 			# set session vars
