@@ -31,6 +31,8 @@ locations = {'SF': {'name': 'San Francisco', 'timezone': 'America/Los_Angeles'},
 			 }
 
 
+class EmailList(Object):
+    pass
 
 class TestEvent(Object):
     pass
@@ -519,6 +521,19 @@ def create_highrise_account(user, tag=None):
 				cust.add_tag(tag)
 			except:
 				pass
+
+def create_highrise_and_tag(email, tag):
+	try:
+		# check if user exists and add to highrise if does not
+		class TempUser(object):
+			pass
+		user = TempUser()
+		user.highrise_id = None
+		user.email = email
+		user.username = email
+		create_highrise_account(user, tag)
+	except:
+		pass	
 
 
 def send_email(to_email, subject, body):

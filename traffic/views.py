@@ -19,7 +19,21 @@ from settings import LIVE
 from parse_rest.user import User
 
 def splash(request):
-	return render_to_response('flatlab/admin/splash.html', {'locations': locations}, context_instance=RequestContext(request))
+	
+	inputs = request.POST if request.POST else None
+	form = SplashForm(inputs)
+	if (inputs) and form.is_valid():
+		cd = form.cleaned_data
+		email_type = "live" if LIVE else 'test'
+		new_email = EmailList(email=cd['email'], type=email_type)
+		new_email.save()
+		
+		if LIVE:
+			create_highrise_and_tag(cd['email'], 'email-list')
+		
+		return HttpResponseRedirect(reverse('confirmation-email-list'))
+	else:
+		return render_to_response('flatlab/admin/splash.html', {'locations': locations, 'form': form}, context_instance=RequestContext(request))
 
 
 def eventsList(request, loc=None):
@@ -117,9 +131,9 @@ def signup(request):
 			# create user in Parse and check for parse errors
 			try:
 				if LIVE:
-					user = User.signup(cd['username'], cd['password'], email=cd['email'], CityPref=cd['location'], company=cd['company'], highrise_id=None, type="live")
+					user = User.signup(cd['username'], cd['password'], email=cd['email'], phone=cd['phone'], CityPref=cd['location'], company=cd['company'], highrise_id=None, type="live")
 				else:
-					user = User.signup(cd['username'], cd['password'], email=cd['email'], CityPref=cd['location'], company=cd['company'], highrise_id=None, type="test")
+					user = User.signup(cd['username'], cd['password'], email=cd['email'], phone=cd['phone'], CityPref=cd['location'], company=cd['company'], highrise_id=None, type="test")
 			except Exception as err:
 				form.errors['__all__'] = form.error_class([ast.literal_eval(err[0])['error']])
 				raise Exception()
@@ -220,24 +234,19 @@ def contact(request):
 		if (inputs) and form.is_valid():
 			cd = form.cleaned_data
 			
-			# check if user exists and add to highrise if does not
-			class TempUser(object):
-				pass
-			user = TempUser()
-			user.highrise_id = None
-			user.email = cd['email']
-			user.username = cd['email']
-			create_highrise_account(user, 'contact')
-			
+			if LIVE:
+				create_highrise_and_tag(cd['email'], 'contact')
+
 			message = "From %s:\n\n%s" % (cd['email'], cd['message'])
 			send_email('info.driverswanted@gmail.com', 'Contact Form', message)
-
+			"""
 			if 'city' in request.session: 
 				loc = request.session['city']
 				return HttpResponseRedirect(reverse('eventsList', kwargs={'loc': request.session['city']}))
 			else:
-				return HttpResponseRedirect(reverse('splash'))		
-			
+				return HttpResponseRedirect(reverse('confirmation'))		
+			"""
+			return HttpResponseRedirect(reverse('confirmation'))
 		else:
 			raise Exception()
 	
@@ -265,4 +274,10 @@ def updateEventsDB(request):
 		results[i] = events
 	return HttpResponse(json.dumps(results), content_type="application/json")
 	#return render_to_response('flatlab/admin/detail.html', data, context_instance=RequestContext(request))	
+
+def confirmation(request):	
+	return render_to_response('flatlab/admin/confirmation.html', {'locations': locations}, context_instance=RequestContext(request))
+def confirmationEmailList(request):
+	return render_to_response('flatlab/admin/confirmation-email-list.html', {'locations': locations}, context_instance=RequestContext(request))
+
 	

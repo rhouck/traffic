@@ -20,6 +20,9 @@ urlpatterns = patterns('',
     url(r'^user/signup/$', 'traffic.views.signup', name='signup'),
     
     url(r'^contact/$', 'traffic.views.contact', name='contact'),
+    url(r'^confirmation/$', 'traffic.views.confirmation', name='confirmation'),
+    url(r'^confirmation/get-in-touch/$', 'traffic.views.confirmationEmailList', name='confirmation-email-list'),
+    
     url(r'^tos/$', 'traffic.views.tos', name='tos'),
     
     url(r'^events/update/$', 'traffic.views.updateEventsDB'),

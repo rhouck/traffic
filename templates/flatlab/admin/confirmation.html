@@ -1,0 +1,48 @@
+{% extends 'flatlab/admin/base.html' %}
+{% load staticfiles %}
+
+{% block head %}
+<style>
+    html,body {
+      height:100%;
+    }
+    #container {
+      min-height: 100%;
+    }
+  </style>
+{% endblock %}
+
+
+{% block body %}
+<!--main content start-->
+      <section id="main-content">
+          <section class="wrapper">
+              
+              <!--tab nav start-->
+              <section class="panel">
+              	<div class="panel-body">
+              		<h2>Thanks, we received your input!</h2>
+              		
+              		{% block message %}
+              		{% endblock %}
+
+              		</br></br>
+              		<p>Return to main page:</p>
+              		{% if request.session.username %}
+                
+		                <!--logo start-->
+		                <a href="{% url 'eventsList' loc=request.session.city %}" class="logo">slow<span>night</span></a>
+		                <!--logo end-->
+		                
+		            {% else %}
+		              <!--logo start-->
+		              <a href="{% url 'splash' %}" class="logo">slow<span>night</span></a>
+		              <!--logo end-->
+		                
+		            {% endif %}
+              	</div>
+              </section>
+          </section>
+       </section>
+
+{% endblock %}

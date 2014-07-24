@@ -1,5 +1,6 @@
 {% extends 'flatlab/admin/base.html' %}
 {% load staticfiles %}
+{% load widget_tweaks %}
 
 {% block head %}
 <!-- Bootstrap core CSS -->
@@ -51,7 +52,7 @@
                         <div class="col-lg-8 col-sm-8">
                         <div class="caption lfr slide_title">
                         <br>
-                        Be there when customers need a cab
+                        Find hails faster
                         </div>
                         </div>
                     </div>
@@ -65,12 +66,32 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-lg-8 col-sm-8">
-                        <br><br>
-                        <input value="Get Started, It's Free" type="button" class="btn btn-primary btn-xlarge btn-block"  onClick="javascript:location.href = '{% url 'signup' %}';" />
+                        <div class="col-lg-8 col-sm-8 col-xs-8">
+                            <br><br>
+                            <div class="caption lfr slide_desc">   
+                                Get in touch today
+                            </div>
+                            <form role="form" action="" method="post">
+                                      
+                                        {% csrf_token %}
+                                        <div class="row">
+                                            <div class="col-lg-10 col-sm-10 col-xs-10">
+                                                {% for error in form.non_field_errors %}
+                                                    {{error}}
+                                                {% endfor %}
+                                                
+                                                {{ form.email.errors }}
+                                                {{ form.email|add_class:"form-control form-block"}}
+                                            </div>
+                                            <div class="col-lg-2 col-sm-2 col-xs-2">
+                                                <button type="submit" class="btn btn-primary">Go!</button>
+                                            </div>
+                                        </div>
+                              </form>
                         </div>
-                        
                     </div>
+                        
+                    
 
                 </div>
 
@@ -97,6 +118,7 @@
                 <h1>welcome to Slow Night</h1>
                 <p>Get a leg-up when cruising for your next customer</p>
             </div>
+            
             <div class="col-lg-4 col-sm-4">
                 <section>
                     <div class="f-box">
@@ -126,6 +148,14 @@
             </div>
             <!--feature end-->
         </div>
+        <div class="row">
+                <div class="col-lg-offset-2 col-sm-offset-2 col-lg-8 col-sm-8">
+                    </br></br>
+                    <input value="Start Today, It's Free" type="button" class="btn btn-success btn-xlarge btn-block"  onClick="javascript:location.href = '{% url 'signup' %}';" />
+                        </div>
+                        
+                </div>
+            </div>
         <div class="row">
             <!--quote start-->
             <div class="quote">

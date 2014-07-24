@@ -2,6 +2,8 @@ from django import forms
 from django.forms import widgets
 from utils import locations
 
+class SplashForm(forms.Form):
+    email = forms.EmailField(widget=forms.TextInput(attrs={'placeholder': 'Your Email Address'}))
 
 class UserLogin(forms.Form):
     username = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'User Name'}))
@@ -10,6 +12,7 @@ class UserLogin(forms.Form):
 class UserSignup(forms.Form):
     email = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Email'}))
     username = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'User Name'}))
+    phone = forms.CharField(required=False, min_length=7, max_length=20, widget=forms.TextInput(attrs={'placeholder': 'Phone number'}))
     password = forms.CharField(min_length=4, widget=forms.TextInput(attrs={'placeholder': 'Password', 'type': "password"}))
     password2 = forms.CharField(min_length=4, widget=forms.TextInput(attrs={'placeholder': 'Repeat your password', 'type': "password"}))
     company = forms.CharField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Company'}))
@@ -21,7 +24,7 @@ class UserSignup(forms.Form):
     location = forms.ChoiceField(required=True, choices = choices,)
                                 
 class ContactForm(forms.Form):
-    email = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Email'}))
+    email = forms.EmailField(widget=forms.TextInput(attrs={'placeholder': 'Email'}))
     message = forms.CharField(min_length=1, widget=forms.Textarea(attrs={'placeholder': 'Message'}))
 
 class CommentForm(forms.Form):
