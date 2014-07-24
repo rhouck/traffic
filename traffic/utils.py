@@ -23,8 +23,11 @@ from settings import EVENTBRITEKEYS, HIGHRISE_CONFIG, DEFAULT_FROM_EMAIL, LIVE
 
 locations = {'SF': {'name': 'San Francisco', 'timezone': 'America/Los_Angeles'},
 			 'BER': {'name': 'Berkeley', 'timezone': 'America/Los_Angeles'},
-			 'LA': {'name': 'Los Angeles', 'timezone': 'America/Los_Angeles'},
+			 #'LA': {'name': 'Los Angeles', 'timezone': 'America/Los_Angeles'},
 			 'OAK': {'name': 'Oakland', 'timezone': 'America/Los_Angeles'},
+			 'SJ': {'name': 'San Jose', 'timezone': 'America/Los_Angeles'},
+			 'PA': {'name': 'Palo Alto', 'timezone': 'America/Los_Angeles'},
+			 'MV': {'name': 'Mountain View', 'timezone': 'America/Los_Angeles'},
 			 }
 
 
@@ -42,13 +45,22 @@ def get_event_type():
 		return TestEvent
 
 
-class EventSizePercentile(Object):
-    pass
-
 class Comment(Object):
     pass
 
 class TestComment(Object):
+    pass
+
+def post_parse_comment(user, message, event):
+	if LIVE:
+		comment = Comment(user=user, message=message, event=event, city=event.City, event_end_date=event.EndDate)
+	else:
+		comment = TestComment(user=user, message=message, event=event, city=event.City, event_end_date=event.EndDate)
+	
+	comment.save()
+	return comment
+
+class EventSizePercentile(Object):
     pass
 
 def current_time_aware():
@@ -65,16 +77,7 @@ def get_local_datetime(location, cur_utc=current_time_aware(), locations=locatio
 	date = cur_utc.astimezone(timezone)
 	return date
 
-def post_parse_comment(user, message, event):
-	if LIVE:
-		comment = Comment(user=user, message=message, event=event, city=event.City, event_end_date=event.EndDate)
-	else:
-		comment = TestComment(user=user, message=message, event=event, city=event.City, event_end_date=event.EndDate)
 	
-	comment.save()
-	return comment
-	
-
 def pull_parse_comments_by_event(event):
 	
 	if LIVE:
