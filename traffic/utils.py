@@ -175,6 +175,9 @@ def pullEvents(location, date=current_time_aware()):
 		# index for timeline formatting
 		index = 1
 		for k in events:
+			
+			k.Capacity = int(k.Capacity) if k.Capacity else None
+
 			if k.StartDate >= date and k.EndDate <= date:
 				
 				# set index for timeline formatting
