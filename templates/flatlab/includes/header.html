@@ -4,18 +4,21 @@
       <header class="header white-bg">
             
             {% if request.get_full_path = splash_page and request.session.username%}
-                <a href="{% url 'eventsList' loc=request.session.city %}" class="logo">slow<span>night</span></a>
+                <!--<a href="{% url 'eventsList' loc=request.session.city %}" class="logo">slow<span>night</span></a>-->
+                <a href="{% url 'eventsList' loc=request.session.city %}" class="logo">events</a>
                 
             {% elif request.session.username %}
                 
                 <!--logo start-->
-                <a href="{% url 'eventsList' loc=request.session.city %}" class="logo">s<span>n</span></a>
+                <!--<a href="{% url 'eventsList' loc=request.session.city %}" class="logo">s<span>n</span></a>-->
                 <!--logo end-->
                 <div class="sidebar-toggle-box">
                     {% if selected %}
-                      <div class="fa fa-bars" data-placement="right">({{ selected }})</div> 
+                      <div class="fa fa-bars" data-placement="right"> {{ selected }}</div>
+                      <!--<div class="fa fa-bars" data-placement="right">({{ selected }})</div> -->
                     {% else %}
-                      <div class="fa fa-bars" data-placement="right"></div>
+                      <div class="fa fa-bars" data-placement="right">events</div>
+                      <!--<div class="fa fa-bars" data-placement="right"></div>-->
                     {% endif %}
                     
                 </div>
