@@ -112,20 +112,11 @@ def pull_recent_parse_comments_by_location(location):
 def get_parse_user_by_username(username):
 	user = User.Query.get(username=str(username))
 	return user
-	"""
-	if not username:
-		raise Exception("No username submitted")
-	
-	users = User.Query.all().filter(username=username)
-	users = [u for u in users]
-	
-	if len(users) == 0:
-		raise Exception("No users returned")
-	elif len(users) > 1:
-		raise Exception("Returned multiple users")
-	else:
-		return users[0]
-	"""
+
+def get_parse_user_by_email(email):
+	user = User.Query.get(email=str(email))
+	return user
+
 
 def calc_percentile(bank, item):
 	

@@ -32,7 +32,13 @@
             <div class="top-nav ">
                 <!--search & user info start-->
                 <ul class="nav pull-right top-menu">
+                    {% if request.session.username %}
+                      <li><a href="{% url 'logout' %}">Log Out</a></li>
+                    {% else %}
+                      <li><a href="{% url 'login' %}">Log In</a></li>
+                    {% endif %}
                     
+                    {% comment %}
                     <!-- user login dropdown start-->
                     <li class="dropdown">
                         <a data-toggle="dropdown" class="dropdown-toggle" href="#">
@@ -57,12 +63,8 @@
 
                         </ul>
                     </li>
-                    <!--
-                    <li class="sb-toggle-right">
-                        <i class="fa  fa-align-right"></i>
-                    </li>
-                    -->
-                    <!-- user login dropdown end -->
+                    {% endcomment %}
+                    
                 </ul>
                 <!--search & user info end-->
             </div>

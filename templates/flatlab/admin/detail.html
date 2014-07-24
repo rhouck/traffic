@@ -119,10 +119,11 @@
                                           <div class="panel-body">
                                               <div class="arrow"></div>
                                               <i class=" fa fa-time"></i>
+                                              {% comment %}
                                               <h4>{{ i.user }}</h4>
-                                              <p>{{ i.message }}</p>
+                                              {% endcomment %}
                                               
-                                              <p><script>
+                                              <h4><script>
                                               var date = new Date({{ i.js_time }});
                                               function formatAMPM(date) {
                                                 var hours = date.getHours();
@@ -135,7 +136,8 @@
                                                 return strTime;
                                               }
                                               document.write(formatAMPM(date));
-                                            </script></p>
+                                            </script></h4>
+                                            <p>{{ i.message }}</p>
                                           </div>
                                       </div>
                                   </div>

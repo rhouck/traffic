@@ -22,19 +22,37 @@ def splash(request):
 	
 	inputs = request.POST if request.POST else None
 	form = SplashForm(inputs)
-	if (inputs) and form.is_valid():
-		cd = form.cleaned_data
-		email_type = "live" if LIVE else 'test'
-		new_email = EmailList(email=cd['email'], type=email_type)
-		new_email.save()
-		
-		if LIVE:
-			create_highrise_and_tag(cd['email'], 'email-list')
-		
-		return HttpResponseRedirect(reverse('confirmation-email-list'))
-	else:
-		return render_to_response('flatlab/admin/splash.html', {'locations': locations, 'form': form}, context_instance=RequestContext(request))
+	try:
+		if (inputs) and form.is_valid():
+			
+			cd = form.cleaned_data
+			"""
+			email_type = "live" if LIVE else 'test'
+			new_email = EmailList(email=cd['email'], type=email_type)
+			new_email.save()
+			"""
+			
+			# create user in Parse and check for parse errors
+			try:
+				if LIVE:
+					user = User.signup(cd['email'], "pass", email=cd['email'], CityPref="SF", type="live")
+				else:
+					user = User.signup(cd['email'], "pass", email=cd['email'], CityPref="SF", type="test")	
+			except Exception as err:
+				raise Exception(ast.literal_eval(err[0])['error'])
+			
+			if LIVE:
+				create_highrise_and_tag(cd['email'], 'user')
+			
+			request.session['username'] = cd['email']
+			return HttpResponseRedirect(reverse('eventsList', kwargs={'loc': "SF"}))
+	
+		else:
+			raise Exception()
 
+	except Exception as err:
+		form.errors['__all__'] = form.error_class([err])
+		return render_to_response('flatlab/admin/splash.html', {'locations': locations, 'form': form}, context_instance=RequestContext(request))
 
 def eventsList(request, loc=None):
 	
@@ -73,7 +91,7 @@ def logout(request):
 	# save final city view
 	if 'city' in request.session:
 		try:
-			user = User.login(request.session['username'], request.session['password'])
+			user = User.login(request.session['username'], "pass")
 			user.CityPref = request.session['city']
 			user.save()
 		except:
@@ -86,27 +104,32 @@ def login(request):
 	
 	inputs = request.POST if request.POST else None
 	form = UserLogin(inputs)
-
+		
 	try:
 		if (inputs) and form.is_valid():
 			cd = form.cleaned_data
 			
+			try:
+				user = get_parse_user_by_email(cd['username'])
+			except Exception as err:
+				raise Exception("Email not registered in system.")
+			
+			"""
 			# log user in if successful
 			try:
-				user = User.login(cd['username'], cd['password'])
+				user = User.login(cd['username'], "pass")
 			except Exception as err:
-				form.errors['__all__'] = form.error_class([ast.literal_eval(err[0])['error']])
-				raise Exception()		
-
+				raise Exception(ast.literal_eval(err[0])['error'])		
+			"""
 			# set session vars
-			request.session['username'] = cd['username']
-			request.session['password'] = cd['password']
+			request.session['username'] = user.email
 			
 			return HttpResponseRedirect(reverse('eventsList', kwargs={'loc': user.CityPref}))
 		else:
 			raise Exception()
+	
 	except Exception as err:
-		#return HttpResponse(json.dumps(str(err)), content_type="application/json")
+		form.errors['__all__'] = form.error_class([err])
 		data = {'form': form, 'locations': locations}
 		return render_to_response('flatlab/admin/login.html', data, context_instance=RequestContext(request))
 
@@ -164,10 +187,6 @@ def signup(request):
 		
 		data = {'form': form, 'locations': locations}
 		return render_to_response('flatlab/admin/signup.html', data, context_instance=RequestContext(request))
-
-def tos(request):
-	data = {'locations': locations}
-	return render_to_response('flatlab/admin/tos.html', data, context_instance=RequestContext(request))	
 
 
 def eventDetail(request, id):
@@ -279,5 +298,9 @@ def confirmation(request):
 	return render_to_response('flatlab/admin/confirmation.html', {'locations': locations}, context_instance=RequestContext(request))
 def confirmationEmailList(request):
 	return render_to_response('flatlab/admin/confirmation-email-list.html', {'locations': locations}, context_instance=RequestContext(request))
+def tos(request):
+	data = {'locations': locations}
+	return render_to_response('flatlab/admin/tos.html', data, context_instance=RequestContext(request))	
+
 
 	

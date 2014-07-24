@@ -6,8 +6,8 @@ class SplashForm(forms.Form):
     email = forms.EmailField(widget=forms.TextInput(attrs={'placeholder': 'Your Email Address'}))
 
 class UserLogin(forms.Form):
-    username = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'User Name'}))
-    password = forms.CharField(min_length=4, widget=forms.TextInput(attrs={'placeholder': 'Password', 'type': "password"}))
+    username = forms.EmailField(widget=forms.TextInput(attrs={'placeholder': 'Email'}))
+    #password = forms.CharField(min_length=4, widget=forms.TextInput(attrs={'placeholder': 'Password', 'type': "password"}))
     
 class UserSignup(forms.Form):
     email = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Email'}))
