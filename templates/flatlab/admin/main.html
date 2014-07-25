@@ -17,6 +17,9 @@
 .timeline:before {
   left: 10%;
 }
+.timeline-desk a{
+  color:#39B6AE;
+}
 @media (max-width:670px) {
   .timeline-item:before, .timeline-item.alt:after {
     width:20%;
@@ -168,14 +171,14 @@
                                                                                       <div class="panel-body" >
                                                                             
                                                                                           <span class="arrow"></span>
-                                                                                          <span class="timeline-icon red"></span> 
+                                                                                          <span class="timeline-icon green"></span> 
                                                                                           <span class="timeline-date">{{ i.pretty_EndTime }}</span>
                                                                                             
-                                                                                            <a href="{% url 'event-detail' i.objectId %}" class="green">
+                                                                                            <a href="{% url 'event-detail' i.objectId %}">
                                                                                             <div class="row">
 
                                                                                               <div class="col-lg-10 col-xs-10">
-                                                                                                <p class="green">{{ i.Capacity }} expected</p>
+                                                                                                <p>{{ i.Capacity }} expected</p>
                                                                                               </div>
                                                                                               <div class="col-lg-2 col-xs-2">
                                                                                                 <i class="fa fa-angle-double-right"></i>
