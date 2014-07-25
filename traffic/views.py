@@ -71,6 +71,7 @@ def eventsList(request, loc=None):
 		binned_comments = {}
 		for i in dates:
 			binned_comments[i[0]] = []	
+		
 		total_comments = pull_recent_parse_comments_by_location(locations[loc]['name'])
 		
 		for i in total_comments:

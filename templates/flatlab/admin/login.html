@@ -36,12 +36,12 @@
                 {{ form.username|add_class:"form-control"}}
                    
                 <button class="btn btn-lg btn-login btn-block" type="submit">Sign in</button>
-                
+            {% comment %}    
             <div class="registration">
                 New User.
                 <a href="{% url 'signup' %}">Signup</a></br>
             </div>
-            
+            {% endcomment %}
             </div>
              <!-- Modal -->
               <div aria-hidden="true" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="myModal" class="modal fade">

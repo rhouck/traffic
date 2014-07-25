@@ -98,6 +98,7 @@ def pull_recent_parse_comments_by_location(location):
 	
 	date = get_local_datetime(location)
 	date = datetime.datetime(date.year, date.month, date.day, 0, 0, 0)
+
 	
 	if LIVE:
 		comments = Comment.Query.all().filter(city=location, event_end_date__gte=date)

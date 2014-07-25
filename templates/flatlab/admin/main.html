@@ -221,56 +221,47 @@
                                                             
                                                             <div class="row">
                                                               <div class="col-lg-12">
-                                                                {% comment %}
-                                                                  <div class="chat-room-head">
-                                                                  <h3>Comments</h3>
-                                                                  </div>                                    
-                                                                  {% endcomment %}
+                                                                
                                                                   <div class="room-desk">
-                                                                  {% comment %}
-                                                                  <h4 class="pull-left">Comments</h4>
-                                                                  {% endcomment %}
                                                                   
-                                                                  {% if comments.count > 0 %}
+                                                                  
                                                                     {% for k, v in comments.items %}
-
+                                                                      
                                                                       {% if k == d.0 %}
-                                                                          {% for i in v %}
-                                                                          <div class="room-box">
-                                                                            <h5 class="text-primary"><a href="{% url 'event-detail' i.event.objectId %}">{{ i.event.Capacity }} ppl - {{ i.event.Address }}</a></h5>
-                                                                            <p>{{ i.message }}</p>
-                                                                            <p><span class="text-muted">User :</span> {{i.user }} | <span class="text-muted">Posted: </span>
-                                                                              <script>
-                                                                                var date = new Date({{ i.js_time }});
-                                                                                function formatAMPM(date) {
-                                                                                  var hours = date.getHours();
-                                                                                  var minutes = date.getMinutes();
-                                                                                  var ampm = hours >= 12 ? 'pm' : 'am';
-                                                                                  hours = hours % 12;
-                                                                                  hours = hours ? hours : 12; // the hour '0' should be '12'
-                                                                                  minutes = minutes < 10 ? '0'+minutes : minutes;
-                                                                                  var strTime = hours + ':' + minutes + ' ' + ampm;
-                                                                                  return strTime;
-                                                                                }
-                                                                                document.write(formatAMPM(date));
-                                                                              </script>
-                                                                             </p>
-                                                                          </div>
+                                                                          {% if v %}        
+                                                                            {% for i in v %}
+                                                                            <div class="room-box">
+                                                                              <h5 class="text-primary"><a href="{% url 'event-detail' i.event.objectId %}">{{ i.event.Capacity }} ppl - {{ i.event.Address }}</a></h5>
+                                                                              <p>{{ i.message }}</p>
+                                                                              <p><span class="text-muted">Posted: </span>
+                                                                                <script>
+                                                                                  var date = new Date({{ i.js_time }});
+                                                                                  function formatAMPM(date) {
+                                                                                    var hours = date.getHours();
+                                                                                    var minutes = date.getMinutes();
+                                                                                    var ampm = hours >= 12 ? 'pm' : 'am';
+                                                                                    hours = hours % 12;
+                                                                                    hours = hours ? hours : 12; // the hour '0' should be '12'
+                                                                                    minutes = minutes < 10 ? '0'+minutes : minutes;
+                                                                                    var strTime = hours + ':' + minutes + ' ' + ampm;
+                                                                                    return strTime;
+                                                                                  }
+                                                                                  document.write(formatAMPM(date));
+                                                                                </script>
+                                                                               </p>
+                                                                            </div>
+                                                                              
+                                                                            {% endfor %}
+                                                                          {% else %}
+                                                                          <div class="text-right">
+                                                                            <p>No activity today yet.</p>
                                                                             
-                                                                          {% endfor %}
+                                                                          </div>  
+
+                                                                          {% endif %}
                                                                       {% endif %}
                                                                     {% endfor %}
-                                                                  {% else %}
-                                                                  <div class="text-right">
-                                                                    <p>No activity today yet.</p>
-                                                                    
-                                                                  </div>  
-
-                                                                  {% endif %}  
-                                                                  
-                                                                  
                                                                 </div>
-
 
                                                               </div>
                                                               
