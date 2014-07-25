@@ -10,11 +10,11 @@
             <section class="panel">
                           <header class="panel-heading">
                               <div class="row">
-                                <div class="col-xs-9">
+                                <div class="col-xs-8">
                                   {{ event.Name }}
                                 </div>
-                                <div class="col-xs-3 text-right">
-                                  <a class="back" href="#"><i class="fa fa-angle-double-left"></i> Back</a>
+                                <div class="col-xs-4 text-right">
+                                  <a href="{% url 'eventsList' loc=request.session.city %}" style="color: #ff6c60;"><i class="fa fa-angle-double-left"></i>Back</a>
                                 </div>
                               </div>
 
