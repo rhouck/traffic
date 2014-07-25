@@ -106,43 +106,46 @@
             <section class="panel">
               <div class="panel-body">
                           <div class="panel-body profile-activity">
-                              <h5 class="pull-left">Comments</h5>
-                              {% for i in comments %}
-                              <div class="activity blue">
-                                  
-                                  <span>
-                                      <i class="fa fa-bullhorn"></i>
-                                  </span>
-                                  
-                                  <div class="activity-desk">
-                                      <div class="panel">
-                                          <div class="panel-body">
-                                              <div class="arrow"></div>
-                                              <i class=" fa fa-time"></i>
-                                              {% comment %}
-                                              <h4>{{ i.user }}</h4>
-                                              {% endcomment %}
+                              {% if comments %}
+                                <h5 class="pull-left">Comments</h5>          
+                              {% else %}
+                                <h5 class="pull-left">No comments yet</h5> 
+                              {% endif %}  
+                              
+                              
+                                <div class="room-desk">
+                                                                  
+                                
+                                          
+                                            {% for i in comments %}
+                                            <div class="room-box">
+                                              <p class="text-primary">{{ i.message }}</p>
+                                              <p><span class="text-muted">Posted: </span>
+                                                <script>
+                                                  var date = new Date({{ i.js_time }});
+                                                  function formatAMPM(date) {
+                                                    var hours = date.getHours();
+                                                    var minutes = date.getMinutes();
+                                                    var ampm = hours >= 12 ? 'pm' : 'am';
+                                                    hours = hours % 12;
+                                                    hours = hours ? hours : 12; // the hour '0' should be '12'
+                                                    minutes = minutes < 10 ? '0'+minutes : minutes;
+                                                    var strTime = hours + ':' + minutes + ' ' + ampm;
+                                                    return strTime;
+                                                  }
+                                                  document.write(formatAMPM(date));
+                                                </script>
+                                               </p>
+                                            </div>
                                               
-                                              <h4><script>
-                                              var date = new Date({{ i.js_time }});
-                                              function formatAMPM(date) {
-                                                var hours = date.getHours();
-                                                var minutes = date.getMinutes();
-                                                var ampm = hours >= 12 ? 'pm' : 'am';
-                                                hours = hours % 12;
-                                                hours = hours ? hours : 12; // the hour '0' should be '12'
-                                                minutes = minutes < 10 ? '0'+minutes : minutes;
-                                                var strTime = hours + ':' + minutes + ' ' + ampm;
-                                                return strTime;
-                                              }
-                                              document.write(formatAMPM(date));
-                                            </script></h4>
-                                            <p>{{ i.message }}</p>
-                                          </div>
-                                      </div>
-                                  </div>
+                                            {% endfor %}
+                                                               
                               </div>
-                              {% endfor %}
+
+
+
+
+                              
                           </div>
                         </div>
                       </section>
