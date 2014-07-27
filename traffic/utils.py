@@ -158,6 +158,8 @@ def pullEvents(location, date=current_time_aware()):
 	events = events.limit(500)
 	events = [e for e in events if (e.Address)]
 	
+	#times = [e.EndTime for e in events]
+	#return len(times)
 	
 	# split into individual days
 	events_split = {}
@@ -172,7 +174,8 @@ def pullEvents(location, date=current_time_aware()):
 			
 			k.Capacity = int(k.Capacity) if k.Capacity else None
 
-			if k.StartDate >= date and k.EndDate <= date:
+			#if k.StartDate >= date and k.EndDate <= date:
+			if k.StartDate == date:
 				
 				# set index for timeline formatting
 				k.index  = index
