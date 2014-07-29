@@ -42,7 +42,10 @@ def splash(request):
 				raise Exception(ast.literal_eval(err[0])['error'])
 			
 			if LIVE:
-				create_highrise_and_tag(cd['email'], 'user')
+				highrise_id = create_highrise_account(cd['email'], 'user')
+				user.highrise_id = highrise_id
+				user.save()
+			
 			
 			request.session['username'] = cd['email']
 			return HttpResponseRedirect(reverse('eventsList', kwargs={'loc': "SF"}))

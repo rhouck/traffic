@@ -18,7 +18,6 @@ import pyrise
 import time
 
 
-
 from settings import EVENTBRITEKEYS, HIGHRISE_CONFIG, DEFAULT_FROM_EMAIL, LIVE
 
 locations = {'SF': {'name': 'San Francisco', 'timezone': 'America/Los_Angeles'},
@@ -486,50 +485,30 @@ class AjaxOnlyView(AjaxView):
 """
 
 
-def create_highrise_account(user, tag=None):
+def create_highrise_account(email, tag=None):
 	
 	pyrise.Highrise.set_server(HIGHRISE_CONFIG['server'])
 	pyrise.Highrise.auth(HIGHRISE_CONFIG['auth'])
 
-	if not user.highrise_id:
-		try:
-
-			cust = pyrise.Person()
-
-			cust.contact_data = pyrise.ContactData(email_addresses=[pyrise.EmailAddress(address=user.email, location='Home'),],)
-
-			cust.first_name = user.username
-
-			cust.save()
-			cust.add_tag('DriversWanted')
-			if tag:
-				cust.add_tag(tag)
-
-			user.highrise_id = cust.id
-
-		except:
-		    pass
-	else:
-		if tag:
-			try:
-				cust = pyrise.Person.get(user.highrise_id)
-				cust.add_tag(tag)
-			except:
-				pass
-
-def create_highrise_and_tag(email, tag):
 	try:
-		# check if user exists and add to highrise if does not
-		class TempUser(object):
-			pass
-		user = TempUser()
-		user.highrise_id = None
-		user.email = email
-		user.username = email
-		create_highrise_account(user, tag)
-	except:
-		pass	
 
+		cust = pyrise.Person()
+
+		cust.contact_data = pyrise.ContactData(email_addresses=[pyrise.EmailAddress(address=email, location='Home'),],)
+
+		cust.first_name = email
+
+		cust.save()
+		
+		cust.add_tag('DriversWanted')
+		if tag:
+			cust.add_tag(tag)
+
+		return cust.id
+		
+	except:
+	    
+	    return None
 
 def send_email(to_email, subject, body):
 
