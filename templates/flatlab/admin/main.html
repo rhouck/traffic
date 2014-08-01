@@ -52,346 +52,168 @@
               
               <!--tab nav start-->
               <section class="panel">
-                  <header class="panel-heading tab-bg-dark-navy-blue ">
-                      <ul class="nav nav-tabs">
-                            {% for i in dates %}
-                                {% if forloop.counter <= 5 %}
-                                    {% if forloop.counter == 1 %}
-                                        <li class="active" id="date-tab-{{ forloop.counter }}">
-                                    {% else %}      
-                                        <li class="" id="date-tab-{{ forloop.counter }}">
-                                    {% endif %}
-                                          <a data-toggle="tab" href="#date-{{ forloop.counter }}">{{i.0|date:'D'}}</a>
-                                      </li>
-                                {% endif %}
-                            {% endfor %}
-                          
-                      </ul>
-                  </header>
+                  
                   <div class="panel-body">
-                      <div class="tab-content">
-
-                            {% for d in dates %}
-                                {% if forloop.counter <= 5 %}
-                                
-                                    {% if forloop.counter == 1 %}
-                                        <div id="date-{{ forloop.counter }}" class="tab-pane active">
-                                    {% else %}
-                                        <div id="date-{{ forloop.counter }}" class="tab-pane ">
-                                    {% endif %}
-
-                                        <div class="text-center mbot30">
-                                              <p class="t-info"></p>
-                                              <h3 class="timeline-title">{{ d.0|date:'l' }}&nbsp&nbsp{{ d.0|date:'F, d' }}</h3>
-                                              <!--<p class="t-info">Here's what you need to know</p>-->
-
-                                        </div>      
-                                    {% comment %} 
-                                    <div class="row">
-                                        <div class='col-lg-12 col-sm-12'>
-                                            {% if d.1 == 1 %}
-                                                <div class="alert alert-warning fade in">   
-                                                  <h4>
-                                                      <i class="fa fa-ok-sign"></i>
-                                                      Below Average Demand
-                                                  </h4>
-                                                  <p>Fewer or smaller events than average</p>
-                                              </div>
-                                            {% elif d.1 == 2 %}
-                                              <div class="alert alert-success fade in">   
-                                                  <h4>
-                                                      <i class="fa fa-ok-sign"></i>
-                                                      Average Demand
-                                                  </h4>
-                                                  <p>Normal number and size of events</p>
-                                              </div>
-                                            {% else %}
-                                                <div class="alert alert-info fade in">   
-                                                  <h4>
-                                                      <i class="fa fa-ok-sign"></i>
-                                                      Above Average Demand
-                                                  </h4>
-                                                  <p>We see more and bigger events than average</p>
-                                              </div>
-                                            {% endif %}
-                                        </div>
-                                    </div>
-                                    {% endcomment %}
-  
-                                    <section class="panel">
-                                          <header class="tab-bg">
-                                              <ul class="nav nav-tabs nav-justified">
-                                        
-                                                <li class="active">
-                                                    <a data-toggle="tab" href="#date-{{ forloop.counter }}-timeline" >
-                                                        <i class="fa fa-calendar text-primary"></i>
-                                                        Timeline View
-                                                    </a>
-                                                </li>
-                                                
-                                                <li class="">
-                                                  <a data-toggle="tab" href="#date-{{ forloop.counter }}-map" id="map-tab-{{ forloop.counter }}">
-                                                    <i class="fa fa-map-marker text-primary"></i>
-                                                      Map View</a>
-                                                </li>
-                                                <li class="">
-                                                  <a data-toggle="tab" href="#recent-activity-{{ forloop.counter }}">
-                                                    <i class="fa fa-comment text-primary"></i>
-                                                      Recent Activity
-                                                    </a>
-                                                </li>
-                                              </ul>
-                                          </header>
+                      
+                      <div class="text-center mbot30">
+                          <p class="t-info"></p>
+                          <h3 class="timeline-title">{{ d.0|date:'l' }}&nbsp&nbsp{{ d.0|date:'F, d' }}</h3>
+                          <!--<p class="t-info">Here's what you need to know</p>-->
+                      </div>  
+                          
+                                      
+                      <section class="panel">
+                            <header class="tab-bg">
+                                <ul class="nav nav-tabs nav-justified">
+                          
+                                  <li class="active">
+                                      <a data-toggle="tab" href="#timeline" >
+                                          <i class="fa fa-calendar text-primary"></i>
+                                          Timeline View
+                                      </a>
+                                  </li>
+                                  
+                                  <li class="">
+                                    <a data-toggle="tab" href="#map">
+                                      <i class="fa fa-map-marker text-primary"></i>
+                                        Map View</a>
+                                  </li>
+                                  <li class="">
+                                    <a data-toggle="tab" href="#recent-activity">
+                                      <i class="fa fa-comment text-primary"></i>
+                                        Recent Activity
+                                      </a>
+                                  </li>
+                                </ul>
+                            </header>
+                            
+                            <div class="panel-body">
+                                <div class="tab-content">
+                                    
+                                    <!-- this is the timeline view -->
+                                      <div id="timeline" class="tab-pane active">
                                           
-                                          <div class="panel-body">
-                                              <div class="tab-content">
-                                                  
-                                                  <!-- this is the timeline view -->
-                                                    <div id="date-{{ forloop.counter }}-timeline" class="tab-pane active">
-                                                        
-                                                        <div class="text-right">
-                                                          <p>(click listings for detail)</p>
-                                                          </br>
-                                                        </div>      
-                                                        
+                                          <div class="text-right">
+                                            <p>(click listings for detail)</p>
+                                            </br>
+                                          </div>                                                                     
 
-          
-                                                                                            
-
-                                                        <div class="timeline">
-                                                            
-                                                            {% for k, v in events_timeline.items %}
-                                                                {% if k == d.0 %}
-                                                                    {% for i in v %}
+                                          <div class="timeline">
+                                              
+                                              {% for i in events %}
+                                                 
+                                                          <article class="timeline-item">
+                                                                <div class="timeline-desk">
+                                                                    <div class="panel">
                                                                         
-                                                                        <article class="timeline-item">
-                                                                              <div class="timeline-desk">
-                                                                                  <div class="panel">
-                                                                                      
-                                                                                      <div class="panel-body" >
-                                                                            
-                                                                                          <span class="arrow"></span>
-                                                                                          <span class="timeline-icon green"></span> 
-                                                                                          <span class="timeline-date">{{ i.pretty_EndTime }}</span>
-                                                                                            
-                                                                                            <a href="{% url 'event-detail' i.objectId %}">
-                                                                                            <div class="row">
-
-                                                                                              <div class="col-lg-9 col-xs-9">
-                                                                                                <p>{{ i.Capacity }} expected</p>
-                                                                                              </div>
-                                                                                              <div class="col-lg-3 col-xs-3 text-right">
-                                                                                                <i class="fa fa-angle-double-right"></i>
-                                                                                              </div>
-                                                                                            
-                                                                                            </div>    
-                                                                                            <p>{{ i.Address }}</p>
-                                                                                            </a>
-                                                                                              
-                                                                                                               
-
-                                                                                      </div>
-                                                                                    
-                                                                                  </div>
-                                                                              </div>
-                                                                          </article>
-                                                                        {% comment %}
-                                                                        {% if i.index == 1 %}
-                                                                          
-                                                                          <article class="timeline-item">
-                                                                              <div class="timeline-desk">
-                                                                                  <div class="panel">
-                                                                                      
-                                                                                      <div class="panel-body" >
-                                                                            
-                                                                                          <span class="arrow"></span>
-                                                                                          <span class="timeline-icon red"></span> 
-                                                                                          <span class="timeline-date">{{ i.pretty_EndTime }}</span>
-                                                                                          
-                                                                                            
-                                                                                              <h1 class="red"><span><a href="{% url 'event-detail' i.objectId %}" class="red">{{ i.Capacity }} expected</a></span></h1>
-                                                                                              <p><span><a href="{% url 'event-detail' i.objectId %}"  class="red">{{ i.Address }}</a></span></p>
-                                                                                              </br>
-                                                                                              <h1><span><a href="{% url 'event-detail' i.objectId %}"  class="red">
-                                                                                                More  <i class="fa fa-angle-double-right"></i></a></span></h1>
-                                                                                                               
-
-                                                                                      </div>
-                                                                                    
-                                                                                  </div>
-                                                                              </div>
-                                                                          </article>
-                                                                        {% endif %}
-
-                                                                        {% if i.index == 2 %}
-                                                                          
-                                                                          <article class="timeline-item">
-                                                                              <div class="timeline-desk">
-                                                                                  <div class="panel">
-                                                                                      
-                                                                                      <div class="panel-body" >
-                                                                            
-                                                                                          <span class="arrow"></span>
-                                                                                          <span class="timeline-icon green"></span> 
-                                                                                          <span class="timeline-date">{{ i.pretty_EndTime }}</span>
-                                                                                          
-                                                                                            
-                                                                                              <h1 class="green"><span><a href="{% url 'event-detail' i.objectId %}" class="green">{{ i.Capacity }} expected</a></span></h1>
-                                                                                              <p><span><a href="{% url 'event-detail' i.objectId %}"  class="green">{{ i.Address }}</a></span></p>
-                                                                                              </br>
-                                                                                              <h1><span><a href="{% url 'event-detail' i.objectId %}"  class="green">
-                                                                                                More  <i class="fa fa-angle-double-right"></i></a></span></h1>
-                                                                                                               
-
-                                                                                      </div>
-                                                                                    
-                                                                                  </div>
-                                                                              </div>
-                                                                          </article>
-                                                                        
-                                                                          
-                                                                        {% endif %}
-
-                                                                        {% if i.index == 3 %}
-                                                                          <article class="timeline-item">
-                                                                              <div class="timeline-desk">
-                                                                                  <div class="panel">
-                                                                                      
-                                                                                      <div class="panel-body" >
-                                                                            
-                                                                                          <span class="arrow"></span>
-                                                                                          <span class="timeline-icon blue"></span> 
-                                                                                          <span class="timeline-date">{{ i.pretty_EndTime }}</span>
-                                                                                          
-                                                                                            
-                                                                                              <h1 class="blue"><span><a href="{% url 'event-detail' i.objectId %}" class="blue">{{ i.Capacity }} expected</a></span></h1>
-                                                                                              <p><span><a href="{% url 'event-detail' i.objectId %}"  class="blue">{{ i.Address }}</a></span></p>
-                                                                                              </br>
-                                                                                              <h1><span><a href="{% url 'event-detail' i.objectId %}"  class="blue">
-                                                                                                More  <i class="fa fa-angle-double-right"></i></a></span></h1>
-                                                                                                               
-
-                                                                                      </div>
-                                                                                    
-                                                                                  </div>
-                                                                              </div>
-                                                                          </article>
-                                                                          
-                                                                        {% endif %}
-
-                                                                        {% if i.index == 4 %}
-                                                                          
-                                                                          <article class="timeline-item">
-                                                                              <div class="timeline-desk">
-                                                                                  <div class="panel">
-                                                                                      
-                                                                                      <div class="panel-body" >
-                                                                            
-                                                                                          <span class="arrow"></span>
-                                                                                          <span class="timeline-icon purple"></span> 
-                                                                                          <span class="timeline-date">{{ i.pretty_EndTime }}</span>
-                                                                                          
-                                                                                            
-                                                                                              <h1 class="red"><span><a href="{% url 'event-detail' i.objectId %}" class="purple">{{ i.Capacity }} expected</a></span></h1>
-                                                                                              <p><span><a href="{% url 'event-detail' i.objectId %}"  class="purple">{{ i.Address }}</a></span></p>
-                                                                                              </br>
-                                                                                              <h1><span><a href="{% url 'event-detail' i.objectId %}"  class="purple">
-                                                                                                More  <i class="fa fa-angle-double-right"></i></a></span></h1>
-                                                                                                               
-
-                                                                                      </div>
-                                                                                    
-                                                                                  </div>
-                                                                              </div>
-                                                                          </article>
-                                                                        {% endif %}
-                                                                        {% endcomment %}
-                                                                      
-                                                                    {% endfor %}
-                                                                {% endif %}
-                                                            {% endfor %}
-                                                                
-                                                        </div>
-                                                        
-                                                        <div class="clearfix">&nbsp;</div>
-
-
-                                                    </div>
-                                                
-                                                    <!-- this loads the map view -->
-                                                    <div id="date-{{ forloop.counter }}-map" class="tab-pane">
-                                                            
-                                                            <div class="row">
-                                                              <div class="col-lg-12">
-                                                                    <div id="gmap_marker-{{ forloop.counter }}" class="gmaps"></div> 
-                                                              </div>
+                                                                        <div class="panel-body" >
                                                               
-                                                            </div>
-
-                                                    </div>
-
-                                                    <!-- this loads the recent activity view -->
-                                                    <div id="recent-activity-{{ forloop.counter }}" class="tab-pane">
-                                                            
-                                                            <div class="row">
-                                                              <div class="col-lg-12">
-                                                                
-                                                                  <div class="room-desk">
-                                                                  
-                                                                  
-                                                                    {% for k, v in comments.items %}
-                                                                      
-                                                                      {% if k == d.0 %}
-                                                                          {% if v %}        
-                                                                            {% for i in v %}
-                                                                            <div class="room-box">
-                                                                              <h5 class="text-primary"><a href="{% url 'event-detail' i.event.objectId %}">{{ i.event.Capacity }} ppl - {{ i.event.Address }}</a></h5>
-                                                                              <p>{{ i.message }}</p>
-                                                                              <p><span class="text-muted">Posted: </span>
-                                                                                <script>
-                                                                                  var date = new Date({{ i.js_time }});
-                                                                                  function formatAMPM(date) {
-                                                                                    var hours = date.getHours();
-                                                                                    var minutes = date.getMinutes();
-                                                                                    var ampm = hours >= 12 ? 'pm' : 'am';
-                                                                                    hours = hours % 12;
-                                                                                    hours = hours ? hours : 12; // the hour '0' should be '12'
-                                                                                    minutes = minutes < 10 ? '0'+minutes : minutes;
-                                                                                    var strTime = hours + ':' + minutes + ' ' + ampm;
-                                                                                    return strTime;
-                                                                                  }
-                                                                                  document.write(formatAMPM(date));
-                                                                                </script>
-                                                                               </p>
-                                                                            </div>
+                                                                            <span class="arrow"></span>
+                                                                            <span class="timeline-icon green"></span> 
+                                                                            <span class="timeline-date">{{ i.pretty_EndTime }}</span>
                                                                               
-                                                                            {% endfor %}
-                                                                          {% else %}
-                                                                          <div class="text-right">
-                                                                            <p>No activity today yet.</p>
-                                                                            
-                                                                          </div>  
+                                                                              <a href="{% url 'event-detail' i.id %}">
+                                                                              <div class="row">
 
-                                                                          {% endif %}
-                                                                      {% endif %}
-                                                                    {% endfor %}
+                                                                                <div class="col-lg-9 col-xs-9">
+                                                                                  <p>{{ i.Capacity }} expected</p>
+                                                                                </div>
+                                                                                <div class="col-lg-3 col-xs-3 text-right">
+                                                                                  <i class="fa fa-angle-double-right"></i>
+                                                                                </div>
+                                                                              
+                                                                              </div>    
+                                                                              <p>{{ i.Address }}</p>
+                                                                              </a>
+                                                                                
+                                                                                                 
+
+                                                                        </div>
+                                                                      
+                                                                    </div>
                                                                 </div>
+                                                            </article>
+                                                
+                                              {% endfor %}
+                                                  
+                                          </div>
+                                          
+                                          <div class="clearfix">&nbsp;</div>
 
-                                                              </div>
-                                                              
-                                                            </div>
 
-                                                    </div>
+                                      </div>
+                                  
+                                      <!-- this loads the map view -->
+                                      <div id="map" class="tab-pane">
+                                              
+                                              <div class="row">
+                                                <div class="col-lg-12">
+                                                      <p>here's some maps</p>
+                                                      <div id="gmap_marker" class="gmaps"></div> 
+                                                </div>
+                                                
                                               </div>
-                                        </div>
-                                    </section>
-                                                                 
+
+                                      </div>
+
+                                      <!-- this loads the recent activity view -->
+                                      <div id="recent-activity" class="tab-pane">
+                                              
+                                              <div class="row">
+                                                <div class="col-lg-12">
+                                                    <p>comments for dayz</p>
+                                                    <div class="room-desk">
+                                                    
+                                                      
+                                                      {% for k, v in comments.items %}
+                                                        
+                                                        {% if k == d.0 %}
+                                                            {% if v %}        
+                                                              {% for i in v %}
+                                                              <div class="room-box">
+                                                                <h5 class="text-primary"><a href="{% url 'event-detail' i.event.objectId %}">{{ i.event.Capacity }} ppl - {{ i.event.Address }}</a></h5>
+                                                                <p>{{ i.message }}</p>
+                                                                <p><span class="text-muted">Posted: </span>
+                                                                  <script>
+                                                                    var date = new Date({{ i.js_time }});
+                                                                    function formatAMPM(date) {
+                                                                      var hours = date.getHours();
+                                                                      var minutes = date.getMinutes();
+                                                                      var ampm = hours >= 12 ? 'pm' : 'am';
+                                                                      hours = hours % 12;
+                                                                      hours = hours ? hours : 12; // the hour '0' should be '12'
+                                                                      minutes = minutes < 10 ? '0'+minutes : minutes;
+                                                                      var strTime = hours + ':' + minutes + ' ' + ampm;
+                                                                      return strTime;
+                                                                    }
+                                                                    document.write(formatAMPM(date));
+                                                                  </script>
+                                                                 </p>
+                                                              </div>
+                                                                
+                                                              {% endfor %}
+                                                            {% else %}
+                                                            <div class="text-right">
+                                                              <p>No activity today yet.</p>
+                                                              
+                                                            </div>  
+
+                                                            {% endif %}
+                                                        {% endif %}
+                                                      {% endfor %}
+                                                  </div>
+
+                                                </div>
+                                                
+                                              </div>
+
+                                      </div>
+                                </div>
+                          </div>
+                      </section>
+                                                   
                                    
-                                           
-                                   </div>       
-                                {% endif %}
-                            {% endfor %}
-                      </div>
+                   
                   </div>
               </section>
             
@@ -441,53 +263,21 @@
 
   <script>
     
-    var events = {{ events_maps|safe }}
-    
-    if (events.length >= 1) {
-        $("#map-tab-1").on('shown.bs.tab', function() {
-            mapMarker('gmap_marker-1', events[0]);      
-        }); 
-    }
-    if (events.length >= 2) {
-        $("#map-tab-2").on('shown.bs.tab', function() {
-            mapMarker('gmap_marker-2', events[1]);      
-        }); 
-    }
-    if (events.length >= 3) {
-        $("#map-tab-3").on('shown.bs.tab', function() {
-            mapMarker('gmap_marker-3', events[2]);      
-        }); 
-    }
-    if (events.length >= 4) {
-        $("#map-tab-4").on('shown.bs.tab', function() {
-            mapMarker('gmap_marker-4', events[3]);      
-        }); 
-    }
-    if (events.length >= 5) {
-        $("#map-tab-5").on('shown.bs.tab', function() {
-            mapMarker('gmap_marker-5', events[4]);      
-        }); 
-    }
-    if (events.length >= 6) {
-        $("#map-tab-6").on('shown.bs.tab', function() {
-            mapMarker('gmap_marker-6', events[4]);      
-        }); 
-    }
-    
+    var events = {{ events|safe }}
     // initializes maps
     var mapMarker = function (element, events) {
     
         var map = new GMaps({
             div: "#" + element,
-            lat: events[0]["lat"],
-            lng: events[0]["lng"],
+            lat: events[0]["Lat"],
+            lng: events[0]["Lng"],
             zoom: 11,
         });
         
         for (i = 0; i < events.length; i++) { 
                 map.addMarker({
-                lat: events[i]["lat"],
-                lng: events[i]["lng"],
+                lat: events[i]["Lat"],
+                lng: events[i]["Lng"],
                 title: events[i]["tag"],
                 infoWindow: {
                     content: events[i]["tag"]
@@ -497,6 +287,16 @@
         }
 
     }
+    console.log(events.length);
+    if (events.length > 0) {
+      debugger;
+        $("#map").on('shown.bs.tab', function() {
+          debugger;
+            mapMarker('gmap_marker', events);      
+        }); 
+    }
+    
+    
 
     
    

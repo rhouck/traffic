@@ -140,75 +140,96 @@ def get_parse_event_by_id(objectId):
 
 def pullEvents(location, date=current_time_aware()):
 	
+	# temporary (remove once done testing)
+	date = date - datetime.timedelta(days=5)
+
 	date = get_local_datetime(location,cur_utc=date)
 
 	# set date ranges
-	date = datetime.datetime(date.year, date.month, date.day, 0, 0, 0)
+	#date = datetime.datetime(date.year, date.month, date.day, 0, 0, 0)
 	beg_date = date - datetime.timedelta(days=0)
-	end_date = date + datetime.timedelta(days=6)
+	end_date = date + datetime.timedelta(days=1)
 	parse_beg_date = Date(beg_date)
 	parse_end_date = Date(end_date)
 
 	# run Parse query
-	#events = TestEvent.Query.all().filter(City=location, StartDate__gte=parse_beg_date, EndDate__lte=parse_end_date, Lat__gte=-10000000, Lng__gte=-100000000)
 	parse_event = get_event_type()
 	events = parse_event.Query.all().filter(City=location, StartDate__lte=parse_end_date, EndDate__gte=parse_beg_date, Lat__gte=-10000000, Lng__gte=-100000000)
 	events = events.order_by("EndTime")
 	events = events.limit(500)
 	events = [e for e in events if (e.Address)]
 	
-	#times = [e.EndTime for e in events]
-	#return len(times)
-	
+	"""
 	# split into individual days
 	events_split = {}
 	for i in range((end_date-beg_date).days):
 		date = beg_date + datetime.timedelta(days=i)
 		events_split[date.date()] = []
+	"""
+	# add item to sub list if is live during the day question
+	# index for timeline formatting
+	formatted_events = []
+	index = 1
+	for k in events:
+		
+		k.Capacity = int(k.Capacity) if k.Capacity else None
 
-		# add item to sub list if is live during the day question
-		# index for timeline formatting
-		index = 1
-		for k in events:
+		#if k.StartDate >= date and k.EndDate <= date:
+		#if k.StartDate == date:
 			
-			k.Capacity = int(k.Capacity) if k.Capacity else None
+		# set index for timeline formatting
+		k.index  = index
+		index += 1
+		if index > 4:
+			index = 1
 
-			#if k.StartDate >= date and k.EndDate <= date:
-			if k.StartDate == date:
-				
-				# set index for timeline formatting
-				k.index  = index
-				index += 1
-				if index > 4:
-					index = 1
-
-				# format EndTime
-				pretty_EndTime = parse(k.EndTime).strftime("%I:%M %p")
-				k.pretty_EndTime = pretty_EndTime
-				if pretty_EndTime[0] == "0":
-					pretty_EndTime = pretty_EndTime[1:]
-				pretty_StartTime = parse(k.StartTime).strftime("%I:%M %p")
-				if pretty_StartTime[0] == "0":
-					pretty_StartTime = pretty_StartTime[1:] 
-				#k.pretty_full_Time = "%s - %s" % (pretty_StartTime, pretty_EndTime)
-				k.pretty_StartTime = pretty_StartTime
-				k.pretty_EndTime = pretty_EndTime
-				k.pretty_full_Time = "%s - %s" % (pretty_StartTime, pretty_EndTime)
-				
-				# string for ajax
-				k.ajax_string = json.dumps({'name': k.Name, 'objectId': k.objectId, 'Lat':k.Lat, 'Lng': k.Lng})
-
-				# add item to events list
-				events_split[date.date()].append(k)
+		# format EndTime
+		pretty_EndTime = parse(k.EndTime).strftime("%I:%M %p")
+		if pretty_EndTime[0] == "0":
+			pretty_EndTime = pretty_EndTime[1:]
+		
+		pretty_StartTime = parse(k.StartTime).strftime("%I:%M %p")
+		if pretty_StartTime[0] == "0":
+			pretty_StartTime = pretty_StartTime[1:] 
 	
+		k.pretty_StartTime = pretty_StartTime
+		k.pretty_EndTime = pretty_EndTime
+		k.pretty_full_Time = "%s - %s" % (pretty_StartTime, pretty_EndTime)
+		
+		k.StartDate = str(k.StartDate)
+		k.EndDate = str(k.EndDate)
+		
+		k.tag = "PPL: %s\nEnding: %s" % (k.Capacity, k.pretty_EndTime)
+		k.id = k.objectId		
+		
+		"""
+		# string for ajax
+		k.ajax_string = json.dumps({'name': k.Name, 'objectId': k.objectId, 'Lat':k.Lat, 'Lng': k.Lng})
+		"""
+		# add item to events list
+		entry = k.__dict__
+		del entry['_created_at']
+		del entry['_updated_at']
+		del entry['_object_id']
+
+		# remove unicode types
+		for k, v in entry.iteritems():
+			if isinstance(v, unicode): 
+				entry[k] = str(v)
+
+		formatted_events.append(entry)
+	
+	return (conv_to_js_date(date), formatted_events)
+	"""
 	sorted_keys = sorted(events_split.keys())
 	
 	capacities_query = EventSizePercentile.Query.all().filter(City=location)
 	capacities_query = capacities_query.order_by("createdAt").limit(1)
-	
 	for c in capacities_query:
 		capacities = c
+	"""
 	
+	"""
 	# turn dic into sorted list for easy iteration on client side
 	events_sorted = []
 	caps = []
@@ -217,15 +238,18 @@ def pullEvents(location, date=current_time_aware()):
 			if i == k:
 				temp = [{'tag': "PPL: %s\nEnding: %s" % (t.Capacity, t.pretty_EndTime), 'lat': t.Lat, 'lng': t.Lng} for t in events_split[k]]
 				events_sorted.append(temp)
+				
 				cap = sum([t.Capacity for t in events_split[k]])
 				caps.append(cap)
-				#percentiles.append(percentileofscore(capacities.Capacities, cap))
-				#percentiles.append(calc_percentile(capacities.Capacities, cap))
+				
+				percentiles.append(percentileofscore(capacities.Capacities, cap))
+				percentiles.append(calc_percentile(capacities.Capacities, cap))
 	
+
 	# select category from percentiles
 	categories = []
 	for i in caps:
-		"""
+		
 		percentile = calc_percentile(caps, i)
 		category = 1
 		if percentile >= 25:
@@ -233,7 +257,7 @@ def pullEvents(location, date=current_time_aware()):
 		elif percentile >= 75:
 			category = 3
 		categories.append(category)
-		"""
+	
 		categories.append(2)
 
 	#combine percentiles/categories and dates
@@ -242,6 +266,7 @@ def pullEvents(location, date=current_time_aware()):
 		dates.append([i, categories[ind]])
 
 	return (dates, events_sorted, events_split)	
+	"""
 
 def searchEventbrite(location, date):
 	
