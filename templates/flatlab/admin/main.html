@@ -74,7 +74,7 @@
                                   </li>
                                   
                                   <li class="">
-                                    <a data-toggle="tab" href="#map">
+                                    <a data-toggle="tab" href="#map" id="map-tab">
                                       <i class="fa fa-map-marker text-primary"></i>
                                         Map View</a>
                                   </li>
@@ -148,7 +148,6 @@
                                               
                                               <div class="row">
                                                 <div class="col-lg-12">
-                                                      <p>here's some maps</p>
                                                       <div id="gmap_marker" class="gmaps"></div> 
                                                 </div>
                                                 
@@ -161,15 +160,13 @@
                                               
                                               <div class="row">
                                                 <div class="col-lg-12">
-                                                    <p>comments for dayz</p>
+                                                    
                                                     <div class="room-desk">
                                                     
-                                                      
-                                                      {% for k, v in comments.items %}
-                                                        
-                                                        {% if k == d.0 %}
-                                                            {% if v %}        
-                                                              {% for i in v %}
+                                            
+                                                            {% if comments %}        
+                                                            
+                                                              {% for i in comments %}
                                                               <div class="room-box">
                                                                 <h5 class="text-primary"><a href="{% url 'event-detail' i.event.objectId %}">{{ i.event.Capacity }} ppl - {{ i.event.Address }}</a></h5>
                                                                 <p>{{ i.message }}</p>
@@ -199,8 +196,7 @@
                                                             </div>  
 
                                                             {% endif %}
-                                                        {% endif %}
-                                                      {% endfor %}
+                                                       
                                                   </div>
 
                                                 </div>
@@ -289,9 +285,7 @@
     }
     console.log(events.length);
     if (events.length > 0) {
-      debugger;
-        $("#map").on('shown.bs.tab', function() {
-          debugger;
+        $("#map-tab").on('shown.bs.tab', function() {
             mapMarker('gmap_marker', events);      
         }); 
     }

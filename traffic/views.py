@@ -69,25 +69,26 @@ def eventsList(request, loc=None):
 		request.session['city'] = loc
 		# pull event listings and locations
 		curDateTime, events = pullEvents(locations[loc]['name'])
-		#return HttpResponse(json.dumps(events), content_type="application/json")
 		#dates, events_maps, events_timeline = pullEvents(locations[loc]['name'])
 		
+		"""
 		# pull recent comments
 		binned_comments = {}
-		"""
 		for i in dates:
 			binned_comments[i[0]] = []	
-		
+		"""
 		total_comments = pull_recent_parse_comments_by_location(locations[loc]['name'])
 		
 		for i in total_comments:
 			i.js_time = conv_to_js_date(i.createdAt)
+			"""
 			for k in binned_comments.iterkeys():
 				date = datetime.datetime(k.year, k.month, k.day, 0, 0, 0)
 				if i.event.StartDate >= date and i.event.EndDate <= date:
 					binned_comments[k].append(i)
-		"""
-		data = {'datetime': curDateTime, 'events': events, 'comments': binned_comments, 
+			"""
+		
+		data = {'datetime': curDateTime, 'events': events, 'comments': total_comments, 
 				'locations': locations, 'selected': locations[loc]['name']}
 		return render_to_response('flatlab/admin/main.html', data, context_instance=RequestContext(request))	
 	else:
