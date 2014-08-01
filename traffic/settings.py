@@ -16,7 +16,6 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 from socket import gethostname
 host = gethostname()
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
 
@@ -57,7 +56,9 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.static",
     "django.core.context_processors.tz",
     "django.contrib.messages.context_processors.messages",
-    'django.core.context_processors.request')
+    'django.core.context_processors.request',
+    # custom processors 
+    'traffic.context_processors.google_analytics',)
 
 ROOT_URLCONF = 'traffic.urls'
 
@@ -108,7 +109,6 @@ EVENTBRITEKEYS = {'app_key':  'EI4VUH4QE3OIQVG27O', 'access_code': 'FSYRI7NFSSVW
 #highrise cms API
 HIGHRISE_CONFIG = {'server': 'levelskies', 'auth': 'e8ad8213477f275724c8a90a38bc1f28', 'email': 'dropbox@85120397.levelskies.highrisehq.com'}
 
-
 # email setup
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
@@ -116,3 +116,7 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = 'info.driverswanted@gmail.com'
 EMAIL_HOST_PASSWORD = 'buttwatercruises'
 DEFAULT_FROM_EMAIL = 'info.driverswanted@gmail.com'
+
+# google analytics
+GOOGLE_ANALYTICS_PROPERTY_ID = 'UA-41287666-4'
+GOOGLE_ANALYTICS_DOMAIN = 'cabattack.com'

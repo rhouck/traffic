@@ -41,6 +41,11 @@
   
   {% block head %}
   {% endblock %}
+  
+{% if GOOGLE_ANALYTICS_PROPERTY_ID %}
+  {% include "flatlab/includes/ga.html" %}
+{% endif %}
+
   </head>
 
   {% block bodytype %}
