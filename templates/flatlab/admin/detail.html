@@ -2,6 +2,14 @@
 {% load staticfiles %}
 {% load widget_tweaks %}
 
+{% block head %}
+<script>
+function goBack() {
+    window.history.back()
+}
+</script>
+{% endblock %}
+
 {% block body %}
       <!--main content start-->
       <section id="main-content">
@@ -14,7 +22,10 @@
                                   {{ event.Name }}
                                 </div>
                                 <div class="col-xs-4 text-right">
-                                  <a href="{% url 'eventsList' loc=request.session.city %}" style="color: #ff6c60;"><i class="fa fa-angle-double-left"></i>Back</a>
+                                  {% comment %}
+                                    <a href="{% url 'eventsList' %}" style="color: #ff6c60;"><i class="fa fa-angle-double-left"></i>Back</a>
+                                  {% endcomment %}
+                                  <button onclick="goBack()" class="btn btn-danger">Back</button>
                                 </div>
                               </div>
 
@@ -123,16 +134,6 @@
                                               <p><span class="text-muted">Posted: </span>
                                                 <script>
                                                   var date = new Date({{ i.js_time }});
-                                                  function formatAMPM(date) {
-                                                    var hours = date.getHours();
-                                                    var minutes = date.getMinutes();
-                                                    var ampm = hours >= 12 ? 'pm' : 'am';
-                                                    hours = hours % 12;
-                                                    hours = hours ? hours : 12; // the hour '0' should be '12'
-                                                    minutes = minutes < 10 ? '0'+minutes : minutes;
-                                                    var strTime = hours + ':' + minutes + ' ' + ampm;
-                                                    return strTime;
-                                                  }
                                                   document.write(formatAMPM(date));
                                                 </script>
                                                </p>

@@ -43,9 +43,12 @@
   }
 }
 </style>
+
+
 {% endblock %}
 
 {% block body %}
+      
       <!--main content start-->
       <section id="main-content">
           <section class="wrapper">
@@ -56,158 +59,176 @@
                   <div class="panel-body">
                       
                       <div class="text-center mbot30">
-                          <p class="t-info"></p>
-                          <h3 class="timeline-title">{{ d.0|date:'l' }}&nbsp&nbsp{{ d.0|date:'F, d' }}</h3>
-                          <!--<p class="t-info">Here's what you need to know</p>-->
-                      </div>  
-                          
-                                      
-                      <section class="panel">
-                            <header class="tab-bg">
-                                <ul class="nav nav-tabs nav-justified">
-                          
-                                  <li class="active">
-                                      <a data-toggle="tab" href="#timeline" >
-                                          <i class="fa fa-calendar text-primary"></i>
-                                          Timeline View
-                                      </a>
-                                  </li>
-                                  
-                                  <li class="">
-                                    <a data-toggle="tab" href="#map" id="map-tab">
-                                      <i class="fa fa-map-marker text-primary"></i>
-                                        Map View</a>
-                                  </li>
-                                  <li class="">
-                                    <a data-toggle="tab" href="#recent-activity">
-                                      <i class="fa fa-comment text-primary"></i>
-                                        Recent Activity
-                                      </a>
-                                  </li>
-                                </ul>
-                            </header>
+                          <h3 class="timeline-title">
+                            <script>
+                              var date = new Date({{ datetime }}); 
+                              document.write(formatHeaderDate(date));
+                            </script>
+                          </h3>
+
+                      </div>
+
+                      <div class="text-center mbot30">
+                        <p class="t-info" id="location_message"></p>
+                      </div>
+                      <!-- get browser location -->
+                      <form role="form" id="location" action="" method="post">
+                        {% csrf_token %}
+                        {{ form.as_table }}  
+                      </form>                      
+                      
+                      <div class="row">
+                        <div class="col-lg-6 col-lg-offset-3">
+                              {% if show_events %}
+                                <input type="button" class="btn btn-primary btn-block" value="Update events near you" onclick="getLocation()"/>
+                              {% else %}
+                                <input type="button" class="btn btn-primary btn-block" value="Find events near you" onclick="getLocation()"/>
+                              {% endif %}
+                        </div>  
+                      </div>
+                      <div class="row">
+                        <p>&nbsp;</p>
+                      </div>
+                      
+                      
+                      
+                      {% if show_events %}                  
+                        <section class="panel">
+                              <header class="tab-bg">
+                                  <ul class="nav nav-tabs nav-justified">
                             
-                            <div class="panel-body">
-                                <div class="tab-content">
+                                    <li class="active">
+                                        <a data-toggle="tab" href="#timeline" >
+                                            <i class="fa fa-calendar text-primary"></i>
+                                            Timeline View
+                                        </a>
+                                    </li>
                                     
-                                    <!-- this is the timeline view -->
-                                      <div id="timeline" class="tab-pane active">
-                                          
-                                          <div class="text-right">
-                                            <p>(click listings for detail)</p>
-                                            </br>
-                                          </div>                                                                     
-
-                                          <div class="timeline">
-                                              
-                                              {% for i in events %}
-                                                 
-                                                          <article class="timeline-item">
-                                                                <div class="timeline-desk">
-                                                                    <div class="panel">
-                                                                        
-                                                                        <div class="panel-body" >
-                                                              
-                                                                            <span class="arrow"></span>
-                                                                            <span class="timeline-icon green"></span> 
-                                                                            <span class="timeline-date">{{ i.pretty_EndTime }}</span>
-                                                                              
-                                                                              <a href="{% url 'event-detail' i.id %}">
-                                                                              <div class="row">
-
-                                                                                <div class="col-lg-9 col-xs-9">
-                                                                                  <p>{{ i.Capacity }} expected</p>
-                                                                                </div>
-                                                                                <div class="col-lg-3 col-xs-3 text-right">
-                                                                                  <i class="fa fa-angle-double-right"></i>
-                                                                                </div>
-                                                                              
-                                                                              </div>    
-                                                                              <p>{{ i.Address }}</p>
-                                                                              </a>
-                                                                                
-                                                                                                 
-
-                                                                        </div>
-                                                                      
-                                                                    </div>
-                                                                </div>
-                                                            </article>
-                                                
-                                              {% endfor %}
-                                                  
-                                          </div>
-                                          
-                                          <div class="clearfix">&nbsp;</div>
-
-
-                                      </div>
-                                  
-                                      <!-- this loads the map view -->
-                                      <div id="map" class="tab-pane">
-                                              
-                                              <div class="row">
-                                                <div class="col-lg-12">
-                                                      <div id="gmap_marker" class="gmaps"></div> 
-                                                </div>
-                                                
-                                              </div>
-
-                                      </div>
-
-                                      <!-- this loads the recent activity view -->
-                                      <div id="recent-activity" class="tab-pane">
-                                              
-                                              <div class="row">
-                                                <div class="col-lg-12">
-                                                    
-                                                    <div class="room-desk">
-                                                    
+                                    <li class="">
+                                      <a data-toggle="tab" href="#map" id="map-tab">
+                                        <i class="fa fa-map-marker text-primary"></i>
+                                          Map View</a>
+                                    </li>
+                                    <li class="">
+                                      <a data-toggle="tab" href="#recent-activity">
+                                        <i class="fa fa-comment text-primary"></i>
+                                          Recent Activity
+                                        </a>
+                                    </li>
+                                  </ul>
+                              </header>
+                              
+                              <div class="panel-body">
+                                  <div class="tab-content">
+                                      
+                                      <!-- this is the timeline view -->
+                                        <div id="timeline" class="tab-pane active">
                                             
-                                                            {% if comments %}        
-                                                            
-                                                              {% for i in comments %}
-                                                              <div class="room-box">
-                                                                <h5 class="text-primary"><a href="{% url 'event-detail' i.event.objectId %}">{{ i.event.Capacity }} ppl - {{ i.event.Address }}</a></h5>
-                                                                <p>{{ i.message }}</p>
-                                                                <p><span class="text-muted">Posted: </span>
-                                                                  <script>
-                                                                    var date = new Date({{ i.js_time }});
-                                                                    function formatAMPM(date) {
-                                                                      var hours = date.getHours();
-                                                                      var minutes = date.getMinutes();
-                                                                      var ampm = hours >= 12 ? 'pm' : 'am';
-                                                                      hours = hours % 12;
-                                                                      hours = hours ? hours : 12; // the hour '0' should be '12'
-                                                                      minutes = minutes < 10 ? '0'+minutes : minutes;
-                                                                      var strTime = hours + ':' + minutes + ' ' + ampm;
-                                                                      return strTime;
-                                                                    }
-                                                                    document.write(formatAMPM(date));
-                                                                  </script>
-                                                                 </p>
-                                                              </div>
-                                                                
-                                                              {% endfor %}
-                                                            {% else %}
-                                                            <div class="text-right">
-                                                              <p>No activity today yet.</p>
-                                                              
-                                                            </div>  
+                                            <div class="text-right">
+                                              <p>(click listings for detail)</p>
+                                              </br>
+                                            </div>                                                                     
 
-                                                            {% endif %}
-                                                       
-                                                  </div>
-
-                                                </div>
+                                            <div class="timeline">
                                                 
-                                              </div>
-
-                                      </div>
-                                </div>
-                          </div>
-                      </section>
+                                                {% for i in events %}
                                                    
+                                                            <article class="timeline-item">
+                                                                  <div class="timeline-desk">
+                                                                      <div class="panel">
+                                                                          
+                                                                          <div class="panel-body" >
+                                                                
+                                                                              <span class="arrow"></span>
+                                                                              <span class="timeline-icon green"></span> 
+                                                                              <span class="timeline-date">{{ i.pretty_EndTime }}</span>
+                                                                                
+                                                                                <a href="{% url 'event-detail' i.id %}">
+                                                                                <div class="row">
+
+                                                                                  <div class="col-lg-9 col-xs-9">
+                                                                                    <p>{{ i.Capacity }} expected</p>
+                                                                                  </div>
+                                                                                  <div class="col-lg-3 col-xs-3 text-right">
+                                                                                    <i class="fa fa-angle-double-right"></i>
+                                                                                  </div>
+                                                                                
+                                                                                </div>    
+                                                                                <p>{{ i.Address }}</p>
+                                                                                </a>
+                                                                                  
+                                                                                                   
+
+                                                                          </div>
+                                                                        
+                                                                      </div>
+                                                                  </div>
+                                                              </article>
+                                                  
+                                                {% endfor %}
+                                                    
+                                            </div>
+                                            
+                                            <div class="clearfix">&nbsp;</div>
+
+
+                                        </div>
+                                    
+                                        <!-- this loads the map view -->
+                                        <div id="map" class="tab-pane">
+                                                
+                                                <div class="row">
+                                                  <div class="col-lg-12">
+                                                        <div id="gmap_marker" class="gmaps"></div> 
+                                                  </div>
+                                                  
+                                                </div>
+
+                                        </div>
+
+                                        <!-- this loads the recent activity view -->
+                                        <div id="recent-activity" class="tab-pane">
+                                                
+                                                <div class="row">
+                                                  <div class="col-lg-12">
+                                                      
+                                                      <div class="room-desk">
+                                                      
+                                              
+                                                              {% if comments %}        
+                                                              
+                                                                {% for i in comments %}
+                                                                <div class="room-box">
+                                                                  <h5 class="text-primary"><a href="{% url 'event-detail' i.event.objectId %}">{{ i.event.Capacity }} ppl - {{ i.event.Address }}</a></h5>
+                                                                  <p>{{ i.message }}</p>
+                                                                  <p><span class="text-muted">Posted: </span>
+                                                                    <script>
+                                                                      var date = new Date({{ i.js_time }});
+                                                                      document.write(formatAMPM(date));
+                                                                    </script>
+                                                                   </p>
+                                                                </div>
+                                                                  
+                                                                {% endfor %}
+                                                              {% else %}
+                                                              <div class="text-right">
+                                                                <p>No activity today yet.</p>
+                                                                
+                                                              </div>  
+
+                                                              {% endif %}
+                                                         
+                                                    </div>
+
+                                                  </div>
+                                                  
+                                                </div>
+
+                                        </div>
+                                  </div>
+                            </div>
+                        </section>
+                      {% endif %}                           
                                    
                    
                   </div>
@@ -296,8 +317,9 @@
    
 
     $(document).ready(function() {
-            
-            
+
+            //getLocation();
+
             // owl carousel
             $("#owl-demo").owlCarousel({
               navigation : true,
@@ -318,6 +340,43 @@
       });
     
   </script>
+
+  <script>
+  var x = document.getElementById("location_message");
+  var lat = document.getElementById("id_lat");
+  var lng = document.getElementById("id_lng");
+
+  function getLocation() {
+      if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(showPosition);
+          haltSubmitLocation();         
+          //document.getElementById("location").submit();
+      } else { 
+          x.innerHTML = "Geolocation is not supported by this browser.";
+      }
+  }
+
+  function showPosition(position) {
+      //x.innerHTML="Latitude: " + position.coords.latitude + 
+      //"<br>Longitude: " + position.coords.longitude;  
+      lat.value = position.coords.latitude;
+      lng.value = position.coords.longitude;
+  }
+
+  var haltSubmitLocation = function(){
+    if(lat.value.length > 1){
+        debugger;
+        document.getElementById("location").submit();
+    }
+    else {
+        setTimeout(haltSubmitLocation, 500); // check again in a second
+    }
+  }
+
+
+
+  </script>
+
 
 {% endblock %}
 

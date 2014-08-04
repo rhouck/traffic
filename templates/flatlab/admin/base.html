@@ -1,5 +1,6 @@
 {% load staticfiles %}
 {% url 'splash' as splash_page %} 
+{% url 'eventsList' as eventsList %} 
 
 
 <!DOCTYPE html>
@@ -38,7 +39,43 @@
       <script src="js/html5shiv.js"></script>
       <script src="js/respond.min.js"></script>
     <![endif]-->
-  
+   <script>
+      var m_names = new Array("Jan", "Feb", "Mar", 
+        "Apr", "May", "Jun", "Jul", "Aug", "Sep", 
+        "Oct", "Nov", "Dec");
+      var weekday_names = new Array(7);
+      weekday_names[0]=  "Sunday";
+      weekday_names[1] = "Monday";
+      weekday_names[2] = "Tuesday";
+      weekday_names[3] = "Wednesday";
+      weekday_names[4] = "Thursday";
+      weekday_names[5] = "Friday";
+      weekday_names[6] = "Saturday";
+
+      function formatHeaderDate(date) {
+        var weekday = date.getDay()
+        var cur_date = date.getDate();
+        var month = date.getMonth();
+        var hours = date.getHours();
+        var minutes = date.getMinutes();
+        var ampm = hours >= 12 ? 'pm' : 'am';
+        hours = hours % 12;
+        hours = hours ? hours : 12; // the hour '0' should be '12'
+        minutes = minutes < 10 ? '0'+minutes : minutes;
+        var strTime =  weekday_names[weekday] + '  ' + m_names[month] + ', ' + cur_date + '&nbsp;&nbsp;' + hours + ':' + minutes + ' ' + ampm;
+        return strTime;
+      }
+      function formatAMPM(date) {
+        var hours = date.getHours();
+        var minutes = date.getMinutes();
+        var ampm = hours >= 12 ? 'pm' : 'am';
+        hours = hours % 12;
+        hours = hours ? hours : 12; // the hour '0' should be '12'
+        minutes = minutes < 10 ? '0'+minutes : minutes;
+        var strTime = hours + ':' + minutes + ' ' + ampm;
+        return strTime;
+      }
+  </script>
   {% block head %}
   {% endblock %}
   
@@ -57,9 +94,12 @@
       
       {% include 'flatlab/includes/header.html' %}
       
-      {% if request.session.username and request.get_full_path != splash_page %}      
-        {% include 'flatlab/includes/sidebar.html' %}
-      {% endif %}
+      {% comment %}
+        {% if request.session.username and request.get_full_path != splash_page %}      
+          {% include 'flatlab/includes/sidebar.html' %}
+        {% endif %}
+      {% endcomment %}
+      
       {% block body %}
       {% endblock %}
 
@@ -83,6 +123,7 @@
 
   <script src={% static "flatlab/admin/js/jquery.js" %}></script>
   <script src={% static "flatlab/admin/js/bootstrap.min.js" %}></script>
+ 
   {% block jsfoot %}
   {% endblock %}
     

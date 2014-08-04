@@ -18,6 +18,8 @@ from settings import LIVE
 
 from parse_rest.user import User
 
+import random
+
 def splash(request):
 	
 	inputs = request.POST if request.POST else None
@@ -59,37 +61,51 @@ def splash(request):
 
 def eventsList(request, loc=None):
 	
+	inputs = request.POST if request.POST else None
+	form = LocationForm(inputs)
+	#return HttpResponse(json.dumps(inputs), content_type="application/json")
+		
+	#if loc and loc not in locations.keys():	
+	#	raise Http404
 	
-	if loc and loc not in locations.keys():	
-		raise Http404
+	if 'username' in request.session:	
+		
+		current_time = current_time_aware()
+
+		if (inputs) and form.is_valid():
+			
+			# set session variable
 	
-	elif loc and 'username' in request.session:	
-		
-		# set session variable
-		request.session['city'] = loc
-		# pull event listings and locations
-		curDateTime, events = pullEvents(locations[loc]['name'])
-		#dates, events_maps, events_timeline = pullEvents(locations[loc]['name'])
-		
-		"""
-		# pull recent comments
-		binned_comments = {}
-		for i in dates:
-			binned_comments[i[0]] = []	
-		"""
-		total_comments = pull_recent_parse_comments_by_location(locations[loc]['name'])
-		
-		for i in total_comments:
-			i.js_time = conv_to_js_date(i.createdAt)
+			# pull event listings and locations
+			events , curDateTime = pullEvents(date=current_time)
+			#dates, events_maps, events_timeline = pullEvents(locations[loc]['name'])
+			
 			"""
-			for k in binned_comments.iterkeys():
-				date = datetime.datetime(k.year, k.month, k.day, 0, 0, 0)
-				if i.event.StartDate >= date and i.event.EndDate <= date:
-					binned_comments[k].append(i)
+			# pull recent comments
+			binned_comments = {}
+			for i in dates:
+				binned_comments[i[0]] = []	
 			"""
+			total_comments = pull_recent_parse_comments_by_location('San Francisco')
+			
+			for i in total_comments:
+				i.js_time = conv_to_js_date(i.createdAt)
+				"""
+				for k in binned_comments.iterkeys():
+					date = datetime.datetime(k.year, k.month, k.day, 0, 0, 0)
+					if i.event.StartDate >= date and i.event.EndDate <= date:
+						binned_comments[k].append(i)
+				"""
+
+			data = {'events': events, 'comments': total_comments, 'show_events': True,}
 		
-		data = {'datetime': curDateTime, 'events': events, 'comments': total_comments, 
-				'locations': locations, 'selected': locations[loc]['name']}
+		else:
+			data = {'datetime': None, 'events': [], 'comments': [],}
+		
+		data['datetime'] = conv_to_js_date(current_time)
+		data['form'] = form
+		#data['locations'] = locations
+		#data['selected'] = locations[loc]['name']
 		return render_to_response('flatlab/admin/main.html', data, context_instance=RequestContext(request))	
 	else:
 		return HttpResponseRedirect(reverse('splash'))
@@ -132,7 +148,7 @@ def login(request):
 			# set session vars
 			request.session['username'] = user.email
 			
-			return HttpResponseRedirect(reverse('eventsList', kwargs={'loc': user.CityPref}))
+			return HttpResponseRedirect(reverse('eventsList'))
 		else:
 			raise Exception()
 	

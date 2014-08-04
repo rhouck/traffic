@@ -12,7 +12,8 @@ urlpatterns = patterns('',
 
     url(r'^admin/', include(admin.site.urls)),
     url(r'^$', 'traffic.views.splash', name='splash'),
-    url(r'^(?P<loc>[A-Z]{2,3})$', 'traffic.views.eventsList', name='eventsList'),
+    #url(r'^(?P<loc>[A-Z]{2,3})$', 'traffic.views.eventsList', name='eventsList'),
+    url(r'^events/$', 'traffic.views.eventsList', name='eventsList'),
     url(r'^events/detail/(?P<id>[A-Za-z0-9]{10})$', 'traffic.views.eventDetail', name='event-detail'),
 
     url(r'^user/login/$', 'traffic.views.login', name='login'),

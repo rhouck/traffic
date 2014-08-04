@@ -3,30 +3,19 @@
 <!--header start-->
       <header class="header white-bg">
             
-            {% if request.get_full_path = splash_page and request.session.username%}
-                <a href="{% url 'eventsList' loc=request.session.city %}" class="logo">events</a>
-                
+            {% if request.get_full_path = splash_page and request.session.username %}
+                <a href="{% url 'eventsList' %}" class="logo">events</a>
+            {% elif request.get_full_path = eventsList %}
+                <a href="{% url 'splash' %}" class="logo">cab<span>attack</span></a>
             {% elif request.session.username %}
-                
-                <!--logo start-->
-                <!--<a href="{% url 'eventsList' loc=request.session.city %}" class="logo">s<span>n</span></a>-->
-                <!--logo end-->
-                <div class="sidebar-toggle-box">
-                    {% if selected %}
-                      <div class="fa fa-bars" data-placement="right"> {{ selected }}</div>
-                      <!--<div class="fa fa-bars" data-placement="right">({{ selected }})</div> -->
-                    {% else %}
-                      <div class="fa fa-bars" data-placement="right">events</div>
-                      <!--<div class="fa fa-bars" data-placement="right"></div>-->
-                    {% endif %}
-                    
-                </div>
+              <a href="{% url 'eventsList' %}" class="logo">cab<span>attack</span></a>
             {% else %}
               <!--logo start-->
               <a href="{% url 'splash' %}" class="logo">cab<span>attack</span></a>
               <!--logo end-->
-                
             {% endif %}
+
+            
                   
             <div class="top-nav ">
                 <!--search & user info start-->

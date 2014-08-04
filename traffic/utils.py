@@ -138,12 +138,12 @@ def get_parse_event_by_id(objectId):
 	event = parse_event.Query.get(objectId=str(objectId))
 	return event
 
-def pullEvents(location, date=current_time_aware()):
+def pullEvents(date=current_time_aware()):
 	
 	# temporary (remove once done testing)
-	date = date - datetime.timedelta(days=5)
+	#date = date - datetime.timedelta(days=5)
 
-	date = get_local_datetime(location,cur_utc=date)
+	#date = get_local_datetime(location,cur_utc=date)
 
 	# set date ranges
 	#date = datetime.datetime(date.year, date.month, date.day, 0, 0, 0)
@@ -154,7 +154,7 @@ def pullEvents(location, date=current_time_aware()):
 
 	# run Parse query
 	parse_event = get_event_type()
-	events = parse_event.Query.all().filter(City=location, StartDate__lte=parse_end_date, EndDate__gte=parse_beg_date, Lat__gte=-10000000, Lng__gte=-100000000)
+	events = parse_event.Query.all().filter(City='San Francisco', StartDate__lte=parse_end_date, EndDate__gte=parse_beg_date, Lat__gte=-10000000, Lng__gte=-100000000)
 	events = events.order_by("EndTime")
 	events = events.limit(500)
 	events = [e for e in events if (e.Address)]
@@ -219,7 +219,7 @@ def pullEvents(location, date=current_time_aware()):
 
 		formatted_events.append(entry)
 	
-	return (conv_to_js_date(date), formatted_events)
+	return (formatted_events, conv_to_js_date(date))
 	"""
 	sorted_keys = sorted(events_split.keys())
 	

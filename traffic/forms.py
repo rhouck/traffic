@@ -5,6 +5,10 @@ from utils import locations
 class SplashForm(forms.Form):
     email = forms.EmailField(widget=forms.TextInput(attrs={'placeholder': 'Your Email Address'}))
 
+class LocationForm(forms.Form):
+    lat = forms.CharField(widget=forms.HiddenInput())
+    lng = forms.CharField(widget=forms.HiddenInput())
+
 class UserLogin(forms.Form):
     username = forms.EmailField(widget=forms.TextInput(attrs={'placeholder': 'Email'}))
     #password = forms.CharField(min_length=4, widget=forms.TextInput(attrs={'placeholder': 'Password', 'type': "password"}))
