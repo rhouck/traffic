@@ -246,6 +246,7 @@ def confirmationSignup(request, promo):
 def tos(request):
 	data = {'locations': locations}
 	return render_to_response('flatlab/admin/tos.html', data, context_instance=RequestContext(request))	
-
+def confirmationEmail(request):
+	return render_to_response('flatlab/admin/confirmation-email-static.html')
 
 	

@@ -1,0 +1,41 @@
+{% extends 'flatlab/admin/base.html' %}
+{% load staticfiles %}
+
+{% block head %}
+<style>
+    html,body {
+      height:100%;
+    }
+    #container {
+      min-height: 100%;
+    }
+  </style>
+{% endblock %}
+
+
+{% block body %}
+<!--main content start-->
+      <section id="main-content">
+          <section class="wrapper">
+              
+              <!--tab nav start-->
+              <section class="panel">
+                <div class="panel-body">
+                  <h2>Successfully verified your email!</h2>
+                  
+                  
+                  </br></br>
+                  <p>Go to site:</p>
+                  <a href="{% url 'splash' %}" class="logo">cab<span>tools</span></a>
+                  
+
+                </div>
+
+                
+
+              </section>
+          </section>
+       </section>
+
+{% endblock %}
+
