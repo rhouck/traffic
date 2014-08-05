@@ -3,15 +3,15 @@
 <!--header start-->
       <header class="header white-bg">
             
-            {% if request.get_full_path = splash_page and request.session.username %}
+            {% if request.get_full_path = splash_page and request.session.token %}
                 <a href="{% url 'eventsList' %}" class="logo">events</a>
             {% elif request.get_full_path = eventsList %}
-                <a href="{% url 'splash' %}" class="logo">cab<span>attack</span></a>
-            {% elif request.session.username %}
-              <a href="{% url 'eventsList' %}" class="logo">cab<span>attack</span></a>
+                <a href="{% url 'splash' %}" class="logo">cab<span>tools</span></a>
+            {% elif request.session.token %}
+              <a href="{% url 'eventsList' %}" class="logo">cab<span>tools</span></a>
             {% else %}
               <!--logo start-->
-              <a href="{% url 'splash' %}" class="logo">cab<span>attack</span></a>
+              <a href="{% url 'splash' %}" class="logo">cab<span>tools</span></a>
               <!--logo end-->
             {% endif %}
 
@@ -20,7 +20,7 @@
             <div class="top-nav ">
                 <!--search & user info start-->
                 <ul class="nav pull-right top-menu">
-                    {% if request.session.username %}
+                    {% if request.session.token %}
                       <li><a href="{% url 'logout' %}">Log Out</a></li>
                     {% else %}
                       <li><a href="{% url 'login' %}">Log In</a></li>

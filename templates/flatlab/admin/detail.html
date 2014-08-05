@@ -57,9 +57,18 @@ function goBack() {
                                       <td>Date:</td>
                                       <td>
                                         {% if event.StartDate == event.EndDate %}
-                                          <p>{{ event.StartDate|date }}</p>
+                                          <p><script>
+                                              var date = new Date({{ event.StartDate }});
+                                              document.write(formatAMPM(date));
+                                            </script>
+                                          </p>
                                         {% else %}
-                                          <p>{{ event.StartDate|date }} - {{ event.EndDate|date }}</p>
+                                          <p><script>
+                                              var date1 = new Date({{ event.StartDate }});
+                                              var date2 = new Date({{ event.EndDate }});
+                                              document.write(formatStandDate(date1) + ' - ' + formatStandDate(date2));
+                                            </script>
+                                          </p>
                                         {% endif %}
                                       </td>
                                   </tr>

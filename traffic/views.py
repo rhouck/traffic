@@ -28,18 +28,13 @@ def splash(request):
 		if (inputs) and form.is_valid():
 			
 			cd = form.cleaned_data
-			"""
-			email_type = "live" if LIVE else 'test'
-			new_email = EmailList(email=cd['email'], type=email_type)
-			new_email.save()
-			"""
 			
 			# create user in Parse and check for parse errors
 			try:
 				if LIVE:
-					user = User.signup(cd['email'], "pass", email=cd['email'], CityPref="SF", type="live")
+					user = User.signup(cd['email'], "pass", email=cd['email'], type="live")
 				else:
-					user = User.signup(cd['email'], "pass", email=cd['email'], CityPref="SF", type="test")	
+					user = User.signup(cd['email'], "pass", email=cd['email'], type="test")	
 			except Exception as err:
 				raise Exception(ast.literal_eval(err[0])['error'])
 			
@@ -48,16 +43,21 @@ def splash(request):
 				user.highrise_id = highrise_id
 				user.save()
 			
+			try:
+				token = parse_login(cd['email'])
+				request.session['token'] = token['token']
+			except Exception as err:
+				raise Exception('Could not log you in at this time.')
+
 			
-			request.session['username'] = cd['email']
-			return HttpResponseRedirect(reverse('eventsList', kwargs={'loc': "SF"}))
+			return HttpResponseRedirect(reverse('confirmation-signup'))
 	
 		else:
 			raise Exception()
 
 	except Exception as err:
 		form.errors['__all__'] = form.error_class([err])
-		return render_to_response('flatlab/admin/splash.html', {'locations': locations, 'form': form}, context_instance=RequestContext(request))
+		return render_to_response('flatlab/admin/splash.html', {'form': form}, context_instance=RequestContext(request))
 
 def eventsList(request, loc=None):
 	
@@ -68,36 +68,20 @@ def eventsList(request, loc=None):
 	#if loc and loc not in locations.keys():	
 	#	raise Http404
 	
-	if 'username' in request.session:	
+	if 'token' in request.session:	
 		
 		current_time = current_time_aware()
 
 		if (inputs) and form.is_valid():
+			cd = form.cleaned_data
 			
-			# set session variable
-	
-			# pull event listings and locations
-			events , curDateTime = pullEvents(date=current_time)
-			#dates, events_maps, events_timeline = pullEvents(locations[loc]['name'])
-			
-			"""
-			# pull recent comments
-			binned_comments = {}
-			for i in dates:
-				binned_comments[i[0]] = []	
-			"""
-			total_comments = pull_recent_parse_comments_by_location('San Francisco')
-			
-			for i in total_comments:
-				i.js_time = conv_to_js_date(i.createdAt)
-				"""
-				for k in binned_comments.iterkeys():
-					date = datetime.datetime(k.year, k.month, k.day, 0, 0, 0)
-					if i.event.StartDate >= date and i.event.EndDate <= date:
-						binned_comments[k].append(i)
-				"""
 
-			data = {'events': events, 'comments': total_comments, 'show_events': True,}
+			# pull event listings and locations
+			events , curDateTime = pullEvents(cd['lat'], cd['lng'], date=current_time)
+			
+			comments = pull_recent_parse_comments_by_location(cd['lat'], cd['lng'], date=current_time)
+			#return HttpResponse(json.dumps(comments), content_type="application/json")
+			data = {'events': events, 'comments': comments, 'show_events': True,}
 		
 		else:
 			data = {'datetime': None, 'events': [], 'comments': [],}
@@ -113,13 +97,6 @@ def eventsList(request, loc=None):
 def logout(request):
 	
 	# save final city view
-	if 'city' in request.session:
-		try:
-			user = User.login(request.session['username'], "pass")
-			user.CityPref = request.session['city']
-			user.save()
-		except:
-			pass
 	request.session.flush()
 	return HttpResponseRedirect(reverse('splash'))
 
@@ -134,19 +111,10 @@ def login(request):
 			cd = form.cleaned_data
 			
 			try:
-				user = get_parse_user_by_email(cd['username'])
+				token = parse_login(cd['username'])
+				request.session['token'] = token['token']
 			except Exception as err:
 				raise Exception("Email not registered in system.")
-			
-			"""
-			# log user in if successful
-			try:
-				user = User.login(cd['username'], "pass")
-			except Exception as err:
-				raise Exception(ast.literal_eval(err[0])['error'])		
-			"""
-			# set session vars
-			request.session['username'] = user.email
 			
 			return HttpResponseRedirect(reverse('eventsList'))
 		else:
@@ -154,7 +122,7 @@ def login(request):
 	
 	except Exception as err:
 		form.errors['__all__'] = form.error_class([err])
-		data = {'form': form, 'locations': locations}
+		data = {'form': form}
 		return render_to_response('flatlab/admin/login.html', data, context_instance=RequestContext(request))
 
 def signup(request):
@@ -213,61 +181,32 @@ def signup(request):
 		return render_to_response('flatlab/admin/signup.html', data, context_instance=RequestContext(request))
 
 
-def eventDetail(request, id):
+def eventDetail(request, event_id):
 	
-	try:
-		event = get_parse_event_by_id(id)
-	except:
-		raise Http404
-
-	if 'username' in request.session:		
-
-		data = {'locations': locations}
-		#format event object
-		pretty_EndTime = parse(event.EndTime).strftime("%I:%M %p")
-		event.pretty_EndTime = pretty_EndTime
-		if pretty_EndTime[0] == "0":
-			pretty_EndTime = pretty_EndTime[1:]
-		pretty_StartTime = parse(event.StartTime).strftime("%I:%M %p")
-		if pretty_StartTime[0] == "0":
-			pretty_StartTime = pretty_StartTime[1:] 
-
-		event.pretty_StartTime = pretty_StartTime
-		event.pretty_EndTime = pretty_EndTime
-
-		map_data = [{'tag': "PPL: %s\nEnding: %s" % (t.Capacity, t.pretty_EndTime), 'lat': t.Lat, 'lng': t.Lng} for t in [event,]]
-		
+	
+	
+	if 'token' in request.session:		
 
 		# update comments if provided
 		inputs = request.POST if request.POST else None
 		form = CommentForm(inputs)	
+		
 		if (inputs) and form.is_valid():
 			cd = form.cleaned_data
 			# post comment
+			event = get_parse_event_by_id(event_id)
 			posted_message = post_parse_comment(request.session['username'], cd['message'], event)
-			
-		# clear comment form
-		form = CommentForm(None)
+			return HttpResponseRedirect(reverse('event-detail', kwargs={'event_id': event_id}))	
 		
-		# pull comments
-		comments = pull_parse_comments_by_event(event)
-		for c in comments:
-			pretty_time = c.createdAt.strftime("%I:%M %p")
-			short_date = c.createdAt.strftime("%b %d")
-			if pretty_time[0] == "0":
-				pretty_time = pretty_time[1:]	
-			c.pretty_time = "%s, %s" % (short_date, pretty_time)
-			c.js_time = conv_to_js_date(c.createdAt)
-
-		data['comments'] = comments
-		data['form']= form 
-		data['events_map'] = map_data
-		data['event'] = event.__dict__
-		data['selected'] = locations[request.session['city']]['name']
-		return render_to_response('flatlab/admin/detail.html', data, context_instance=RequestContext(request))	
+		else:
+		
+			data = get_event_detail(event_id)
+			data['form']= form 
+			return render_to_response('flatlab/admin/detail.html', data, context_instance=RequestContext(request))	
 
 	else:
 		return HttpResponseRedirect(reverse('splash'))
+
 
 def contact(request):
 	inputs = request.POST if request.POST else None
@@ -294,7 +233,7 @@ def contact(request):
 			raise Exception()
 	
 	except Exception as err:
-		data = {'form': form, 'locations': locations, 'error': str(err)}
+		data = {'form': form, 'error': str(err)}
 		return render_to_response('flatlab/admin/contact.html', data, context_instance=RequestContext(request))
 
 	
@@ -320,11 +259,14 @@ def updateEventsDB(request):
 
 def confirmation(request):	
 	return render_to_response('flatlab/admin/confirmation.html', {'locations': locations}, context_instance=RequestContext(request))
-def confirmationEmailList(request):
-	return render_to_response('flatlab/admin/confirmation-email-list.html', {'locations': locations}, context_instance=RequestContext(request))
+def confirmationSignup(request):
+	return render_to_response('flatlab/admin/confirmation-signup.html', {'locations': locations}, context_instance=RequestContext(request))
 def tos(request):
 	data = {'locations': locations}
 	return render_to_response('flatlab/admin/tos.html', data, context_instance=RequestContext(request))	
 
+def trash(request):
+	url = get_email_confirmation_link('so@what.com')
+	return HttpResponse(json.dumps(url), content_type="application/json")
 
 	

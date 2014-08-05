@@ -113,10 +113,10 @@ HIGHRISE_CONFIG = {'server': 'levelskies', 'auth': 'e8ad8213477f275724c8a90a38bc
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'info.driverswanted@gmail.com'
-EMAIL_HOST_PASSWORD = 'buttwatercruises'
-DEFAULT_FROM_EMAIL = 'info.driverswanted@gmail.com'
+EMAIL_HOST_USER = 'cabtools@gmail.com'
+EMAIL_HOST_PASSWORD = '_second&mission_'
+DEFAULT_FROM_EMAIL = 'cabtools@gmail.com'
 
 # google analytics
-GOOGLE_ANALYTICS_PROPERTY_ID = 'UA-41287666-4'
-GOOGLE_ANALYTICS_DOMAIN = 'cabattack.com'
+GOOGLE_ANALYTICS_PROPERTY_ID = 'UA-41287666-5'
+GOOGLE_ANALYTICS_DOMAIN = 'cabtools.com'

@@ -1,5 +1,5 @@
 from parse_rest.user import User
-from parse_rest.datatypes import Object, Date
+from parse_rest.datatypes import Object, Date, GeoPoint
 from parse_rest.connection import ParseBatcher
 
 from django.template.loader import render_to_string
@@ -16,9 +16,31 @@ import json
 import pprint
 import pyrise
 import time
-
+from math import radians, cos, sin, asin, sqrt
+from random import choice
+import string
+from socket import gethostname
 
 from settings import EVENTBRITEKEYS, HIGHRISE_CONFIG, DEFAULT_FROM_EMAIL, LIVE
+
+
+def haversine(lon1, lat1, lon2, lat2):
+    """
+    Calculate the great circle distance between two points 
+    on the earth (specified in decimal degrees)
+    """
+    # convert decimal degrees to radians 
+    lon1, lat1, lon2, lat2 = map(radians, [lon1, lat1, lon2, lat2])
+    # haversine formula 
+    dlon = lon2 - lon1 
+    dlat = lat2 - lat1 
+    a = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlon/2)**2
+    c = 2 * asin(sqrt(a)) 
+    km = 6367 * c
+    m = km * 0.621371
+    return m
+
+
 
 locations = {'SF': {'name': 'San Francisco', 'timezone': 'America/Los_Angeles'},
 			 'BER': {'name': 'Berkeley', 'timezone': 'America/Los_Angeles'},
@@ -28,6 +50,12 @@ locations = {'SF': {'name': 'San Francisco', 'timezone': 'America/Los_Angeles'},
 			 'PA': {'name': 'Palo Alto', 'timezone': 'America/Los_Angeles'},
 			 'MV': {'name': 'Mountain View', 'timezone': 'America/Los_Angeles'},
 			 }
+
+
+def parse_login(email):	
+	u = User.login(email, "pass")
+	header = u.session_header()
+	return {'token': header['X-Parse-Session-Token']}
 
 
 class EmailList(Object):
@@ -64,6 +92,26 @@ def post_parse_comment(user, message, event):
 class EventSizePercentile(Object):
     pass
 
+
+
+class EmailConfirmation(Object):
+    pass
+    
+def get_email_confirmation_link(email):
+	
+	code = gen_alphanum_key()	
+	entry = EmailConfirmation(email=email, code=code)
+	entry.save()
+	host = gethostname()
+	url = "%s/user/confirmation/%s" % (host, code)
+	return {'url': code}
+
+def gen_alphanum_key():
+    key = ''
+    for i in range(10):
+        key += choice(string.lowercase + string.uppercase + string.digits)
+    return key
+
 def current_time_aware():
     return datetime.datetime.utcnow().replace(tzinfo=utc)
 
@@ -77,7 +125,6 @@ def get_local_datetime(location, cur_utc=current_time_aware(), locations=locatio
 	
 	date = cur_utc.astimezone(timezone)
 	return date
-
 	
 def pull_parse_comments_by_event(event):
 	
@@ -87,27 +134,73 @@ def pull_parse_comments_by_event(event):
 		comments = TestComment.Query.all().filter(event=event)
 	
 	comments = comments.order_by("-createdAt")
-	comments = comments.limit(100)
-	comments = [c for c in comments]
-	comments.reverse()
-	return comments
-
-
-def pull_recent_parse_comments_by_location(location):
+	comments = comments.limit(50)
 	
-	date = get_local_datetime(location)
-	date = datetime.datetime(date.year, date.month, date.day, 0, 0, 0)
+	formatted_comments = []
+	for c in comments:
+		pretty_time = c.createdAt.strftime("%I:%M %p")
+		short_date = c.createdAt.strftime("%b %d")
+		if pretty_time[0] == "0":
+			pretty_time = pretty_time[1:]	
+		c.pretty_time = "%s, %s" % (short_date, pretty_time)
+		c.js_time = conv_to_js_date(c.createdAt)
+		
+		entry = c.__dict__
+		del entry['user']
+		del entry['_updated_at']
+		del entry['event_end_date']
+		del entry['_created_at']
+		del entry['event']
+		del entry['objectId']
+		del entry['city']
+		formatted_comments.append(entry)
 
+
+	formatted_comments.reverse()
+	return formatted_comments
+
+
+def pull_recent_parse_comments_by_location(lat, lng, date=current_time_aware(), max_dist=5):
+	
+	# set current location
+	cur_loc = GeoPoint(latitude=float(lat), longitude=float(lng))
+
+	# set date ranges
+	beg_date = date - datetime.timedelta(hours=1)
+	end_date = date + datetime.timedelta(hours=5)
+	parse_beg_date = Date(beg_date)
+	parse_end_date = Date(end_date)
 	
 	if LIVE:
-		comments = Comment.Query.all().filter(city=location, event_end_date__gte=date)
+		comments = Comment.Query.all()
 	else:
-		comments = TestComment.Query.all().filter(city=location, event_end_date__gte=date)
+		comments = TestComment.Query.all()
+
 	
+	#comments = comments.filter(event_location__nearSphere=cur_loc)
 	comments = comments.order_by("-createdAt")
-	comments = comments.limit(200)
-	comments = [c for c in comments]
-	return comments
+	comments = comments.limit(50)
+	
+	filtered = []
+	for c in comments:
+		c.distance = haversine(cur_loc.longitude, cur_loc.latitude, c.event.location.longitude, c.event.location.latitude)
+		if c.distance > max_dist:
+			break
+		
+		c.js_time = conv_to_js_date(c.createdAt)
+		
+		entry = c.__dict__
+		del entry['_created_at']
+		del entry['_updated_at']
+		del entry['objectId']
+		del entry['event_end_date']
+		entry['event_id'] = entry['event'].objectId
+		entry['event_title'] = "%s miles - %s" %(("%.2f" % c.distance), entry['event'].Address)
+		del entry['event']
+		
+		filtered.append(entry)
+
+	return filtered
 
 def get_parse_user_by_username(username):
 	user = User.Query.get(username=str(username))
@@ -116,7 +209,6 @@ def get_parse_user_by_username(username):
 def get_parse_user_by_email(email):
 	user = User.Query.get(email=str(email))
 	return user
-
 
 def calc_percentile(bank, item):
 	
@@ -138,25 +230,26 @@ def get_parse_event_by_id(objectId):
 	event = parse_event.Query.get(objectId=str(objectId))
 	return event
 
-def pullEvents(date=current_time_aware()):
+def pullEvents(lat, lng, date=current_time_aware(), max_dist=5):
 	
 	# temporary (remove once done testing)
 	#date = date - datetime.timedelta(days=5)
 
-	#date = get_local_datetime(location,cur_utc=date)
+	# set current location
+	cur_loc = GeoPoint(latitude=float(lat), longitude=float(lng))
 
 	# set date ranges
-	#date = datetime.datetime(date.year, date.month, date.day, 0, 0, 0)
-	beg_date = date - datetime.timedelta(days=0)
-	end_date = date + datetime.timedelta(days=1)
+	beg_date = date - datetime.timedelta(hours=1)
+	end_date = date + datetime.timedelta(hours=5)
 	parse_beg_date = Date(beg_date)
 	parse_end_date = Date(end_date)
 
 	# run Parse query
 	parse_event = get_event_type()
-	events = parse_event.Query.all().filter(City='San Francisco', StartDate__lte=parse_end_date, EndDate__gte=parse_beg_date, Lat__gte=-10000000, Lng__gte=-100000000)
-	events = events.order_by("EndTime")
-	events = events.limit(500)
+	#events = parse_event.Query.all().filter(StartDate__lte=parse_end_date, EndDate__gte=parse_beg_date, Lat__gte=-10000000, Lng__gte=-100000000)
+	events = parse_event.Query.filter(location__nearSphere=cur_loc)
+	#events = events.order_by("EndTime")
+	events = events.limit(50)
 	events = [e for e in events if (e.Address)]
 	
 	"""
@@ -172,10 +265,13 @@ def pullEvents(date=current_time_aware()):
 	index = 1
 	for k in events:
 		
+		# calcualte distance from user
+		k.distance = haversine(cur_loc.longitude, cur_loc.latitude, k.location.longitude, k.location.latitude)
+		# break once next closest event is further than max_dist
+		if k.distance > max_dist:
+			break
+		k.distance = ("%.2f" % k.distance)
 		k.Capacity = int(k.Capacity) if k.Capacity else None
-
-		#if k.StartDate >= date and k.EndDate <= date:
-		#if k.StartDate == date:
 			
 		# set index for timeline formatting
 		k.index  = index
@@ -202,15 +298,13 @@ def pullEvents(date=current_time_aware()):
 		k.tag = "PPL: %s\nEnding: %s" % (k.Capacity, k.pretty_EndTime)
 		k.id = k.objectId		
 		
-		"""
-		# string for ajax
-		k.ajax_string = json.dumps({'name': k.Name, 'objectId': k.objectId, 'Lat':k.Lat, 'Lng': k.Lng})
-		"""
 		# add item to events list
 		entry = k.__dict__
 		del entry['_created_at']
 		del entry['_updated_at']
-		del entry['_object_id']
+		#del entry['_object_id']
+		del entry['objectId']
+		del entry['location']
 
 		# remove unicode types
 		for k, v in entry.iteritems():
@@ -220,53 +314,62 @@ def pullEvents(date=current_time_aware()):
 		formatted_events.append(entry)
 	
 	return (formatted_events, conv_to_js_date(date))
-	"""
-	sorted_keys = sorted(events_split.keys())
-	
-	capacities_query = EventSizePercentile.Query.all().filter(City=location)
-	capacities_query = capacities_query.order_by("createdAt").limit(1)
-	for c in capacities_query:
-		capacities = c
-	"""
-	
-	"""
-	# turn dic into sorted list for easy iteration on client side
-	events_sorted = []
-	caps = []
-	for i in sorted_keys:
-		for k in events_split.iterkeys():
-			if i == k:
-				temp = [{'tag': "PPL: %s\nEnding: %s" % (t.Capacity, t.pretty_EndTime), 'lat': t.Lat, 'lng': t.Lng} for t in events_split[k]]
-				events_sorted.append(temp)
-				
-				cap = sum([t.Capacity for t in events_split[k]])
-				caps.append(cap)
-				
-				percentiles.append(percentileofscore(capacities.Capacities, cap))
-				percentiles.append(calc_percentile(capacities.Capacities, cap))
-	
 
-	# select category from percentiles
-	categories = []
-	for i in caps:
+
+def get_event_detail(id):
+	
+	try:
+		event = get_parse_event_by_id(id)
+
+		#format event object
+		pretty_EndTime = parse(event.EndTime).strftime("%I:%M %p")
+		event.pretty_EndTime = pretty_EndTime
+		if pretty_EndTime[0] == "0":
+			pretty_EndTime = pretty_EndTime[1:]
+		pretty_StartTime = parse(event.StartTime).strftime("%I:%M %p")
+		if pretty_StartTime[0] == "0":
+			pretty_StartTime = pretty_StartTime[1:] 
+
+		event.pretty_StartTime = pretty_StartTime
+		event.pretty_EndTime = pretty_EndTime
+
+		# set map data
+		map_data = [{'tag': str("%s\nEnding: %s" % (t.Name, t.pretty_EndTime)), 'lat': t.Lat, 'lng': t.Lng} for t in [event,]]
 		
-		percentile = calc_percentile(caps, i)
-		category = 1
-		if percentile >= 25:
-			category = 2
-		elif percentile >= 75:
-			category = 3
-		categories.append(category)
-	
-		categories.append(2)
+		# pull comments
+		comments = pull_parse_comments_by_event(event)
+		
+		data = {}
+		data['comments'] = comments
+		data['events_map'] = map_data
+		
 
-	#combine percentiles/categories and dates
-	dates = []
-	for ind, i in enumerate(sorted_keys):
-		dates.append([i, categories[ind]])
+		event = event.__dict__
+			
+		del event['_created_at']
+		del event['_updated_at']
+		#del event['_object_id']
+		del event['objectId']
+		del event['location']
+		
+		# change date format type
+		event['StartDate'] = conv_to_js_date(event['StartDate'])
+		event['EndDate'] = conv_to_js_date(event['EndDate'])
 
-	return (dates, events_sorted, events_split)	
-	"""
+		# remove unicode and date types
+		for k, v in event.iteritems():
+			if isinstance(v, (unicode)): 
+				event[k] = str(v)
+		
+		data['event'] = event
+		
+		return data
+		
+	except Exception as err:
+		
+		return str(err)
+		
+
 
 def searchEventbrite(location, date):
 	
@@ -389,8 +492,7 @@ def searchEventbrite(location, date):
 		return True 
 		
 	except Exception as err:
-		return err
-	
+		return err	
 
 def daily_event_size(location):
 	
@@ -457,7 +559,6 @@ def daily_event_size(location):
 
 	return capacities
 
-
 def sendRequest(url, data={}, headers=None, method='get'):
 
   try:
@@ -495,21 +596,6 @@ def sendRequest(url, data={}, headers=None, method='get'):
   except Exception as err:
     return {'success': False, 'error': str(err)}
 
-
-"""
-class AjaxView(TemplateView):
-  def render_to_json(self, data):
-    return HttpResponse(json.dumps(data), content_type='application/json')
-
-class AjaxOnlyView(AjaxView):
-  def dispatch(self, *args, **kwargs):
-    if not self.request.is_ajax():
-      return permission_denied(self.request)
-
-    return super(AjaxView, self).dispatch(*args, **kwargs)
-"""
-
-
 def create_highrise_account(email, tag=None):
 	
 	pyrise.Highrise.set_server(HIGHRISE_CONFIG['server'])
@@ -539,3 +625,8 @@ def send_email(to_email, subject, body):
 
 	send_mail(subject, body, DEFAULT_FROM_EMAIL,[to_email], fail_silently=False)
 	return True
+
+
+
+
+

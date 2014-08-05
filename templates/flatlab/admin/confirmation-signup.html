@@ -1,0 +1,40 @@
+{% extends 'flatlab/admin/base.html' %}
+{% load staticfiles %}
+
+{% block head %}
+<style>
+    html,body {
+      height:100%;
+    }
+    #container {
+      min-height: 100%;
+    }
+  </style>
+{% endblock %}
+
+
+{% block body %}
+<!--main content start-->
+      <section id="main-content">
+          <section class="wrapper">
+              
+              <!--tab nav start-->
+              <section class="panel">
+              	<div class="panel-body">
+              		<h2>Thanks for signing up!</h2>
+              		
+              		</br>
+					<p>We've sent you an email to confirm you entered your email address correctly.</p>
+					<p>Follow the link in the email address to use CabTools.</p>
+					<p>Once you do, you'll have free trial access to CabTools for a full month.</p>
+		
+              		</br></br>
+              		<p>Return to main page:</p>
+              		<a href="{% url 'splash' %}" class="logo">cab<span>tools</span></a>
+              	</div>
+              </section>
+          </section>
+       </section>
+
+{% endblock %}
+

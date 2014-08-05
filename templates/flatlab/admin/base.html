@@ -11,7 +11,7 @@
     <meta name="description" content="">
     <link rel="shortcut icon" href={% static "flatlab/admin/img/favicon.png" %}>
     
-    <title>CAB ATTACK</title>
+    <title>CABTOOLS</title>
 
     <!-- Bootstrap core CSS -->
     <link href={% static "flatlab/admin/css/bootstrap.min.css" %} rel="stylesheet">
@@ -75,6 +75,12 @@
         var strTime = hours + ':' + minutes + ' ' + ampm;
         return strTime;
       }
+      function formatStandDate(date) {
+        var cur_date = date.getDate();
+        var month = date.getMonth();
+        var strTime =  m_names[month] + ', ' + cur_date;
+        return strTime;
+      }
   </script>
   {% block head %}
   {% endblock %}
@@ -95,7 +101,7 @@
       {% include 'flatlab/includes/header.html' %}
       
       {% comment %}
-        {% if request.session.username and request.get_full_path != splash_page %}      
+        {% if request.session.token and request.get_full_path != splash_page %}      
           {% include 'flatlab/includes/sidebar.html' %}
         {% endif %}
       {% endcomment %}
@@ -109,7 +115,7 @@
   <footer class="site-footer">
       
       <div class="text-center blue">
-          2014 &copy; Cab Attack
+          2014 &copy; CabTools
            | <a style="color: white;" href="{% url 'tos' %}">Terms of Service</a>
            | <a style="color: white;" href="{% url 'contact' %}">Contact Us</a>
       

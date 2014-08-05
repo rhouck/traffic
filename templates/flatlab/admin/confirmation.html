@@ -28,15 +28,15 @@
 
               		</br></br>
               		<p>Return to main page:</p>
-              		{% if request.session.username %}
+              		{% if request.session.token %}
                 
 		                <!--logo start-->
-		                <a href="{% url 'eventsList' loc=request.session.city %}" class="logo">slow<span>night</span></a>
+		                <a href="{% url 'eventsList' loc=request.session.city %}" class="logo">cab<span>tools</span></a>
 		                <!--logo end-->
 		                
 		            {% else %}
 		              <!--logo start-->
-		              <a href="{% url 'splash' %}" class="logo">slow<span>night</span></a>
+		              <a href="{% url 'splash' %}" class="logo">cab<span>tools</span></a>
 		              <!--logo end-->
 		                
 		            {% endif %}
