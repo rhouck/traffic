@@ -42,13 +42,13 @@ def splash(request):
 				highrise_id = create_highrise_account(cd['email'], 'user')
 				user.highrise_id = highrise_id
 				user.save()
-			
+			"""
 			try:
 				token = parse_login(cd['email'])
 				request.session['token'] = token['token']
 			except Exception as err:
 				raise Exception('Could not log you in at this time.')
-
+			"""
 			
 			return HttpResponseRedirect(reverse('confirmation-signup'))
 	
@@ -109,12 +109,11 @@ def login(request):
 	try:
 		if (inputs) and form.is_valid():
 			cd = form.cleaned_data
-			
-			try:
-				token = parse_login(cd['username'])
-				request.session['token'] = token['token']
-			except Exception as err:
-				raise Exception("Email not registered in system.")
+				
+			token = parse_login(cd['username'])
+			if 'error' in token:
+				raise Exception(token['error'])
+			request.session['token'] = token['token']
 			
 			return HttpResponseRedirect(reverse('eventsList'))
 		else:
@@ -265,8 +264,5 @@ def tos(request):
 	data = {'locations': locations}
 	return render_to_response('flatlab/admin/tos.html', data, context_instance=RequestContext(request))	
 
-def trash(request):
-	url = get_email_confirmation_link('so@what.com')
-	return HttpResponse(json.dumps(url), content_type="application/json")
 
 	

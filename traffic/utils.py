@@ -19,9 +19,8 @@ import time
 from math import radians, cos, sin, asin, sqrt
 from random import choice
 import string
-from socket import gethostname
 
-from settings import EVENTBRITEKEYS, HIGHRISE_CONFIG, DEFAULT_FROM_EMAIL, LIVE
+from settings import EVENTBRITEKEYS, HIGHRISE_CONFIG, DEFAULT_FROM_EMAIL, LIVE, BASE
 
 
 def haversine(lon1, lat1, lon2, lat2):
@@ -53,10 +52,19 @@ locations = {'SF': {'name': 'San Francisco', 'timezone': 'America/Los_Angeles'},
 
 
 def parse_login(email):	
+	
+	try:
+		user = get_parse_user_by_email(email)
+	except:
+		return {'error': "No one has signed up with this address."}
+		
+	if not user.emailVerified:
+		return {'error': "Email address not verified. Plase check inbox."}
+
 	u = User.login(email, "pass")
 	header = u.session_header()
 	return {'token': header['X-Parse-Session-Token']}
-
+	
 
 class EmailList(Object):
     pass
@@ -92,19 +100,6 @@ def post_parse_comment(user, message, event):
 class EventSizePercentile(Object):
     pass
 
-
-
-class EmailConfirmation(Object):
-    pass
-    
-def get_email_confirmation_link(email):
-	
-	code = gen_alphanum_key()	
-	entry = EmailConfirmation(email=email, code=code)
-	entry.save()
-	host = gethostname()
-	url = "%s/user/confirmation/%s" % (host, code)
-	return {'url': code}
 
 def gen_alphanum_key():
     key = ''

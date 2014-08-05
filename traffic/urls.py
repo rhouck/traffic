@@ -28,6 +28,5 @@ urlpatterns = patterns('',
     
     url(r'^events/update/$', 'traffic.views.updateEventsDB'),
 
-    url(r'^trash/$', 'traffic.views.trash'),
    
 )
