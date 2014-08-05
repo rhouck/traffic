@@ -22,7 +22,7 @@ urlpatterns = patterns('',
     
     url(r'^contact/$', 'traffic.views.contact', name='contact'),
     url(r'^confirmation/$', 'traffic.views.confirmation', name='confirmation'),
-    url(r'^confirmation/signup/$', 'traffic.views.confirmationSignup', name='confirmation-signup'),
+    url(r'^confirmation/signup/(?P<promo>[A-Za-z0-9]{5})$', 'traffic.views.confirmationSignup', name='confirmation-signup'),
     
     url(r'^tos/$', 'traffic.views.tos', name='tos'),
     

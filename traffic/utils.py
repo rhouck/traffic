@@ -19,6 +19,7 @@ import time
 from math import radians, cos, sin, asin, sqrt
 from random import choice
 import string
+import ast
 
 from settings import EVENTBRITEKEYS, HIGHRISE_CONFIG, DEFAULT_FROM_EMAIL, LIVE, BASE
 
@@ -64,7 +65,25 @@ def parse_login(email):
 	u = User.login(email, "pass")
 	header = u.session_header()
 	return {'token': header['X-Parse-Session-Token']}
-	
+
+def create_parse_user(email):
+	try:
+		if LIVE:
+			user_type = "live"
+		else:
+			user_type = "test"
+		promo = gen_alphanum_key()
+		user = User.signup(email, "pass", email=email, type=user_type, promo=promo)	
+	except Exception as err:
+		return {'error': ast.literal_eval(err[0])['error']}
+
+	if LIVE:
+		highrise_id = create_highrise_account(email, 'user')
+		user.highrise_id = highrise_id
+		user.save()
+
+	return {'created': True, 'promo': promo}
+
 
 class EmailList(Object):
     pass
@@ -103,8 +122,8 @@ class EventSizePercentile(Object):
 
 def gen_alphanum_key():
     key = ''
-    for i in range(10):
-        key += choice(string.lowercase + string.uppercase + string.digits)
+    for i in range(5):
+        key += choice(string.lowercase + string.digits)
     return key
 
 def current_time_aware():
@@ -606,7 +625,7 @@ def create_highrise_account(email, tag=None):
 
 		cust.save()
 		
-		cust.add_tag('DriversWanted')
+		cust.add_tag('CabTools')
 		if tag:
 			cust.add_tag(tag)
 

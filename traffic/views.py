@@ -9,7 +9,6 @@ from django.forms.util import ErrorList
 
 import datetime
 import json
-import ast
 from dateutil.parser import parse
 
 from utils import *
@@ -30,27 +29,11 @@ def splash(request):
 			cd = form.cleaned_data
 			
 			# create user in Parse and check for parse errors
-			try:
-				if LIVE:
-					user = User.signup(cd['email'], "pass", email=cd['email'], type="live")
-				else:
-					user = User.signup(cd['email'], "pass", email=cd['email'], type="test")	
-			except Exception as err:
-				raise Exception(ast.literal_eval(err[0])['error'])
+			created = create_parse_user(cd['email'])
+			if 'error'in created:
+				raise Exception(created['error'])	
 			
-			if LIVE:
-				highrise_id = create_highrise_account(cd['email'], 'user')
-				user.highrise_id = highrise_id
-				user.save()
-			"""
-			try:
-				token = parse_login(cd['email'])
-				request.session['token'] = token['token']
-			except Exception as err:
-				raise Exception('Could not log you in at this time.')
-			"""
-			
-			return HttpResponseRedirect(reverse('confirmation-signup'))
+			return HttpResponseRedirect(reverse('confirmation-signup', kwargs={'promo': created['promo']}))
 	
 		else:
 			raise Exception()
@@ -258,8 +241,8 @@ def updateEventsDB(request):
 
 def confirmation(request):	
 	return render_to_response('flatlab/admin/confirmation.html', {'locations': locations}, context_instance=RequestContext(request))
-def confirmationSignup(request):
-	return render_to_response('flatlab/admin/confirmation-signup.html', {'locations': locations}, context_instance=RequestContext(request))
+def confirmationSignup(request, promo):
+	return render_to_response('flatlab/admin/confirmation-signup.html', {'promo': promo}, context_instance=RequestContext(request))
 def tos(request):
 	data = {'locations': locations}
 	return render_to_response('flatlab/admin/tos.html', data, context_instance=RequestContext(request))	
