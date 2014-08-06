@@ -72,8 +72,8 @@ def create_parse_user(email):
 			user_type = "live"
 		else:
 			user_type = "test"
-		promo = gen_alphanum_key()
-		user = User.signup(email, "pass", email=email, type=user_type, promo=promo)	
+		ref = gen_alphanum_key()
+		user = User.signup(email, "pass", email=email, type=user_type, ref=ref)	
 	except Exception as err:
 		return {'error': ast.literal_eval(err[0])['error']}
 
@@ -82,7 +82,7 @@ def create_parse_user(email):
 		user.highrise_id = highrise_id
 		user.save()
 
-	return {'created': True, 'promo': promo}
+	return {'created': True, 'ref': ref}
 
 
 class EmailList(Object):
@@ -122,8 +122,8 @@ class EventSizePercentile(Object):
 
 def gen_alphanum_key():
     key = ''
-    for i in range(5):
-        key += choice(string.lowercase + string.digits)
+    for i in range(8):
+        key += choice(string.uppercase + string.lowercase + string.digits)
     return key
 
 def current_time_aware():

@@ -21,6 +21,8 @@ import random
 
 def splash(request):
 	
+	inputs_get = request.GET if request.GET else None
+	return HttpResponse(json.dumps(inputs_get), content_type="application/json")
 	inputs = request.POST if request.POST else None
 	form = SplashForm(inputs)
 	try:
@@ -33,7 +35,7 @@ def splash(request):
 			if 'error'in created:
 				raise Exception(created['error'])	
 			
-			return HttpResponseRedirect(reverse('confirmation-signup', kwargs={'promo': created['promo']}))
+			return HttpResponseRedirect(reverse('confirmation-signup', kwargs={'ref': created['ref']}))
 	
 		else:
 			raise Exception()
@@ -241,8 +243,8 @@ def updateEventsDB(request):
 
 def confirmation(request):	
 	return render_to_response('flatlab/admin/confirmation.html', {'locations': locations}, context_instance=RequestContext(request))
-def confirmationSignup(request, promo):
-	return render_to_response('flatlab/admin/confirmation-signup.html', {'promo': promo}, context_instance=RequestContext(request))
+def confirmationSignup(request, ref):
+	return render_to_response('flatlab/admin/confirmation-signup.html', {'ref': ref}, context_instance=RequestContext(request))
 def tos(request):
 	data = {'locations': locations}
 	return render_to_response('flatlab/admin/tos.html', data, context_instance=RequestContext(request))	
