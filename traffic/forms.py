@@ -2,6 +2,9 @@ from django import forms
 from django.forms import widgets
 from utils import locations
 
+class ReferralForm(forms.Form):
+    ref = forms.CharField(min_length=8, max_length=8)
+
 class SplashForm(forms.Form):
     email = forms.EmailField(widget=forms.TextInput(attrs={'placeholder': 'Your Email Address'}))
 
@@ -12,9 +15,6 @@ class LocationForm(forms.Form):
 class UserLogin(forms.Form):
     username = forms.EmailField(widget=forms.TextInput(attrs={'placeholder': 'Email'}))
     #password = forms.CharField(min_length=4, widget=forms.TextInput(attrs={'placeholder': 'Password', 'type': "password"}))
-
-class PromoForm(forms.Form):
-    promo = forms.CharField(min_length=5, max_length=5)
 
 class UserSignup(forms.Form):
     email = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Email'}))

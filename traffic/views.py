@@ -21,8 +21,14 @@ import random
 
 def splash(request):
 	
-	inputs_get = request.GET if request.GET else None
-	return HttpResponse(json.dumps(inputs_get), content_type="application/json")
+	# get referral code if exists
+	inputs = request.GET if request.GET else None
+	form = ReferralForm(inputs)
+	referred_by = None
+	if (inputs) and form.is_valid():
+		cd = form.cleaned_data
+		referred_by = cd['ref']
+	
 	inputs = request.POST if request.POST else None
 	form = SplashForm(inputs)
 	try:
@@ -31,7 +37,7 @@ def splash(request):
 			cd = form.cleaned_data
 			
 			# create user in Parse and check for parse errors
-			created = create_parse_user(cd['email'])
+			created = create_parse_user(cd['email'], referred_by)
 			if 'error'in created:
 				raise Exception(created['error'])	
 			
@@ -220,16 +226,6 @@ def contact(request):
 		data = {'form': form, 'error': str(err)}
 		return render_to_response('flatlab/admin/contact.html', data, context_instance=RequestContext(request))
 
-	
-
-
-
-"""
-class MyView(AjaxOnlyView):
-  def get(self, *args, **kwargs):
-    return self.render_to_json({'success':True,html:render_to_string('ajax/includes/template.html',{'context':blah,'data':blah,'here':blah})})
-"""
-
 def updateEventsDB(request):
 	
 	current_time = datetime.datetime.now()
@@ -248,7 +244,17 @@ def confirmationSignup(request, ref):
 def tos(request):
 	data = {'locations': locations}
 	return render_to_response('flatlab/admin/tos.html', data, context_instance=RequestContext(request))	
+
 def confirmationEmail(request):
+
+	
+	inputs = request.GET if request.GET else None
+	form = UserLogin(inputs)
+	if (inputs) and form.is_valid():
+		cd = form.cleaned_data
+		email = cd['username']
+		confirmed = confirm_referral(email)
+		return HttpResponse(json.dumps(confirmed), content_type="application/json")
 	return render_to_response('flatlab/admin/confirmation-email-static.html')
 
 	

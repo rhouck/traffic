@@ -66,7 +66,11 @@ def parse_login(email):
 	header = u.session_header()
 	return {'token': header['X-Parse-Session-Token']}
 
-def create_parse_user(email):
+
+class Referrals(Object):
+    pass
+
+def create_parse_user(email, referred_by=None):
 	try:
 		if LIVE:
 			user_type = "live"
@@ -82,9 +86,40 @@ def create_parse_user(email):
 		user.highrise_id = highrise_id
 		user.save()
 
+	if referred_by:
+		referral = Referrals(user=user, email=email, code=referred_by, verified=False)
+		referral.save()
+
 	return {'created': True, 'ref': ref}
 
+def confirm_referral(email):
+	
+	# check if this email address was referred
+	ref = Referrals.Query.all().filter(email=email, verified=False)
+	ref = [r for r in ref]
+	
+	if len(ref) > 0:
+		# check if theres a user tied to the associated referral code
+		ref = ref[0]
+		referrer = User.Query.all().filter(ref=ref.code)
+		referrer = [r for r in referrer]
+		
+		if len(referrer) > 0:
+			# updated verified status of referral
+			referrer = referrer[0]
+			ref.verified = True
+			ref.save()
+			
+			# send email to referrer
+			ref = Referrals.Query.all().filter(code=ref.code, verified=True)
+			count = len([r for r in ref])
+			
+			subject = "Almost There | CabTools Free for 6 Months"
 
+			send_email(referrer.email, subject, str(count))
+			
+	
+	
 class EmailList(Object):
     pass
 
