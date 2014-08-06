@@ -240,7 +240,7 @@ def updateEventsDB(request):
 def confirmation(request):	
 	return render_to_response('flatlab/admin/confirmation.html', {'locations': locations}, context_instance=RequestContext(request))
 def confirmationSignup(request, ref):
-	return render_to_response('flatlab/admin/confirmation-signup.html', {'ref': ref}, context_instance=RequestContext(request))
+	return render_to_response('flatlab/admin/confirmation-signup.html', {'ref': ref, 'count': 0}, context_instance=RequestContext(request))
 def tos(request):
 	data = {'locations': locations}
 	return render_to_response('flatlab/admin/tos.html', data, context_instance=RequestContext(request))	
