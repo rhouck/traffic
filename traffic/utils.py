@@ -21,7 +21,28 @@ from random import choice
 import string
 import ast
 
-from settings import EVENTBRITEKEYS, HIGHRISE_CONFIG, DEFAULT_FROM_EMAIL, LIVE, BASE
+from settings import EVENTBRITEKEYS, HIGHRISE_CONFIG, DEFAULT_FROM_EMAIL, EMAIL_HOST_PASSWORD, LIVE, BASE
+
+from django.core.mail import send_mail, get_connection
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import get_template
+from django.template import Context
+from inlinestyler.utils import inline_css
+
+def send_template_email(to_email, subject, title, body):
+
+    plaintext = get_template('email_template/plain_text.txt')
+    htmly     = get_template('email_template/index.html')
+    d = Context({'title': title, 'body': body})
+    text_content = plaintext.render(d)
+    html_content = htmly.render(d)
+    
+    html_content = inline_css(html_content)
+
+    connection = get_connection(username=DEFAULT_FROM_EMAIL, password=EMAIL_HOST_PASSWORD, fail_silently=False)
+    msg = EmailMultiAlternatives(subject, text_content, DEFAULT_FROM_EMAIL, [to_email], [HIGHRISE_CONFIG['email']], connection=connection)
+    msg.attach_alternative(html_content, "text/html")
+    msg.send()
 
 
 def haversine(lon1, lat1, lon2, lat2):
@@ -77,7 +98,7 @@ def create_parse_user(email, referred_by=None):
 		else:
 			user_type = "test"
 		ref = gen_alphanum_key()
-		user = User.signup(email, "pass", email=email, type=user_type, ref=ref)	
+		user = User.signup(email, "pass", email=email, type=user_type, ref=ref, welcomed=False)	
 	except Exception as err:
 		return {'error': ast.literal_eval(err[0])['error']}
 
@@ -101,7 +122,8 @@ def confirm_referral(email):
 	if len(ref) > 0:
 		# check if theres a user tied to the associated referral code
 		ref = ref[0]
-		referrer = User.Query.all().filter(ref=ref.code)
+		ref_code = ref.code
+		referrer = User.Query.all().filter(ref=ref_code)
 		referrer = [r for r in referrer]
 		
 		if len(referrer) > 0:
@@ -113,13 +135,48 @@ def confirm_referral(email):
 			# send email to referrer
 			ref = Referrals.Query.all().filter(code=ref.code, verified=True)
 			count = len([r for r in ref])
+	
+			if count < 5:
+				subject = "Almost There | CabTools Free for 6 Months"
+				title = "%s/5 sign-ups" % (str(int(count)))
+				body = "Get 5 of your friends to sign up to get CabTools <b>free for 6 months</b>. Keep sharing the link below!"
+			if count == 5:
+				subject = "You've earned CabTools Free for 6 months!"
+				title = "You got 5 sign-ups!"
+				body = "You've earned CabTools <b>free for 6 months</b>. Keep sharing - more rewards coming soon :)"
+			if count > 5:
+				subject = "You are incredible"
+				title = "You got %s sign-ups!" % (str(int(count)))
+				body = "Wow! Those that get more sign-ups will get rewarded. You have our word."
 			
-			subject = "Almost There | CabTools Free for 6 Months"
+			link = "<a href='http://www.cabtools.com/?ref=%s'>http://www.cabtools.com/?ref=%s</a>" % (str(ref_code), str(ref_code))
+			body += "</br></br>%s" % (link)
+			send_template_email(referrer.email, subject, title, body)
 
-			send_email(referrer.email, subject, str(count))
+
+def send_welcome_email(email):
+
+	user = User.Query.all().filter(email=email, welcomed=False)
+	user = [u for u in user]
+
+	try:
+		if len(user) > 0:
+			user = user[0]
+		
+			subject = "Our Gift to You | CabTools"
+			title = "We love you"
+			link = "<a href='http://www.cabtools.com/?ref=%s'>http://www.cabtools.com/?ref=%s</a>" % (str(user.ref), str(user.ref))
+			body = "That's why we're giving you full access to CabTools for a month. Get CabTools <b>free for 6 months</b> if you get 5 people to sign-up. Share the link below."	
+			body += "</br></br>%s" % (link)
+
+			send_template_email(user.email, subject, title, body)	
 			
-	
-	
+			u = User.login(email, "pass")
+			u.welcomed = True
+			u.save()
+	except:
+		pass
+
 class EmailList(Object):
     pass
 
@@ -670,10 +727,7 @@ def create_highrise_account(email, tag=None):
 	    
 	    return None
 
-def send_email(to_email, subject, body):
 
-	send_mail(subject, body, DEFAULT_FROM_EMAIL,[to_email], fail_silently=False)
-	return True
 
 
 

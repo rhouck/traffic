@@ -246,15 +246,19 @@ def tos(request):
 	return render_to_response('flatlab/admin/tos.html', data, context_instance=RequestContext(request))	
 
 def confirmationEmail(request):
-
-	
+		
 	inputs = request.GET if request.GET else None
 	form = UserLogin(inputs)
 	if (inputs) and form.is_valid():
 		cd = form.cleaned_data
 		email = cd['username']
-		confirmed = confirm_referral(email)
-		return HttpResponse(json.dumps(confirmed), content_type="application/json")
+		
+		# credit referrer if applicable
+		confirm_referral(email)
+	
+		# send welcome email to registered user
+		send_welcome_email(email)
+		
 	return render_to_response('flatlab/admin/confirmation-email-static.html')
 
 	
