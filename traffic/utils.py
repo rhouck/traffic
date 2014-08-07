@@ -93,10 +93,13 @@ class Referrals(Object):
 
 def create_parse_user(email, referred_by=None):
 	try:
+		"""
 		if LIVE:
 			user_type = "live"
 		else:
 			user_type = "test"
+		"""
+		user_type = "test"
 		ref = gen_alphanum_key()
 		user = User.signup(email, "pass", email=email, type=user_type, ref=ref, welcomed=False)	
 	except Exception as err:
