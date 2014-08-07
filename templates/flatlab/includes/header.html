@@ -17,11 +17,13 @@
                 {% endif %}
               </div>
              
-              {% if request.session.ref %}
+              
                 <div class="col-lg-1 col-md-2 col-sm-3 col-xs-3">
-                   <a href="{% url 'share' %}" class="logo">SAVE</a>
+                  {% if request.session.ref %}
+                    <a href="{% url 'share' %}" class="logo">SHARE</a>
+                  {% endif %}
                 </div>
-              {% endif %}
+             
             
             
              <div class="col-lg-10 col-md-8 col-sm-7 col-xs-5">   
