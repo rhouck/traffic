@@ -4,14 +4,14 @@
 
 {% block head %}
 <!-- Bootstrap core CSS -->
-    <link href={% static "flatlab/frontend/css/bootstrap.min.css" %} rel="stylesheet"> 
+    <link href={% static "flatlab/frontend/css/bootstrap.min.css" %} rel="stylesheet">
     <link href={% static "flatlab/frontend/css/theme.css" %} rel="stylesheet">
     <link href={% static "flatlab/frontend/css/bootstrap-reset.css" %} rel="stylesheet">
     <!--external css-->
     <link rel="stylesheet" href={% static "flatlab/frontend/css/flexslider.css" %}/>
     <link href={% static "flatlab/frontend/assets/bxslider/jquery.bxslider.css" %} rel="stylesheet" />
     <link href={% static "flatlab/frontend/assets/fancybox/source/jquery.fancybox.css" %} rel="stylesheet" />
-    
+
     <!-- Custom styles for this template -->
     <link href={% static "flatlab/frontend/css/style.css" %} rel="stylesheet">
     <link href={% static "flatlab/frontend/css/style-responsive.css" %} rel="stylesheet" />
@@ -33,6 +33,24 @@
      padding-top: 45px;
      margin-bottom: 40px;
     }
+    .quote-info {
+        -webkit-border-radius: 8px;
+        -moz-border-radius: 8px;
+        border-radius: 8px;
+    }
+    .facebook-btn,.twitter-btn{
+        display:block;
+        margin-bottom:70px;
+        -webkit-border-radius: 8px;
+        -moz-border-radius: 8px;
+        border-radius: 8px;
+    }
+    .facebook-btn{
+        background:#445394;
+    }
+    .twitter-btn{
+        background:#5978ec;
+    }
     </style>
     {% comment %}
         <script src="//load.sumome.com/" data-sumo-site-id="553780c8ace6942d64e85f1ac41df540761fcce5916d6445763c63e299485042" async></script>
@@ -41,15 +59,15 @@
 {% endblock %}
 
   {% block body %}
-    
-  
-    
+
+
+
      <!--breadcrumbs start-->
-    
+
     <div class="big-banner">
         <div class="container">
             <div class="row">
-                
+
                 <div class="col-lg-9 col-sm-9">
                     <div class="row">
                         <div class="col-lg-6 col-sm-6 col-xs-12">
@@ -59,10 +77,10 @@
                         </div>
                         </div>
                     </div>
-                    
+
                     <div class="row">
                         <div class="col-lg-6 col-sm-6 col-xs-10">
-                        <div class="caption lfr slide_desc">   
+                        <div class="caption lfr slide_desc">
                          <br>
                          CabTools helps cab drivers get to their customers faster by showing them when and where people will likely be waiting.
                         </div>
@@ -71,18 +89,18 @@
                     <div class="row">
                         <div class="col-lg-6 col-sm-6 col-xs-11">
                             <br><br>
-                            <div class="caption lfr slide_desc">   
+                            <div class="caption lfr slide_desc">
                                 Try for one month free!
                             </div>
                             <form role="form" action="" method="post">
-                                      
+
                                         {% csrf_token %}
                                         <div class="row">
                                             <div class="col-lg-10 col-sm-10 col-xs-10">
                                                 {% for error in form.non_field_errors %}
                                                     {{error}}
                                                 {% endfor %}
-                                                
+
                                                 {{ form.email.errors }}
                                                 {{ form.email|add_class:"form-control form-block"}}
                                             </div>
@@ -93,35 +111,35 @@
                               </form>
                         </div>
                     </div>
-                        
-                    
+
+
 
                 </div>
 
                 <div class="col-lg-3 col-sm-3">
                     <br>
                     <img src={% static "site_screenshot.png" %} alt="Image 1">
-               
+
                 </div>
 
 
-                
+
             </div>
         </div>
     </div>
-    <!--breadcrumbs end-->     
+    <!--breadcrumbs end-->
 
 
     <!--container start-->
     <div class="container">
-        
+
         <div class="row">
             <!--feature start-->
             <div class="text-center feature-head">
                 <h1>welcome to CabTools</h1>
                 <p>Get a leg-up when cruising for your next customer</p>
             </div>
-            
+
             <div class="col-lg-4 col-sm-4">
                 <section>
                     <div class="f-box">
@@ -151,17 +169,17 @@
             </div>
             <!--feature end-->
         </div>
-        
+
         <div class="row hidden-md hidden-lg">
             </br></br>
             <div class="col-xs-12">
                 <input type="button" class="btn btn-xlarge btn-danger btn-block" value="SAVE APP" onclick="addtohome.show(true)"/>
             </div>
         </div>
-        
+
         <div class="row hidden-sm hidden-xs">
             </br></br>
-        </div> 
+        </div>
 
         <div class="row">
             <!--quote start-->
@@ -175,17 +193,17 @@
 
 
                         <h1>Try Free for one month!</h1>
-                        
-                            
+
+
                         <form role="form" action="" method="post">
-                                  
+
                                     {% csrf_token %}
                                     <div class="row">
                                         <div class="col-lg-10 col-cd-10 col-sm-9 col-xs-9">
                                             {% for error in form.non_field_errors %}
                                                 {{error}}
                                             {% endfor %}
-                                            
+
                                             {{ form.email.errors }}
                                             {{ form.email|add_class:"form-control form-block"}}
                                         </div>
@@ -194,58 +212,58 @@
                                         </div>
                                     </div>
                           </form>
-                    
+
                     </div>
                 </div>
-                
+
             </div>
             <!--quote end-->
         </div>
 
-         
+
         <div class="row hidden-sm hidden-xs">
             </br></br>
-        </div> 
+        </div>
 
         <div class="row text-center">
-            <div class="col-md-6 col-md-offset-3">      
+            <div class="col-md-6 col-md-offset-3">
               <div class="row">
                 <div class="col-md-6">
-                  <a href="http://www.facebook.com/share.php?u=http%3A%2F%2Fwww.cabtools.com&title=Excited about #CabTools, the service exclusively for taxi drivers, finding them more fares everyday." target="_blank">
+                  <a href="http://www.facebook.com/share.php?u=http%3A%2F%2Fwww.cabtools.com&title=Excited about #CabTools, the service exclusively for taxi drivers, finding them more fares everyday." class="facebook-btn" target="_blank">
                     <img src="{% static "fb_share.png" %}">
                   </a>
                 </div>
                 <div class="col-md-6">
-                  <a href="http://twitter.com/home?status=Excited about @CabTools, the service exclusively for taxi drivers. Find more fares everyday: +http%3A%2F%2Fwww.cabtools.com" target="_blank">
+                  <a href="http://twitter.com/home?status=Excited about @CabTools, the service exclusively for taxi drivers. Find more fares everyday: +http%3A%2F%2Fwww.cabtools.com" class="twitter-btn" target="_blank">
                     <img src="{% static "twit_share.png" %}">
                   </a>
                 </div>
               </div>
             </div>
-            
+
         </div>
-        
+
         <div class="row">
             </br></br>
-        </div> 
+        </div>
     </div>
 
 
 
 {% endblock %}
 
-{% block jsfoot %}  
+{% block jsfoot %}
     <!-- js placed at the end of the document so the pages load faster -->
     <script src={% static "flatlab/frontend/js/jquery-migrate-1.2.1.min.js" %}></script>
     <script defer src={% static "flatlab/frontend/js/jquery.flexslider.js" %}></script>
     <script type="text/javascript" src={% static "flatlab/frontend/js/hover-dropdown.js" %}></script>
     <script type="text/javascript" src={% static "flatlab/frontend/assets/bxslider/jquery.bxslider.js" %}></script>
 
-    
+
     <script src={% static "flatlab/frontend/assets/fancybox/source/jquery.fancybox.pack.js" %}></script>
     <script src={% static "flatlab/frontend/js/common-scripts.js" %}></script>
-    
-    
+
+
      <script src={% static "flatlab/frontend/js/jquery.easing.min.js" %}></script>
     <script src={% static "flatlab/frontend/js/link-hover.js" %}></script>
 
@@ -253,5 +271,5 @@
     <!--common script for all pages-->
     <script src={% static "flatlab/frontend/js/common-scripts.js" %}></script>
 
-  
+
 {% endblock %}

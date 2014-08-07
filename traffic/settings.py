@@ -17,7 +17,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 #host = gethostname()
 from os import environ
 
-host = environ.get('MODE')
+host = environ.get('MODE', '')
 
 from re import search
 
