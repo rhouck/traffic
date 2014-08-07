@@ -114,8 +114,7 @@ def create_parse_user(email, referred_by=None):
 
 	if referred_by:
 		try:
-			user = get_parse_user_by_email(email)
-			referral = Referrals(user=user, email=email, code=referred_by, verified=False)
+			referral = Referrals(email=email, code=referred_by, verified=False)
 			referral.save()
 		except Exception as err:
 			return {'error': ast.literal_eval(err[0])['error']}	
