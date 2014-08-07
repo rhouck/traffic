@@ -97,7 +97,7 @@ STATICFILES_DIRS = (
 from parse_rest.connection import register
 register("DORr1RM1Gyv4UcoT9FRvMniO9A1CnTqxYJ1ty1m0", "QUs3gOoqhPvHUQpjeLYS3V1rW4N3YAtPMaW0vTKx")
 
-if search('heroku', host):
+if search('coast', host):
     from settings_live import *
     LIVE = True
     BASE = "http:www.cabtools.com"
