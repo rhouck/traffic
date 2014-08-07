@@ -81,7 +81,7 @@ def parse_login(email):
 		return {'error': "No one has signed up with this address."}
 		
 	if not user.emailVerified:
-		return {'error': "Email address not verified. Plase check inbox."}
+		return {'error': "Email address not verified. Please check inbox."}
 
 	u = User.login(email, "pass")
 	header = u.session_header()
