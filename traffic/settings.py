@@ -103,7 +103,7 @@ if host == 'RYANs-MacBook-Air-3.local':
 else:
     from settings_live import *
     LIVE = True
-    BASE = "http:www.cabtools.com"
+    BASE = "http://www.cabtools.com"
 
 # eventbrite api credentials
 EVENTBRITEKEYS = {'app_key':  'EI4VUH4QE3OIQVG27O', 'access_code': 'FSYRI7NFSSVWUV3MTVU5'}
