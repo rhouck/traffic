@@ -15,6 +15,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 # Use site-specific settings
 from socket import gethostname
 host = gethostname()
+from re import search
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
@@ -57,7 +58,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.tz",
     "django.contrib.messages.context_processors.messages",
     'django.core.context_processors.request',
-    # custom processors 
+    # custom processors
     'traffic.context_processors.google_analytics',)
 
 ROOT_URLCONF = 'traffic.urls'
@@ -96,14 +97,14 @@ STATICFILES_DIRS = (
 from parse_rest.connection import register
 register("DORr1RM1Gyv4UcoT9FRvMniO9A1CnTqxYJ1ty1m0", "QUs3gOoqhPvHUQpjeLYS3V1rW4N3YAtPMaW0vTKx")
 
-if host == 'RYANs-MacBook-Air-3.local':
-    from settings_local import *
-    LIVE = False
-    BASE = "http://127.0.0.1:8000"
-else:
+if search('heroku', host):
     from settings_live import *
     LIVE = True
     BASE = "http:www.cabtools.com"
+else:
+    from settings_local import *
+    LIVE = False
+    BASE = "http://127.0.0.1:8000"
 
 # eventbrite api credentials
 EVENTBRITEKEYS = {'app_key':  'EI4VUH4QE3OIQVG27O', 'access_code': 'FSYRI7NFSSVWUV3MTVU5'}
