@@ -101,12 +101,12 @@ def create_parse_user(email, referred_by=None):
 		user = User.signup(email, "pass", email=email, type=user_type, ref=ref, welcomed=False)	
 	except Exception as err:
 		return {'error': ast.literal_eval(err[0])['error']}
-
+	"""
 	if LIVE:
 		highrise_id = create_highrise_account(email, 'user')
 		user.highrise_id = highrise_id
 		user.save()
-	
+	"""
 	if referred_by:
 		try:
 			referral = Referrals(user=user, email=email, code=referred_by, verified=False)
