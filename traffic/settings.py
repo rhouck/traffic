@@ -13,8 +13,12 @@ import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 # Use site-specific settings
-from socket import gethostname
-host = gethostname()
+#from socket import gethostname
+#host = gethostname()
+from os import environ
+
+host = environ.get('MODE')
+
 from re import search
 
 # Quick-start development settings - unsuitable for production
@@ -97,7 +101,7 @@ STATICFILES_DIRS = (
 from parse_rest.connection import register
 register("DORr1RM1Gyv4UcoT9FRvMniO9A1CnTqxYJ1ty1m0", "QUs3gOoqhPvHUQpjeLYS3V1rW4N3YAtPMaW0vTKx")
 
-if search('coast', host):
+if search('live', host):
     from settings_live import *
     LIVE = True
     BASE = "http:www.cabtools.com"
