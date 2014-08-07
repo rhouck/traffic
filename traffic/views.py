@@ -115,7 +115,7 @@ def login(request):
 		form.errors['__all__'] = form.error_class([err])
 		data = {'form': form}
 		return render_to_response('flatlab/admin/login.html', data, context_instance=RequestContext(request))
-
+"""
 def signup(request):
 
 	inputs = request.POST if request.POST else None
@@ -170,7 +170,7 @@ def signup(request):
 		
 		data = {'form': form, 'locations': locations}
 		return render_to_response('flatlab/admin/signup.html', data, context_instance=RequestContext(request))
-
+"""
 def eventDetail(request, event_id):
 	
 	
@@ -224,7 +224,7 @@ def contact(request):
 	except Exception as err:
 		data = {'form': form, 'error': str(err)}
 		return render_to_response('flatlab/admin/contact.html', data, context_instance=RequestContext(request))
-
+"""
 def updateEventsDB(request):
 	
 	current_time = datetime.datetime.now()
@@ -235,7 +235,7 @@ def updateEventsDB(request):
 		results[i] = events
 	return HttpResponse(json.dumps(results), content_type="application/json")
 	#return render_to_response('flatlab/admin/detail.html', data, context_instance=RequestContext(request))	
-
+"""
 def confirmation(request):	
 	return render_to_response('flatlab/admin/confirmation.html', {'locations': locations}, context_instance=RequestContext(request))
 
@@ -271,3 +271,27 @@ def confirmationEmail(request):
 	return render_to_response('flatlab/admin/confirmation-email-static.html')
 
 	
+
+
+"""
+API endpoint views
+"""
+
+def apiLogin(request):
+	inputs = request.GET if request.GET else None
+	form = SplashForm(inputs)
+	if (inputs) and form.is_valid():
+			cd = form.cleaned_data
+			token = parse_login(cd['email'])
+			return HttpResponse(json.dumps(token), content_type="application/json")
+	else:
+		return HttpResponse(json.dumps({'error': [(k, v[0]) for k, v in form.errors.items()]}), content_type="application/json")
+
+def apiSignup(request):
+	pass
+def apiReferrals(request):
+	pass
+def apiEventsList(request):
+	pass
+def apiEventsDetail(request, event_id):
+	pass

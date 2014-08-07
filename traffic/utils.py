@@ -21,7 +21,7 @@ from random import choice
 import string
 import ast
 
-from settings import EVENTBRITEKEYS, HIGHRISE_CONFIG, DEFAULT_FROM_EMAIL, EMAIL_HOST_PASSWORD, LIVE, BASE
+from settings import EVENTBRITEKEYS, HIGHRISE_CONFIG, DEFAULT_FROM_EMAIL, EMAIL_HOST_PASSWORD, LIVE
 
 from django.core.mail import send_mail, get_connection
 from django.core.mail import EmailMultiAlternatives
