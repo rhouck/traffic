@@ -38,6 +38,7 @@ def splash(request):
 			
 			# create user in Parse and check for parse errors
 			created = create_parse_user(cd['email'], referred_by)
+			#return HttpResponse(json.dumps(created), content_type="application/json")
 			if 'error'in created:
 				raise Exception(created['error'])	
 			
