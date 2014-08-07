@@ -81,7 +81,7 @@ def parse_login(email):
 		return {'error': "No one has signed up with this address."}
 		
 	if not user.emailVerified:
-		return {'error': "Email address not verified. Plase check inbox."}
+		return {'error': "Email address not verified. Please check inbox."}
 
 	u = User.login(email, "pass")
 	header = u.session_header()
@@ -92,25 +92,33 @@ class Referrals(Object):
     pass
 
 def create_parse_user(email, referred_by=None):
-	try:
+	
+	try:	
 		if LIVE:
 			user_type = "live"
 		else:
 			user_type = "test"
 		ref = gen_alphanum_key()
 		user = User.signup(email, "pass", email=email, type=user_type, ref=ref, welcomed=False)	
+	
 	except Exception as err:
 		return {'error': ast.literal_eval(err[0])['error']}
-
+	
 	if LIVE:
-		highrise_id = create_highrise_account(email, 'user')
-		user.highrise_id = highrise_id
-		user.save()
+		try:
+			highrise_id = create_highrise_account(email, 'user')
+			user.highrise_id = highrise_id
+			user.save()
+		except:
+			pass
 
 	if referred_by:
-		referral = Referrals(user=user, email=email, code=referred_by, verified=False)
-		referral.save()
-
+		try:
+			referral = Referrals(email=email, code=referred_by, verified=False)
+			referral.save()
+		except Exception as err:
+			return {'error': ast.literal_eval(err[0])['error']}	
+	
 	return {'created': True, 'ref': ref}
 
 def count_referrals(ref):
