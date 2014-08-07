@@ -30,5 +30,11 @@ urlpatterns = patterns('',
     
     url(r'^events/update/$', 'traffic.views.updateEventsDB'),
 
+    # api endpoints
+    url(r'^api/v1/user/login/$', 'traffic.views.apiLogin', name='api_login'),
+    url(r'^api/v1/user/signup/$', 'traffic.views.apiSignup', name='api_signup'),
+    url(r'^api/v1/user/referrals/$', 'traffic.views.apiReferrals', name='api_referrals'),
+    url(r'^api/v1/events/$', 'traffic.views.apiEventsList', name='api_events_list'),
+    url(r'^api/v1/events/detail/(?P<event_id>[A-Za-z0-9]{10})$', 'traffic.views.apiEventsDetail', name='api_events_detail'),
    
 )

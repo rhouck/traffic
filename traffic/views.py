@@ -91,7 +91,6 @@ def logout(request):
 	request.session.flush()
 	return HttpResponseRedirect(reverse('splash'))
 
-
 def login(request):
 	
 	inputs = request.POST if request.POST else None
@@ -172,7 +171,6 @@ def signup(request):
 		data = {'form': form, 'locations': locations}
 		return render_to_response('flatlab/admin/signup.html', data, context_instance=RequestContext(request))
 
-
 def eventDetail(request, event_id):
 	
 	
@@ -198,7 +196,6 @@ def eventDetail(request, event_id):
 
 	else:
 		return HttpResponseRedirect(reverse('splash'))
-
 
 def contact(request):
 	inputs = request.POST if request.POST else None
