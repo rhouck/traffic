@@ -92,15 +92,15 @@ class Referrals(Object):
     pass
 
 def create_parse_user(email, referred_by=None):
-	try:
-		if LIVE:
-			user_type = "live"
-		else:
-			user_type = "test"
-		ref = gen_alphanum_key()
-		user = User.signup(email, "pass", email=email, type=user_type, ref=ref, welcomed=False)	
-	except Exception as err:
-		return {'error': ast.literal_eval(err[0])['error']}
+	#try:
+	if LIVE:
+		user_type = "live"
+	else:
+		user_type = "test"
+	ref = gen_alphanum_key()
+	user = User.signup(email, "pass", email=email, type=user_type, ref=ref, welcomed=False)	
+	#except Exception as err:
+	#	return {'error': ast.literal_eval(err[0])['error']}
 
 	if LIVE:
 		highrise_id = create_highrise_account(email, 'user')
