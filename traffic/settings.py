@@ -104,11 +104,9 @@ register("DORr1RM1Gyv4UcoT9FRvMniO9A1CnTqxYJ1ty1m0", "QUs3gOoqhPvHUQpjeLYS3V1rW4
 if search('live', host):
     from settings_live import *
     LIVE = True
-    BASE = "http:www.cabtools.com"
 else:
     from settings_local import *
     LIVE = False
-    BASE = "http://127.0.0.1:8000"
 
 # eventbrite api credentials
 EVENTBRITEKEYS = {'app_key':  'EI4VUH4QE3OIQVG27O', 'access_code': 'FSYRI7NFSSVWUV3MTVU5'}
