@@ -1,0 +1,70 @@
+{% extends 'flatlab/admin/base.html' %}
+{% load staticfiles %}
+
+{% block head %}
+<style>
+    html,body {
+      height:100%;
+    }
+    #container {
+      min-height: 100%;
+    }
+  </style>
+{% endblock %}
+
+
+{% block body %}
+<!--main content start-->
+      <section id="main-content">
+          <section class="wrapper">
+              
+              <!--tab nav start-->
+              <section class="panel">
+              	<div class="panel-body text-center">
+              		
+                  {% block message %}
+                  {% endblock %}
+                  
+                  <h1>Want CabTools free for six months?</h1>
+              		
+              		</br>
+        					<p>Get five people to sign up with this unique URL:</p>
+        					
+                  <h3>http://www.cabtools.com/?ref={{ ref }}</h3>
+        					</br>
+                  
+                  <div class="row">
+                    <div class="col-md-6 col-md-offset-3">      
+                      <div class="row">
+                        <div class="col-md-6">
+                          <a href="http://www.facebook.com/share.php?u=http%3A%2F%2Fwww.cabtools.com%2F%3Fref%3D{{ ref }}&title=Excited about #CabTools, the service exclusively for taxi drivers, finding them more fares everyday." target="_blank">
+                            <img src="{% static "fb_share.png" %}">
+                          </a>
+                        </div>
+                        <div class="col-md-6">
+                          <a href="http://twitter.com/home?status=Excited about @CabTools, the service exclusively for taxi drivers. Find more fares everyday: +http%3A%2F%2Fwww.cabtools.com%2F%3Fref%3D{{ ref }}" target="_blank">
+                            <img src="{% static "twit_share.png" %}">
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+
+                
+                <div class="row">
+                  <div class="col-md-12">      
+                    </br>
+                    <h3>So far, you have {{ count }} referrals.</h3>
+                    {% block message2 %}
+                    {% endblock %} 
+                  </div>
+                </div> 
+
+
+                </div>
+              </section>
+          </section>
+       </section>
+
+{% endblock %}
+

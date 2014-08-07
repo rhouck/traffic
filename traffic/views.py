@@ -104,7 +104,9 @@ def login(request):
 			token = parse_login(cd['username'])
 			if 'error' in token:
 				raise Exception(token['error'])
+			
 			request.session['token'] = token['token']
+			request.session['ref'] = token['ref']
 			
 			return HttpResponseRedirect(reverse('eventsList'))
 		else:
@@ -239,8 +241,18 @@ def updateEventsDB(request):
 
 def confirmation(request):	
 	return render_to_response('flatlab/admin/confirmation.html', {'locations': locations}, context_instance=RequestContext(request))
+
+def share(request):
+	try:
+		ref = request.session['ref']
+		count = count_referrals(ref)
+		return render_to_response('flatlab/admin/share.html', {'ref': ref, 'count': count}, context_instance=RequestContext(request))
+	except:
+		raise Http404
+	
 def confirmationSignup(request, ref):
 	return render_to_response('flatlab/admin/confirmation-signup.html', {'ref': ref, 'count': 0}, context_instance=RequestContext(request))
+
 def tos(request):
 	data = {'locations': locations}
 	return render_to_response('flatlab/admin/tos.html', data, context_instance=RequestContext(request))	

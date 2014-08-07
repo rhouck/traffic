@@ -19,6 +19,7 @@ urlpatterns = patterns('',
     url(r'^user/login/$', 'traffic.views.login', name='login'),
     url(r'^user/logout/$', 'traffic.views.logout', name='logout'),
     url(r'^user/signup/$', 'traffic.views.signup', name='signup'),
+    url(r'^user/share/$', 'traffic.views.share', name='share'),
     
     url(r'^contact/$', 'traffic.views.contact', name='contact'),
     url(r'^confirmation/$', 'traffic.views.confirmation', name='confirmation'),

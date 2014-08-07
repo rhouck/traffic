@@ -85,7 +85,7 @@ def parse_login(email):
 
 	u = User.login(email, "pass")
 	header = u.session_header()
-	return {'token': header['X-Parse-Session-Token']}
+	return {'token': header['X-Parse-Session-Token'], 'ref': u.ref}
 
 
 class Referrals(Object):
@@ -113,6 +113,11 @@ def create_parse_user(email, referred_by=None):
 
 	return {'created': True, 'ref': ref}
 
+def count_referrals(ref):
+	ref = Referrals.Query.all().filter(code=ref, verified=True)
+	count = len([r for r in ref])
+	return int(count)
+
 def confirm_referral(email):
 	
 	# check if this email address was referred
@@ -133,8 +138,7 @@ def confirm_referral(email):
 			ref.save()
 			
 			# send email to referrer
-			ref = Referrals.Query.all().filter(code=ref.code, verified=True)
-			count = len([r for r in ref])
+			count = count_referrals(ref_code)
 	
 			if count < 5:
 				subject = "Almost There | CabTools Free for 6 Months"
