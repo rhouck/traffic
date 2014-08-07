@@ -106,11 +106,14 @@ def create_parse_user(email, referred_by=None):
 		highrise_id = create_highrise_account(email, 'user')
 		user.highrise_id = highrise_id
 		user.save()
-	"""
+	
 	if referred_by:
-		referral = Referrals(user=user, email=email, code=referred_by, verified=False)
-		referral.save()
-	"""
+		try:
+			referral = Referrals(user=user, email=email, code=referred_by, verified=False)
+			referral.save()
+		except Exception as err:
+			return {'error': ast.literal_eval(err[0])['error']}	
+	
 	return {'created': True, 'ref': ref}
 
 def count_referrals(ref):
