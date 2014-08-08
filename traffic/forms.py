@@ -9,8 +9,8 @@ class SplashForm(forms.Form):
     email = forms.EmailField(widget=forms.TextInput(attrs={'placeholder': 'Your Email Address'}))
 
 class LocationForm(forms.Form):
-    lat = forms.CharField(widget=forms.HiddenInput())
-    lng = forms.CharField(widget=forms.HiddenInput())
+    lat = forms.FloatField(widget=forms.HiddenInput(), min_value=-90.0, max_value=90.0)
+    lng = forms.FloatField(widget=forms.HiddenInput(), min_value=-180.0, max_value=180.0)
 
 class UserLogin(forms.Form):
     username = forms.EmailField(widget=forms.TextInput(attrs={'placeholder': 'Email'}))
@@ -37,5 +37,21 @@ class ContactForm(forms.Form):
 class CommentForm(forms.Form):
     message = forms.CharField(required=True, min_length=2, widget=forms.Textarea(attrs={'placeholder': 'Any tips on this event?', 'rows': 2}))
 
-    
+"""
+Api forms
+"""
+class ApiLoginForm(forms.Form):
+    email = forms.EmailField()
+class ApiSignupForm(forms.Form):
+    email = forms.EmailField()
+    ref = forms.CharField(required=False, min_length=8, max_length=8)
+class ApiRefForm(forms.Form):
+    ref = forms.CharField(min_length=8, max_length=8)
+class ApiCommentForm(forms.Form):
+    message = forms.CharField(min_length=2)
+    email = forms.EmailField()
+class ApiHighriseForm(forms.Form):
+    tag = forms.CharField(required=False)
+    email = forms.EmailField()
+
 

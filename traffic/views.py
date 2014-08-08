@@ -91,7 +91,6 @@ def logout(request):
 	request.session.flush()
 	return HttpResponseRedirect(reverse('splash'))
 
-
 def login(request):
 	
 	inputs = request.POST if request.POST else None
@@ -105,6 +104,7 @@ def login(request):
 			if 'error' in token:
 				raise Exception(token['error'])
 			
+			request.session['username'] = cd['username']
 			request.session['token'] = token['token']
 			request.session['ref'] = token['ref']
 			
@@ -116,7 +116,7 @@ def login(request):
 		form.errors['__all__'] = form.error_class([err])
 		data = {'form': form}
 		return render_to_response('flatlab/admin/login.html', data, context_instance=RequestContext(request))
-
+"""
 def signup(request):
 
 	inputs = request.POST if request.POST else None
@@ -171,11 +171,8 @@ def signup(request):
 		
 		data = {'form': form, 'locations': locations}
 		return render_to_response('flatlab/admin/signup.html', data, context_instance=RequestContext(request))
-
-
+"""
 def eventDetail(request, event_id):
-	
-	
 	
 	if 'token' in request.session:		
 
@@ -198,7 +195,6 @@ def eventDetail(request, event_id):
 
 	else:
 		return HttpResponseRedirect(reverse('splash'))
-
 
 def contact(request):
 	inputs = request.POST if request.POST else None
@@ -227,7 +223,7 @@ def contact(request):
 	except Exception as err:
 		data = {'form': form, 'error': str(err)}
 		return render_to_response('flatlab/admin/contact.html', data, context_instance=RequestContext(request))
-
+"""
 def updateEventsDB(request):
 	
 	current_time = datetime.datetime.now()
@@ -238,7 +234,7 @@ def updateEventsDB(request):
 		results[i] = events
 	return HttpResponse(json.dumps(results), content_type="application/json")
 	#return render_to_response('flatlab/admin/detail.html', data, context_instance=RequestContext(request))	
-
+"""
 def confirmation(request):	
 	return render_to_response('flatlab/admin/confirmation.html', {'locations': locations}, context_instance=RequestContext(request))
 
@@ -274,3 +270,99 @@ def confirmationEmail(request):
 	return render_to_response('flatlab/admin/confirmation-email-static.html')
 
 	
+
+
+"""
+API endpoint views
+"""
+def apiSignup(request):
+	inputs = request.POST if request.POST else None
+	form = ApiSignupForm(inputs)
+	if (inputs) and form.is_valid():
+			cd = form.cleaned_data
+			resp = create_parse_user(cd['email'], cd['ref'])
+			return HttpResponse(json.dumps(resp), content_type="application/json")
+	else:
+		return HttpResponse(json.dumps({'error': [(k, v[0]) for k, v in form.errors.items()]}), content_type="application/json")
+
+def apiLogin(request):
+	inputs = request.GET if request.GET else None
+	form = ApiLoginForm(inputs)
+	if (inputs) and form.is_valid():
+			cd = form.cleaned_data
+			resp = parse_login(cd['email'])
+			return HttpResponse(json.dumps(resp), content_type="application/json")
+	else:
+		return HttpResponse(json.dumps({'error': [(k, v[0]) for k, v in form.errors.items()]}), content_type="application/json")
+
+def apiReferrals(request):
+	inputs = request.GET if request.GET else None
+	form = ApiRefForm(inputs)
+	if (inputs) and form.is_valid():
+			cd = form.cleaned_data
+			resp = count_referrals(cd['ref'])
+			return HttpResponse(json.dumps({'count': resp}), content_type="application/json")
+	else:
+		return HttpResponse(json.dumps({'error': [(k, v[0]) for k, v in form.errors.items()]}), content_type="application/json")
+
+def apiEventsList(request):
+
+	inputs = request.GET if request.GET else None
+	form = LocationForm(inputs)
+	if (inputs) and form.is_valid():
+			cd = form.cleaned_data
+
+			current_time = current_time_aware()
+
+			# pull event listings and locations
+			events , curDateTime = pullEvents(cd['lat'], cd['lng'], date=current_time)
+			comments = pull_recent_parse_comments_by_location(cd['lat'], cd['lng'], date=current_time)
+			data = {'events': events, 'comments': comments}
+			data['datetime'] = conv_to_js_date(current_time)
+			return HttpResponse(json.dumps(data), content_type="application/json")
+	else:
+		return HttpResponse(json.dumps({'error': [(k, v[0]) for k, v in form.errors.items()]}), content_type="application/json")		
+	
+def apiEventsDetail(request, event_id):
+	data = get_event_detail(event_id)
+	if data:
+		return HttpResponse(json.dumps(data), content_type="application/json")
+	else:
+		return HttpResponse(json.dumps({'error': 'No event with this ID'}), content_type="application/json")
+
+def apiEventsPostComment(request, event_id):
+	
+	inputs = request.POST if request.POST else None
+	form = ApiCommentForm(inputs)	
+	
+	try:
+		if (inputs) and form.is_valid():
+			cd = form.cleaned_data
+			
+
+
+			try:
+				event = get_parse_event_by_id(event_id)			
+			except:
+				raise Exception('No event with this ID')
+			posted_message = post_parse_comment(cd['email'], cd['message'], event)
+			return HttpResponse(json.dumps(True), content_type="application/json")	
+		else:
+			form_errors = [(k, v[0]) for k, v in form.errors.items()]
+			raise Exception(form_errors)
+
+	except Exception as err:
+
+		return HttpResponse(json.dumps({'error': err.message}), content_type="application/json")
+
+def apiHighrise(request):
+
+	inputs = request.POST if request.POST else None
+	form = ApiHighriseForm(inputs)	
+	
+	if (inputs) and form.is_valid():
+		cd = form.cleaned_data
+		highrise_id = create_highrise_account(cd['email'], tag=cd['tag'])
+		return HttpResponse(json.dumps({'highrise-id': highrise_id}), content_type="application/json")
+	else:
+		return HttpResponse(json.dumps({'error': [(k, v[0]) for k, v in form.errors.items()]}), content_type="application/json")
