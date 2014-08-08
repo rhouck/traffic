@@ -75,6 +75,8 @@ locations = {'SF': {'name': 'San Francisco', 'timezone': 'America/Los_Angeles'},
 
 def parse_login(email):	
 	
+	email = email.lower()
+
 	try:
 		user = get_parse_user_by_email(email)
 	except:
@@ -93,6 +95,8 @@ class Referrals(Object):
 
 def create_parse_user(email, referred_by=None):
 	
+	email = email.lower()
+
 	try:	
 		if LIVE:
 			user_type = "live"
