@@ -18,7 +18,7 @@ urlpatterns = patterns('',
 
     url(r'^user/login/$', 'traffic.views.login', name='login'),
     url(r'^user/logout/$', 'traffic.views.logout', name='logout'),
-    url(r'^user/signup/$', 'traffic.views.signup', name='signup'),
+    #url(r'^user/signup/$', 'traffic.views.signup', name='signup'),
     url(r'^user/share/$', 'traffic.views.share', name='share'),
     
     url(r'^contact/$', 'traffic.views.contact', name='contact'),
@@ -28,13 +28,14 @@ urlpatterns = patterns('',
     
     url(r'^tos/$', 'traffic.views.tos', name='tos'),
     
-    url(r'^events/update/$', 'traffic.views.updateEventsDB'),
+    #url(r'^events/update/$', 'traffic.views.updateEventsDB'),
 
     # api endpoints
+    url(r'^api/v1/user/$', 'traffic.views.apiSignup', name='api_signup'),
     url(r'^api/v1/user/login/$', 'traffic.views.apiLogin', name='api_login'),
-    url(r'^api/v1/user/signup/$', 'traffic.views.apiSignup', name='api_signup'),
     url(r'^api/v1/user/referrals/$', 'traffic.views.apiReferrals', name='api_referrals'),
     url(r'^api/v1/events/$', 'traffic.views.apiEventsList', name='api_events_list'),
     url(r'^api/v1/events/detail/(?P<event_id>[A-Za-z0-9]{10})$', 'traffic.views.apiEventsDetail', name='api_events_detail'),
-   
+    url(r'^api/v1/events/detail/(?P<event_id>[A-Za-z0-9]{10})/comment/$', 'traffic.views.apiEventsPostComment', name='api_events_post_comment'),
+    url(r'^api/v1/highrise/$', 'traffic.views.apiHighrise', name='api_highrise'),
 )

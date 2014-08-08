@@ -344,9 +344,11 @@ def calc_percentile(bank, item):
 		return percentile
 
 def get_parse_event_by_id(objectId):
+	
 	parse_event = get_event_type()
 	event = parse_event.Query.get(objectId=str(objectId))
 	return event
+	
 
 def pullEvents(lat, lng, date=current_time_aware(), max_dist=5):
 	
