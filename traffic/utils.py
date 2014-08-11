@@ -520,7 +520,7 @@ def get_event_detail(id):
 		
 
 		event = event.__dict__
-			
+		"""	
 		del event['_created_at']
 		del event['_updated_at']
 		if '_object_id' in event:
@@ -529,7 +529,7 @@ def get_event_detail(id):
 			del event['objectId']
 		del event['objectId']
 		del event['location']
-		
+		"""
 	
 		# remove bad data types
 		for k, v in event.iteritems():
