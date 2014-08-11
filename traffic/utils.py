@@ -523,7 +523,10 @@ def get_event_detail(id):
 			
 		del event['_created_at']
 		del event['_updated_at']
-		#del event['_object_id']
+		if '_object_id' in event:
+			del event['_object_id']
+		if 'objectId' in event:
+			del event['objectId']
 		del event['objectId']
 		del event['location']
 		
