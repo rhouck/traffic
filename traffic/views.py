@@ -186,7 +186,7 @@ def eventDetail(request, event_id):
 		else:
 		
 			data = get_event_detail(event_id)
-			#return HttpResponse(json.dumps(data), content_type="application/json")
+			return HttpResponse(json.dumps(data), content_type="application/json")
 			data['form']= form 
 			return render_to_response('flatlab/admin/detail.html', data, context_instance=RequestContext(request))	
 
