@@ -393,7 +393,7 @@ def pullEvents(lat, lng, date=current_time_aware(), max_dist=10):
 										)
 	events = events.order_by("endTime")
 	events = events.limit(50)
-
+	return True, len([1 for e in events])
 	# add item to sub list if is live during the day question
 	# index for timeline formatting
 	formatted_events = []

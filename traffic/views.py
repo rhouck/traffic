@@ -54,7 +54,6 @@ def eventsList(request, loc=None):
 	
 	inputs = request.POST if request.POST else None
 	form = LocationForm(inputs)
-	#return HttpResponse(json.dumps(inputs), content_type="application/json")
 		
 	#if loc and loc not in locations.keys():	
 	#	raise Http404
@@ -68,6 +67,7 @@ def eventsList(request, loc=None):
 			
 			# pull event listings and locations
 			events , curDateTime = pullEvents(cd['lat'], cd['lng'], date=current_time)
+			return HttpResponse(json.dumps((events, curDateTime)), content_type="application/json")
 			comments = pull_recent_parse_comments_by_location(cd['lat'], cd['lng'], date=current_time)
 			data = {'events': events, 'comments': comments, 'show_events': True,}
 		
