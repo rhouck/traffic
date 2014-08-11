@@ -17,6 +17,7 @@ psycopg2==2.5.3
 pyrise==0.5.3
 pystache==0.5.4
 python-dateutil==2.2
+pytz==2014.4
 requests==2.3.0
 six==1.7.3
 static==1.0.2

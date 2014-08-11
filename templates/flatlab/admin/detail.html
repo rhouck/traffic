@@ -19,7 +19,7 @@ function goBack() {
                           <header class="panel-heading">
                               <div class="row">
                                 <div class="col-xs-8">
-                                  {{ event.Name }}
+                                  {{ event.name }}
                                 </div>
                                 <div class="col-xs-4 text-right">
                                   {% comment %}
@@ -41,31 +41,35 @@ function goBack() {
                                   <tr>
                                       <td>Venue:</td>
                                       <td>
-                                        {% if event.VenueName %}
-                                          {{ event.VenueName }}
+                                        {% if event.venueName %}
+                                          {{ event.venueName }}
                                         {% else %}
                                           N/A
                                         {% endif %}
                                       </td>
-                                      <td>Size:</td>
-                                      <td class="numeric">{{ event.Capacity }} ppl</td>
-                                      
+                                      {% if event.capacity %}
+                                        <td>Size:</td>
+                                        <td class="numeric">{{ event.capacity }} ppl</td>
+                                      {% else %}
+                                        <td></td>
+                                        <td></td>
+                                      {% endif %}
                                   </tr>
                                   <tr>
                                       <td>Address:</td>
-                                      <td>{{ event.Address }}</td>
+                                      <td>{{ event.address }}</td>
                                       <td>Date:</td>
                                       <td>
-                                        {% if event.StartDate == event.EndDate %}
+                                        {% if event.startDate == event.endDate %}
                                           <p><script>
-                                              var date = new Date({{ event.StartDate }});
+                                              var date = new Date({{ event.startDate }});
                                               document.write(formatAMPM(date));
                                             </script>
                                           </p>
                                         {% else %}
                                           <p><script>
-                                              var date1 = new Date({{ event.StartDate }});
-                                              var date2 = new Date({{ event.EndDate }});
+                                              var date1 = new Date({{ event.startDate }});
+                                              var date2 = new Date({{ event.endDate }});
                                               document.write(formatStandDate(date1) + ' - ' + formatStandDate(date2));
                                             </script>
                                           </p>
@@ -74,9 +78,9 @@ function goBack() {
                                   </tr>
                                   <tr>
                                       <td>City:</td>
-                                      <td>{{ event.City }}</td>
+                                      <td>{{ event.city }}</td>
                                       <td>Time:</td>
-                                      <td>{{ event.pretty_StartTime }} - {{ event.pretty_EndTime }}</td>
+                                      <td>{{ event.pretty_startTime }} - {{ event.pretty_endTime }}</td>
                                   </tr>
                                   </tbody>
                                   

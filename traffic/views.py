@@ -71,6 +71,7 @@ def eventsList(request, loc=None):
 			events , curDateTime = pullEvents(cd['lat'], cd['lng'], date=current_time)
 			
 			comments = pull_recent_parse_comments_by_location(cd['lat'], cd['lng'], date=current_time)
+			
 			#return HttpResponse(json.dumps(comments), content_type="application/json")
 			data = {'events': events, 'comments': comments, 'show_events': True,}
 		

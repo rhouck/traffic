@@ -147,14 +147,14 @@
                                                                                 <div class="row">
 
                                                                                   <div class="col-lg-9 col-xs-9">
-                                                                                    <p>{{ i.Name }}</p>
+                                                                                    <p>{{ i.name }}</p>
                                                                                   </div>
                                                                                   <div class="col-lg-3 col-xs-3 text-right">
                                                                                     <i class="fa fa-angle-double-right"></i>
                                                                                   </div>
                                                                                 
                                                                                 </div>    
-                                                                                <p>{{ i.Address }}</p>
+                                                                                <p>{{ i.address }}</p>
                                                                                 <p>{{ i.distance }} miles</p>
                                                                                 </a>
                                                                                   
@@ -287,15 +287,15 @@
     
         var map = new GMaps({
             div: "#" + element,
-            lat: events[0]["Lat"],
-            lng: events[0]["Lng"],
-            zoom: 11,
+            lat: events[0]["lat"],
+            lng: events[0]["lng"],
+            zoom: 12,
         });
         
         for (i = 0; i < events.length; i++) { 
                 map.addMarker({
-                lat: events[i]["Lat"],
-                lng: events[i]["Lng"],
+                lat: events[i]["lat"],
+                lng: events[i]["lng"],
                 title: events[i]["tag"],
                 infoWindow: {
                     content: events[i]["tag"]

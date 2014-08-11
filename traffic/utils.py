@@ -10,6 +10,7 @@ from django.utils.timezone import utc
 import datetime
 from dateutil.parser import parse
 from dateutil import tz
+import pytz
 import urllib2
 import urllib
 import json
@@ -217,9 +218,9 @@ class TestComment(Object):
 
 def post_parse_comment(user, message, event):
 	if LIVE:
-		comment = Comment(user=user, message=message, event=event, city=event.City, event_end_date=event.EndDate)
+		comment = Comment(user=user, message=message, event=event, city=event.city, event_end_date=event.endTime)
 	else:
-		comment = TestComment(user=user, message=message, event=event, city=event.City, event_end_date=event.EndDate)
+		comment = TestComment(user=user, message=message, event=event, city=event.city, event_end_date=event.endTime)
 	
 	comment.save()
 	return comment
@@ -282,7 +283,7 @@ def pull_parse_comments_by_event(event):
 	return formatted_comments
 
 
-def pull_recent_parse_comments_by_location(lat, lng, date=current_time_aware(), max_dist=5):
+def pull_recent_parse_comments_by_location(lat, lng, date=current_time_aware(), max_dist=10):
 	
 	# set current location
 	cur_loc = GeoPoint(latitude=float(lat), longitude=float(lng))
@@ -305,22 +306,23 @@ def pull_recent_parse_comments_by_location(lat, lng, date=current_time_aware(), 
 	
 	filtered = []
 	for c in comments:
-		c.distance = haversine(cur_loc.longitude, cur_loc.latitude, c.event.location.longitude, c.event.location.latitude)
-		if c.distance > max_dist:
-			break
-		
-		c.js_time = conv_to_js_date(c.createdAt)
-		
-		entry = c.__dict__
-		del entry['_created_at']
-		del entry['_updated_at']
-		del entry['objectId']
-		del entry['event_end_date']
-		entry['event_id'] = entry['event'].objectId
-		entry['event_title'] = "%s miles - %s" %(("%.2f" % c.distance), entry['event'].Address)
-		del entry['event']
-		
-		filtered.append(entry)
+		if c.event.location.longitude:
+			c.distance = haversine(cur_loc.longitude, cur_loc.latitude, c.event.location.longitude, c.event.location.latitude)
+			if c.distance > max_dist:
+				break
+			
+			c.js_time = conv_to_js_date(c.createdAt)
+			
+			entry = c.__dict__
+			del entry['_created_at']
+			del entry['_updated_at']
+			del entry['objectId']
+			del entry['event_end_date']
+			entry['event_id'] = entry['event'].objectId
+			entry['event_title'] = "%s miles - %s" %(("%.2f" % c.distance), entry['event'].address)
+			del entry['event']
+			
+			filtered.append(entry)
 
 	return filtered
 
@@ -354,35 +356,43 @@ def get_parse_event_by_id(objectId):
 	return event
 	
 
-def pullEvents(lat, lng, date=current_time_aware(), max_dist=5):
+def pullEvents(lat, lng, date=current_time_aware(), max_dist=10):
 	
-	# temporary (remove once done testing)
-	#date = date - datetime.timedelta(days=5)
-
 	# set current location
 	cur_loc = GeoPoint(latitude=float(lat), longitude=float(lng))
 
 	# set date ranges
 	beg_date = date - datetime.timedelta(hours=1)
-	end_date = date + datetime.timedelta(hours=5)
+	end_date = date + datetime.timedelta(hours=10)
 	parse_beg_date = Date(beg_date)
 	parse_end_date = Date(end_date)
 
+	# filter for entries added yesterday
+	local_date = date.astimezone(tz.gettz('America/Los_Angeles'))
+	pacific = pytz.timezone('America/Los_Angeles') # 'US/Pacific'
+	
+	created_date_min = pacific.localize(datetime.datetime(local_date.year,local_date.month, local_date.day-1,0,0))
+	created_date_min = created_date_min.astimezone(pytz.utc)
+	created_date_min = Date(created_date_min)
+	
+	created_date_max = pacific.localize(datetime.datetime(local_date.year,local_date.month, local_date.day,0,0))
+	created_date_max = created_date_max.astimezone(pytz.utc)
+	created_date_max = Date(created_date_max)
+	
 	# run Parse query
 	parse_event = get_event_type()
-	#events = parse_event.Query.all().filter(StartDate__lte=parse_end_date, EndDate__gte=parse_beg_date, Lat__gte=-10000000, Lng__gte=-100000000)
-	events = parse_event.Query.filter(location__nearSphere=cur_loc)
-	#events = events.order_by("EndTime")
+	events = parse_event.Query.filter(location__exists=True, 
+										address__exists=True, 
+										endTime__exists=True,
+										location__nearSphere=cur_loc,
+										createdAt__gte=created_date_min, 
+										createdAt__lte=created_date_max, 
+										endTime__gte=parse_beg_date, 
+										endTime__lte=parse_end_date
+										)
+	events = events.order_by("endTime")
 	events = events.limit(50)
-	events = [e for e in events if (e.Address)]
-	
-	"""
-	# split into individual days
-	events_split = {}
-	for i in range((end_date-beg_date).days):
-		date = beg_date + datetime.timedelta(days=i)
-		events_split[date.date()] = []
-	"""
+
 	# add item to sub list if is live during the day question
 	# index for timeline formatting
 	formatted_events = []
@@ -395,7 +405,8 @@ def pullEvents(lat, lng, date=current_time_aware(), max_dist=5):
 		if k.distance > max_dist:
 			break
 		k.distance = ("%.2f" % k.distance)
-		k.Capacity = int(k.Capacity) if k.Capacity else None
+		k.lat = k.location.latitude
+		k.lng = k.location.longitude
 			
 		# set index for timeline formatting
 		k.index  = index
@@ -403,23 +414,31 @@ def pullEvents(lat, lng, date=current_time_aware(), max_dist=5):
 		if index > 4:
 			index = 1
 
-		# format EndTime
-		pretty_EndTime = parse(k.EndTime).strftime("%I:%M %p")
-		if pretty_EndTime[0] == "0":
-			pretty_EndTime = pretty_EndTime[1:]
+		if k.endTime:
+			pretty_endTime = k.endTime.strftime("%I:%M %p")
+			if pretty_endTime[0] == "0":
+				pretty_endTime = pretty_endTime[1:]
+			
+			k.pretty_endTime = pretty_endTime
+			k.endDate = str(k.endTime.date())
+		else:
+			k.pretty_endTime = "n/a"
+			k.endDate = "n/a"
+
+		if k.startTime:
+			pretty_startTime = k.startTime.strftime("%I:%M %p")
+			if pretty_startTime[0] == "0":
+				pretty_startTime = pretty_startTime[1:] 
+			k.pretty_startTime = pretty_startTime
+			k.startDate = str(k.startTime.date())
+		else:
+			k.pretty_startTime = "n/a"
+			k.startDate = "n/a"
 		
-		pretty_StartTime = parse(k.StartTime).strftime("%I:%M %p")
-		if pretty_StartTime[0] == "0":
-			pretty_StartTime = pretty_StartTime[1:] 
+		k.pretty_full_Time = "%s - %s" % (k.pretty_startTime, k.pretty_endTime)
+		
 	
-		k.pretty_StartTime = pretty_StartTime
-		k.pretty_EndTime = pretty_EndTime
-		k.pretty_full_Time = "%s - %s" % (pretty_StartTime, pretty_EndTime)
-		
-		k.StartDate = str(k.StartDate)
-		k.EndDate = str(k.EndDate)
-		
-		k.tag = "PPL: %s\nEnding: %s" % (k.Capacity, k.pretty_EndTime)
+		k.tag = "Ending: %s" % (k.pretty_endTime)
 		k.id = k.objectId		
 		
 		# add item to events list
@@ -429,12 +448,14 @@ def pullEvents(lat, lng, date=current_time_aware(), max_dist=5):
 		#del entry['_object_id']
 		del entry['objectId']
 		del entry['location']
-
+		
 		# remove unicode types
 		for k, v in entry.iteritems():
 			if isinstance(v, unicode): 
+				entry[k] = v.encode('utf-8')
+			if isinstance(v, datetime.datetime): 
 				entry[k] = str(v)
-
+			
 		formatted_events.append(entry)
 	
 	return (formatted_events, conv_to_js_date(date))
@@ -446,23 +467,37 @@ def get_event_detail(id):
 		event = get_parse_event_by_id(id)
 
 		#format event object
-		pretty_EndTime = parse(event.EndTime).strftime("%I:%M %p")
-		event.pretty_EndTime = pretty_EndTime
-		if pretty_EndTime[0] == "0":
-			pretty_EndTime = pretty_EndTime[1:]
-		pretty_StartTime = parse(event.StartTime).strftime("%I:%M %p")
-		if pretty_StartTime[0] == "0":
-			pretty_StartTime = pretty_StartTime[1:] 
+		if event.endTime:
+			pretty_endTime = event.endTime.strftime("%I:%M %p")
+			if pretty_endTime[0] == "0":
+				pretty_endTime = pretty_endTime[1:]
+			
+			event.pretty_endTime = pretty_endTime
+			#event.endDate = str(event.endTime.date())
+			event.endDate = conv_to_js_date(event.endTime.date())
+		else:
+			event.pretty_endTime = "n/a"
+			event.endDate = "n/a"
 
-		event.pretty_StartTime = pretty_StartTime
-		event.pretty_EndTime = pretty_EndTime
-
+		if event.startTime:
+			pretty_startTime = event.startTime.strftime("%I:%M %p")
+			if pretty_startTime[0] == "0":
+				pretty_startTime = pretty_startTime[1:] 
+			event.pretty_startTime = pretty_startTime
+			event.startDate = conv_to_js_date(event.startTime.date())
+			#event.startDate = str(event.startTime.date())
+		else:
+			event.pretty_startTime = "n/a"
+			event.startDate = "n/a"
+		
+		event.pretty_full_Time = "%s - %s" % (event.pretty_startTime, event.pretty_endTime)
+		
 		# set map data
-		map_data = [{'tag': str("%s\nEnding: %s" % (t.Name, t.pretty_EndTime)), 'lat': t.Lat, 'lng': t.Lng} for t in [event,]]
+		map_data = [{'tag': str("%s\nEnding: %s" % (t.name, t.pretty_endTime)), 'lat': t.location.latitude, 'lng': t.location.longitude} for t in [event,]]
 		
 		# pull comments
 		comments = pull_parse_comments_by_event(event)
-		
+	
 		data = {}
 		data['comments'] = comments
 		data['events_map'] = map_data
@@ -476,15 +511,13 @@ def get_event_detail(id):
 		del event['objectId']
 		del event['location']
 		
-		# change date format type
-		event['StartDate'] = conv_to_js_date(event['StartDate'])
-		event['EndDate'] = conv_to_js_date(event['EndDate'])
-
-		# remove unicode and date types
+		# remove unicode types
 		for k, v in event.iteritems():
-			if isinstance(v, (unicode)): 
+			if isinstance(v, unicode): 
+				event[k] = v.encode('utf-8')
+			if isinstance(v, datetime.datetime): 
 				event[k] = str(v)
-		
+
 		data['event'] = event
 		
 		return data
