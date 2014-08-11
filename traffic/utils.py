@@ -321,7 +321,10 @@ def pull_recent_parse_comments_by_location(lat, lng, date=current_time_aware(), 
 			entry = c.__dict__
 			del entry['_created_at']
 			del entry['_updated_at']
-			del entry['objectId']
+			if '_object_id' in entry:
+				del entry['_object_id']
+			if 'objectId' in entry:
+				del entry['objectId']
 			del entry['event_end_date']
 			entry['event_id'] = entry['event'].objectId
 			entry['event_title'] = "%s miles - %s" %(("%.2f" % c.distance), entry['event'].address)
