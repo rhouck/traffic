@@ -66,13 +66,11 @@ def eventsList(request, loc=None):
 		if (inputs) and form.is_valid():
 			cd = form.cleaned_data
 			
+			return HttpResponse(json.dumps([cd['lat'], cd['lng']]), content_type="application/json")
 
 			# pull event listings and locations
 			events , curDateTime = pullEvents(cd['lat'], cd['lng'], date=current_time)
-			
 			comments = pull_recent_parse_comments_by_location(cd['lat'], cd['lng'], date=current_time)
-			
-			#return HttpResponse(json.dumps(comments), content_type="application/json")
 			data = {'events': events, 'comments': comments, 'show_events': True,}
 		
 		else:

@@ -401,8 +401,7 @@ def pullEvents(lat, lng, date=current_time_aware(), max_dist=10):
 	for k in events:
 		
 		# calcualte distance from user
-		#k.distance = haversine(cur_loc.longitude, cur_loc.latitude, k.location.longitude, k.location.latitude)
-		k.distance = 3
+		k.distance = haversine(cur_loc.longitude, cur_loc.latitude, k.location.longitude, k.location.latitude)
 		# break once next closest event is further than max_dist
 		if k.distance > max_dist:
 			break
