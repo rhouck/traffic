@@ -204,12 +204,14 @@ class LiveEvent(Object):
     pass
 
 def get_event_type():
+	
+	return TestEvent
+	"""
 	if LIVE:
-		return TestEvent
-		#return LiveEvent
+		return LiveEvent
 	else:
 		return TestEvent
-
+	"""
 
 class Comment(Object):
     pass
@@ -361,7 +363,7 @@ def pullEvents(lat, lng, date=current_time_aware(), max_dist=10):
 	
 	# set current location
 	cur_loc = GeoPoint(latitude=float(lat), longitude=float(lng))
-
+	return str(type(cur_loc)), str(date)
 	# set date ranges
 	beg_date = date - datetime.timedelta(hours=1)
 	end_date = date + datetime.timedelta(hours=10)
@@ -382,8 +384,8 @@ def pullEvents(lat, lng, date=current_time_aware(), max_dist=10):
 	
 	# run Parse query
 	parse_event = get_event_type()
-	events = parse_event.Query.all() 
-	"""
+	#events = parse_event.Query.all() 
+	
 	events = parse_event.Query.filter(location__exists=True, 
 										address__exists=True, 
 										endTime__exists=True,
@@ -395,9 +397,8 @@ def pullEvents(lat, lng, date=current_time_aware(), max_dist=10):
 										)
 	
 	events = events.order_by("endTime")
-	"""
 	events = events.limit(50)
-	return True, len([1 for e in events])
+	
 	# add item to sub list if is live during the day question
 	# index for timeline formatting
 	formatted_events = []
