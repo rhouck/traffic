@@ -363,7 +363,7 @@ def pullEvents(lat, lng, date=current_time_aware(), max_dist=10):
 	
 	# set current location
 	cur_loc = GeoPoint(latitude=float(lat), longitude=float(lng))
-	return str(type(cur_loc)), str(date)
+	#return str(type(cur_loc)), str(date)
 	# set date ranges
 	beg_date = date - datetime.timedelta(hours=1)
 	end_date = date + datetime.timedelta(hours=10)
@@ -455,7 +455,7 @@ def pullEvents(lat, lng, date=current_time_aware(), max_dist=10):
 		del entry['objectId']
 		del entry['location']
 		
-		# remove unicode types
+		# remove bad data types
 		for k, v in entry.iteritems():
 			if isinstance(v, unicode): 
 				entry[k] = v.encode('utf-8')
@@ -501,7 +501,7 @@ def get_event_detail(id):
 		event.pretty_full_Time = "%s - %s" % (event.pretty_startTime, event.pretty_endTime)
 		
 		# set map data
-		map_data = [{'tag': str("%s\nEnding: %s" % (t.name, t.pretty_endTime)), 'lat': t.location.latitude, 'lng': t.location.longitude} for t in [event,]]
+		map_data = [{'tag': str("%s\nEnding: %s" % (t.name.encode('utf-8'), t.pretty_endTime)), 'lat': t.location.latitude, 'lng': t.location.longitude} for t in [event,]]
 		
 		# pull comments
 		comments = pull_parse_comments_by_event(event)
@@ -519,12 +519,15 @@ def get_event_detail(id):
 		del event['objectId']
 		del event['location']
 		
-		# remove unicode types
+	
+		# remove bad data types
 		for k, v in event.iteritems():
 			if isinstance(v, unicode): 
 				event[k] = v.encode('utf-8')
 			if isinstance(v, datetime.datetime): 
 				event[k] = str(v)
+			if v is None:
+				event[k] = "n/a"
 
 		data['event'] = event
 		
