@@ -279,7 +279,7 @@ def pull_parse_comments_by_event(event):
 		del entry['event_end_date']
 		del entry['_created_at']
 		del entry['event']
-		del entry['objectId']
+		#del entry['objectId']
 		del entry['city']
 		formatted_comments.append(entry)
 
@@ -322,11 +322,14 @@ def pull_recent_parse_comments_by_location(lat, lng, date=current_time_aware(), 
 			del entry['_created_at']
 			del entry['_updated_at']
 			if '_object_id' in entry:
+				entry['event_id'] = entry['event']._event_id
 				del entry['_object_id']
 			if 'objectId' in entry:
+				entry['event_id'] = entry['event'].objectId
 				del entry['objectId']
+			
 			del entry['event_end_date']
-			entry['event_id'] = entry['event'].objectId
+			
 			entry['event_title'] = "%s miles - %s" %(("%.2f" % c.distance), entry['event'].address)
 			del entry['event']
 			
@@ -526,10 +529,12 @@ def get_event_detail(id):
 		
 		del event['_created_at']
 		del event['_updated_at']
+		"""
 		if '_object_id' in event:
 			del event['_object_id']
 		if 'objectId' in event:
 			del event['objectId']
+		"""
 		del event['location']
 		
 	
