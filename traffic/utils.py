@@ -205,7 +205,8 @@ class LiveEvent(Object):
 
 def get_event_type():
 	if LIVE:
-		return LiveEvent
+		return TestEvent
+		#return LiveEvent
 	else:
 		return TestEvent
 
