@@ -58,23 +58,32 @@ function goBack() {
                                   <tr>
                                       <td>Address:</td>
                                       <td>{{ event.address }}</td>
+                                     
                                       <td>Date:</td>
                                       <td>
-                                        {% if event.startDate == event.endDate %}
-                                          <p><script>
-                                              var date = new Date({{ event.startDate }});
-                                              document.write(formatAMPM(date));
-                                            </script>
-                                          </p>
-                                        {% else %}
-                                          <p><script>
-                                              var date1 = new Date({{ event.startDate }});
-                                              var date2 = new Date({{ event.endDate }});
-                                              document.write(formatStandDate(date1) + ' - ' + formatStandDate(date2));
-                                            </script>
-                                          </p>
-                                        {% endif %}
+                                      {% if not event.js_endDate %}
+                                        <p><script>
+                                            var date = new Date({{ event.js_startDate }});
+                                            document.write(formatStandDate(date));
+                                          </script>
+                                        </p>
+                                      {% else %}
+                                        <p><script>
+                                            var date1 = new Date({{ event.js_startDate }});
+                                            var date2 = new Date({{ event.js_endDate }});
+                                            date1 = formatStandDate(date1);
+                                            date2 = formatStandDate(date2);
+                                            if (date1 == date2) {
+                                              document.write(date1);
+                                            } else {
+                                              document.write(date1 + ' - ' + date2);  
+                                            }
+                                            
+                                          </script>
+                                        </p>
+                                      {% endif %}
                                       </td>
+                                    
                                   </tr>
                                   <tr>
                                       <td>City:</td>

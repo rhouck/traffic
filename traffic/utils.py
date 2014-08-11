@@ -245,6 +245,8 @@ def conv_to_js_date(date):
     return 1000 * time.mktime(date.timetuple())
 
 def get_local_datetime(location, cur_utc=current_time_aware(), locations=locations):
+	
+	timezone = tz.gettz('America/Los_Angeles')
 	for k, v in locations.iteritems():
 		if v['name'] == location:
 			timezone = tz.gettz(v['timezone'])
@@ -421,6 +423,7 @@ def pullEvents(lat, lng, date=current_time_aware(), max_dist=10):
 			index = 1
 
 		if k.endTime:
+			k.endTime = get_local_datetime(k.city, cur_utc=k.endTime.replace(tzinfo=utc), locations=locations)
 			pretty_endTime = k.endTime.strftime("%I:%M %p")
 			if pretty_endTime[0] == "0":
 				pretty_endTime = pretty_endTime[1:]
@@ -432,6 +435,7 @@ def pullEvents(lat, lng, date=current_time_aware(), max_dist=10):
 			k.endDate = "n/a"
 
 		if k.startTime:
+			k.startTime = get_local_datetime(k.city, cur_utc=k.startTime.replace(tzinfo=utc), locations=locations)
 			pretty_startTime = k.startTime.strftime("%I:%M %p")
 			if pretty_startTime[0] == "0":
 				pretty_startTime = pretty_startTime[1:] 
@@ -478,24 +482,26 @@ def get_event_detail(id):
 
 		#format event object
 		if event.endTime:
+			event.js_endDate = conv_to_js_date(event.endTime)
+			event.endTime = get_local_datetime(event.city, cur_utc=event.endTime.replace(tzinfo=utc), locations=locations)
 			pretty_endTime = event.endTime.strftime("%I:%M %p")
 			if pretty_endTime[0] == "0":
 				pretty_endTime = pretty_endTime[1:]
 			
 			event.pretty_endTime = pretty_endTime
-			#event.endDate = str(event.endTime.date())
-			event.endDate = conv_to_js_date(event.endTime.date())
+			event.endDate = str(event.endTime.date())
 		else:
 			event.pretty_endTime = "n/a"
 			event.endDate = "n/a"
 
 		if event.startTime:
+			event.js_startDate = conv_to_js_date(event.startTime)
+			event.startTime = get_local_datetime(event.city, cur_utc=event.startTime.replace(tzinfo=utc), locations=locations)
 			pretty_startTime = event.startTime.strftime("%I:%M %p")
 			if pretty_startTime[0] == "0":
 				pretty_startTime = pretty_startTime[1:] 
 			event.pretty_startTime = pretty_startTime
-			event.startDate = conv_to_js_date(event.startTime.date())
-			#event.startDate = str(event.startTime.date())
+			event.startDate = str(event.startTime.date())
 		else:
 			event.pretty_startTime = "n/a"
 			event.startDate = "n/a"
