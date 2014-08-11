@@ -456,7 +456,9 @@ def pullEvents(lat, lng, date=current_time_aware(), max_dist=10):
 				entry[k] = v.encode('utf-8')
 			if isinstance(v, datetime.datetime): 
 				entry[k] = str(v)
-			
+			if v is None:
+				entry[k] = "n/a"
+				
 		formatted_events.append(entry)
 	
 	return (formatted_events, conv_to_js_date(date))
