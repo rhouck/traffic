@@ -382,6 +382,8 @@ def pullEvents(lat, lng, date=current_time_aware(), max_dist=10):
 	
 	# run Parse query
 	parse_event = get_event_type()
+	events = parse_event.Query.all() 
+	"""
 	events = parse_event.Query.filter(location__exists=True, 
 										address__exists=True, 
 										endTime__exists=True,
@@ -391,7 +393,9 @@ def pullEvents(lat, lng, date=current_time_aware(), max_dist=10):
 										endTime__gte=parse_beg_date, 
 										endTime__lte=parse_end_date
 										)
+	
 	events = events.order_by("endTime")
+	"""
 	events = events.limit(50)
 	return True, len([1 for e in events])
 	# add item to sub list if is live during the day question
