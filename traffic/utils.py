@@ -451,8 +451,10 @@ def pullEvents(lat, lng, date=current_time_aware(), max_dist=10):
 		entry = k.__dict__
 		del entry['_created_at']
 		del entry['_updated_at']
-		#del entry['_object_id']
-		del entry['objectId']
+		if '_object_id' in entry:
+			del entry['_object_id']
+		if 'objectId' in entry:
+			del entry['objectId']
 		del entry['location']
 		
 		# remove bad data types
