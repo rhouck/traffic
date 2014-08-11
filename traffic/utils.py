@@ -401,7 +401,8 @@ def pullEvents(lat, lng, date=current_time_aware(), max_dist=10):
 	for k in events:
 		
 		# calcualte distance from user
-		k.distance = haversine(cur_loc.longitude, cur_loc.latitude, k.location.longitude, k.location.latitude)
+		#k.distance = haversine(cur_loc.longitude, cur_loc.latitude, k.location.longitude, k.location.latitude)
+		k.distance = 3
 		# break once next closest event is further than max_dist
 		if k.distance > max_dist:
 			break
@@ -458,7 +459,7 @@ def pullEvents(lat, lng, date=current_time_aware(), max_dist=10):
 				entry[k] = str(v)
 			if v is None:
 				entry[k] = "n/a"
-				
+
 		formatted_events.append(entry)
 	
 	return (formatted_events, conv_to_js_date(date))
