@@ -392,19 +392,17 @@ def pullEvents(lat, lng, date=current_time_aware(), max_dist=10):
 	
 	# run Parse query
 	parse_event = get_event_type()
-	events = parse_event.Query.filter(location__nearSphere=GeoPoint(latitude=37.8, longitude=-122.3))
-	"""
 	events = parse_event.Query.filter(location__exists=True, 
 										address__exists=True, 
 										#endTime__exists=True,
-										location__nearSphere=cur_loc,
+										#location__nearSphere=cur_loc,
 										createdAt__gte=created_date_min, 
 										createdAt__lte=created_date_max, 
 										#endTime__gte=parse_beg_date, 
 										#endTime__lte=parse_end_date
 										)
 	
-	"""
+	
 	#events = events.order_by("endTime")
 	events = events.limit(100)
 	
