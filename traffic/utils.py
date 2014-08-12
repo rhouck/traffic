@@ -250,10 +250,9 @@ def get_local_datetime(location, cur_utc=current_time_aware(), locations=locatio
 	for k, v in locations.iteritems():
 		if v['name'] == location:
 			timezone = tz.gettz(v['timezone'])
-	
-	date = cur_utc.astimezone(timezone)
+	date = cur_utc.astimezone(timezone)	
 	return date
-	
+
 def pull_parse_comments_by_event(event):
 	
 	if LIVE:
@@ -369,7 +368,10 @@ def pullEvents(lat, lng, date=current_time_aware(), max_dist=10):
 	
 	# set current location
 	cur_loc = GeoPoint(latitude=float(lat), longitude=float(lng))
-	#return str(type(cur_loc)), str(date)
+
+	# get timezone
+	timezone = get_timezone(lat,lng, cur_time=date)
+
 	# set date ranges
 	beg_date = date - datetime.timedelta(hours=1)
 	end_date = date + datetime.timedelta(hours=10)
@@ -394,7 +396,7 @@ def pullEvents(lat, lng, date=current_time_aware(), max_dist=10):
 	events = parse_event.Query.filter(location__exists=True, 
 										address__exists=True, 
 										#endTime__exists=True,
-										location__nearSphere=cur_loc,
+										#location__nearSphere=cur_loc,
 										createdAt__gte=created_date_min, 
 										createdAt__lte=created_date_max, 
 										#endTime__gte=parse_beg_date, 
@@ -421,7 +423,8 @@ def pullEvents(lat, lng, date=current_time_aware(), max_dist=10):
 		k.lng = k.location.longitude
 			
 		if k.startTime:
-			k.startTime = get_local_datetime(k.city, cur_utc=k.startTime.replace(tzinfo=utc), locations=locations)
+			k.startTime = k.startTime.replace(tzinfo=utc).astimezone(tz.gettz(timezone))
+			#k.startTime = get_local_datetime(k.city, cur_utc=k.startTime.replace(tzinfo=utc), locations=locations)
 			
 			# don't include items with midnight start times (probably bs)
 			if k.startTime.hour == 0:
@@ -438,7 +441,7 @@ def pullEvents(lat, lng, date=current_time_aware(), max_dist=10):
 			if k.endTime.replace(tzinfo=utc) < beg_date or k.endTime.replace(tzinfo=utc) > end_date:
 				continue
 
-			k.endTime = get_local_datetime(k.city, cur_utc=k.endTime.replace(tzinfo=utc), locations=locations)
+			k.endTime = k.endTime.replace(tzinfo=utc).astimezone(tz.gettz(timezone))
 			pretty_endTime = k.endTime.strftime("%I:%M %p")
 			if pretty_endTime[0] == "0":
 				pretty_endTime = pretty_endTime[1:]
@@ -451,8 +454,8 @@ def pullEvents(lat, lng, date=current_time_aware(), max_dist=10):
 				k.sort_time= datetime.time(23,59,58)	
 		elif k.startTime.hour >= 20:
 			# remove items out of range of interest - in this case, dont include late-night events if the endtime of interest is before late night events would be included
-			loc_beg = get_local_datetime(k.city, cur_utc=beg_date.replace(tzinfo=utc), locations=locations)
-			loc_end = get_local_datetime(k.city, cur_utc=end_date.replace(tzinfo=utc), locations=locations)
+			loc_beg = beg_date.replace(tzinfo=utc).astimezone(tz.gettz(timezone))
+			loc_end = end_date.replace(tzinfo=utc).astimezone(tz.gettz(timezone))
 			if loc_end.day == loc_beg.day and loc_end.hour < 20:
 				continue
 
@@ -825,7 +828,17 @@ def create_highrise_account(email, tag=None):
 	    return None
 
 
+def get_timezone(lat, lng, cur_time=current_time_aware()):
 
+	# set long and lat
+	cur_time = time.mktime(cur_time.timetuple())
+	params = {'location': "%s,%s" % (lat,lng), 'timestamp': cur_time}
+	response = sendRequest("https://maps.googleapis.com/maps/api/timezone/json", data=params, headers=None, method='get')
+
+	if response['success'] and response['response']['status'] == "OK":
+		return response['response']['timeZoneId']
+	else:
+		raise Exception("Google API did not return timezone id.")
 
 
 
