@@ -367,8 +367,8 @@ def get_parse_event_by_id(objectId):
 def pullEvents(lat, lng, date=current_time_aware(), max_dist=10):
 	
 	# set current location
-	#cur_loc = GeoPoint(latitude=float(lat), longitude=float(lng))
-	cur_loc = GeoPoint(latitude=37.8, longitude=-122.3)
+	cur_loc = GeoPoint(latitude=float(lat), longitude=float(lng))
+	
 	# get timezone
 	timezone = get_timezone(lat,lng, cur_time=date)
 
@@ -392,7 +392,8 @@ def pullEvents(lat, lng, date=current_time_aware(), max_dist=10):
 	
 	# run Parse query
 	parse_event = get_event_type()
-	
+	events = parse_event.Query.filter(location__nearSphere=GeoPoint(latitude=37.8, longitude=-122.3))
+	"""
 	events = parse_event.Query.filter(location__exists=True, 
 										address__exists=True, 
 										#endTime__exists=True,
@@ -403,6 +404,7 @@ def pullEvents(lat, lng, date=current_time_aware(), max_dist=10):
 										#endTime__lte=parse_end_date
 										)
 	
+	"""
 	#events = events.order_by("endTime")
 	events = events.limit(100)
 	
