@@ -105,8 +105,8 @@ if search('live', host):
     from settings_live import *
     LIVE = True
 elif search('dev', host):
-    from settings_live import *
-    LIVE = True
+    from settings_dev import *
+    LIVE = False
 else:
     from settings_local import *
     LIVE = False
