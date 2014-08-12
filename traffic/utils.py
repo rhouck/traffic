@@ -467,7 +467,7 @@ def pullEvents(lat, lng, date=current_time_aware(), max_dist=10):
 			continue
 		
 		# remove on-going events
-		if k.endTime and (k.endTime - k.startTime) > datetime.timedelta(days=20):
+		if k.endTime and (k.endTime - k.startTime) > datetime.timedelta(days=10):
 			continue
 
 		k.pretty_full_Time = "%s - %s" % (k.pretty_startTime, k.pretty_endTime)
