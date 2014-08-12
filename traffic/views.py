@@ -75,8 +75,6 @@ def eventsList(request, loc=None):
 		
 		data['datetime'] = conv_to_js_date(current_time)
 		data['form'] = form
-		#data['locations'] = locations
-		#data['selected'] = locations[loc]['name']
 		return render_to_response('flatlab/admin/main.html', data, context_instance=RequestContext(request))	
 	else:
 		return HttpResponseRedirect(reverse('splash'))
