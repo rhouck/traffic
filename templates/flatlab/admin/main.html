@@ -144,19 +144,35 @@
                                                                               <span class="timeline-date">{{ i.pretty_endTime }}</span>
                                                                             
                                                                                 <a href="{% url 'event-detail' i.id %}">
-                                                                              
-                                                                                <div class="row">
-
-                                                                                  <div class="col-lg-9 col-xs-9">
-                                                                                    <p>{{ i.name }}</p>
-                                                                                  </div>
-                                                                                  <div class="col-lg-3 col-xs-3 text-right">
-                                                                                    <i class="fa fa-angle-double-right"></i>
-                                                                                  </div>
                                                                                 
-                                                                                </div>    
-                                                                                <p>{{ i.address }}</p>
-                                                                                <p>{{ i.distance }} miles</p>
+                                                                                  <div class="hidden-md hidden-lg">
+                                                                                    <div class="row">
+
+                                                                                      <div class="col-lg-9 col-xs-9">
+                                                                                        <p>{{ i.name|slice:":20" }}</p>
+                                                                                      </div>
+                                                                                      <div class="col-lg-3 col-xs-3 text-right">
+                                                                                        <i class="fa fa-angle-double-right"></i>
+                                                                                      </div>
+                                                                                    
+                                                                                    </div>    
+                                                                                    <p>{{ i.address|slice:":50" }}</p>
+                                                                                    <p>{{ i.distance }} miles</p>
+                                                                                  </div>
+                                                                                  <div class="hidden-xs hidden-sm">
+                                                                                    <div class="row">
+
+                                                                                      <div class="col-lg-9 col-xs-9">
+                                                                                        <p>{{ i.name }}</p>
+                                                                                      </div>
+                                                                                      <div class="col-lg-3 col-xs-3 text-right">
+                                                                                        <i class="fa fa-angle-double-right"></i>
+                                                                                      </div>
+                                                                                    
+                                                                                    </div>    
+                                                                                    <p>{{ i.address }}</p>
+                                                                                    <p>{{ i.distance }} miles</p>
+                                                                                  
                                                                                 </a>
                                                                                   
                                                                                                    

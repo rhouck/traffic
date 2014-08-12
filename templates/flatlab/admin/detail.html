@@ -47,18 +47,16 @@ function goBack() {
                                           N/A
                                         {% endif %}
                                       </td>
-                                      {% if event.capacity %}
-                                        <td>Size:</td>
-                                        <td class="numeric">{{ event.capacity }} ppl</td>
-                                      {% else %}
-                                        <td></td>
-                                        <td></td>
-                                      {% endif %}
+                                      
+                                      
                                   </tr>
                                   <tr>
                                       <td>Address:</td>
-                                      <td>{{ event.address }}</td>
-                                     
+                                      <td><p>{{ event.address }},&nbsp;&nbsp;{{ event.city }},&nbsp;&nbsp;{{ event.postalCode }}</p></td>
+                                   
+                                  </tr>
+                                  <tr>
+                                  
                                       <td>Date:</td>
                                       <td>
                                       {% if not event.js_endDate %}
@@ -86,8 +84,7 @@ function goBack() {
                                     
                                   </tr>
                                   <tr>
-                                      <td>City:</td>
-                                      <td>{{ event.city }}</td>
+                                   
                                       <td>Time:</td>
                                       <td>{{ event.pretty_startTime }} - {{ event.pretty_endTime }}</td>
                                   </tr>
