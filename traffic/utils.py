@@ -392,6 +392,7 @@ def pullEvents(lat, lng, date=current_time_aware(), max_dist=10):
 	
 	# run Parse query
 	parse_event = get_event_type()
+	"""
 	try:
 		events = parse_event.Query.filter(location__exists=True, 
 											address__exists=True, 
@@ -403,12 +404,13 @@ def pullEvents(lat, lng, date=current_time_aware(), max_dist=10):
 											#endTime__lte=parse_end_date
 											)
 	except:
-		events = parse_event.Query.filter(location__exists=True, 
-											address__exists=True, 
-											createdAt__gte=created_date_min, 
-											createdAt__lte=created_date_max, 
-											)
-	
+	"""
+	events = parse_event.Query.filter(location__exists=True, 
+										address__exists=True, 
+										createdAt__gte=created_date_min, 
+										createdAt__lte=created_date_max, 
+										)
+
 	#events = events.order_by("endTime")
 	events = events.limit(100)
 	
