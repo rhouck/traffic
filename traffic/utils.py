@@ -395,7 +395,7 @@ def pullEvents(lat, lng, date=current_time_aware(), max_dist=10):
 	events = parse_event.Query.filter(location__exists=True, 
 										address__exists=True, 
 										#endTime__exists=True,
-										#location__nearSphere=cur_loc,
+										location__nearSphere=cur_loc,
 										createdAt__gte=created_date_min, 
 										createdAt__lte=created_date_max, 
 										#endTime__gte=parse_beg_date, 
