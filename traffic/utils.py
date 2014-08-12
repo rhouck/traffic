@@ -373,8 +373,8 @@ def pullEvents(lat, lng, date=current_time_aware(), max_dist=10):
 	# set date ranges
 	beg_date = date - datetime.timedelta(hours=1)
 	end_date = date + datetime.timedelta(hours=10)
-	parse_beg_date = Date(beg_date)
-	parse_end_date = Date(end_date)
+	#parse_beg_date = Date(beg_date)
+	#parse_end_date = Date(end_date)
 
 	# filter for entries added yesterday
 	local_date = date.astimezone(tz.gettz('America/Los_Angeles'))
@@ -390,43 +390,54 @@ def pullEvents(lat, lng, date=current_time_aware(), max_dist=10):
 	
 	# run Parse query
 	parse_event = get_event_type()
-	#events = parse_event.Query.all() 
 	
 	events = parse_event.Query.filter(location__exists=True, 
 										address__exists=True, 
-										endTime__exists=True,
-										#location__nearSphere=cur_loc,
+										#endTime__exists=True,
+										location__nearSphere=cur_loc,
 										createdAt__gte=created_date_min, 
 										createdAt__lte=created_date_max, 
-										endTime__gte=parse_beg_date, 
-										endTime__lte=parse_end_date
+										#endTime__gte=parse_beg_date, 
+										#endTime__lte=parse_end_date
 										)
 	
-	events = events.order_by("endTime")
-	events = events.limit(50)
+	#events = events.order_by("endTime")
+	events = events.limit(100)
 	
 	# add item to sub list if is live during the day question
 	# index for timeline formatting
 	formatted_events = []
-	index = 1
 	for k in events:
 		
 		# calcualte distance from user
 		k.distance = haversine(cur_loc.longitude, cur_loc.latitude, k.location.longitude, k.location.latitude)
-		# break once next closest event is further than max_dist
+		
+		# don't include items further away than max distance
 		if k.distance > max_dist:
-			break
+			continue
+
 		k.distance = ("%.2f" % k.distance)
 		k.lat = k.location.latitude
 		k.lng = k.location.longitude
 			
-		# set index for timeline formatting
-		k.index  = index
-		index += 1
-		if index > 4:
-			index = 1
+		if k.startTime:
+			k.startTime = get_local_datetime(k.city, cur_utc=k.startTime.replace(tzinfo=utc), locations=locations)
+			
+			# don't include items with midnight start times (probably bs)
+			if k.startTime.hour == 0:
+				continue
 
+			pretty_startTime = k.startTime.strftime("%I:%M %p")
+			if pretty_startTime[0] == "0":
+				pretty_startTime = pretty_startTime[1:] 
+			k.pretty_startTime = pretty_startTime
+			k.startDate = str(k.startTime.date())
+		
 		if k.endTime:
+			# remove items out of range of interest - events with end dates outside range defined above
+			if k.endTime.replace(tzinfo=utc) < beg_date or k.endTime.replace(tzinfo=utc) > end_date:
+				continue
+
 			k.endTime = get_local_datetime(k.city, cur_utc=k.endTime.replace(tzinfo=utc), locations=locations)
 			pretty_endTime = k.endTime.strftime("%I:%M %p")
 			if pretty_endTime[0] == "0":
@@ -434,21 +445,28 @@ def pullEvents(lat, lng, date=current_time_aware(), max_dist=10):
 			
 			k.pretty_endTime = pretty_endTime
 			k.endDate = str(k.endTime.date())
-		else:
-			k.pretty_endTime = "n/a"
-			k.endDate = "n/a"
+			k.sort_time = k.endTime.time()
+			# ensure events ending at midnight are at end of list, not beginning
+			if k.sort_time == datetime.time(0,0):
+				k.sort_time= datetime.time(23,59,58)	
+		elif k.startTime.hour >= 20:
+			# remove items out of range of interest - in this case, dont include late-night events if the endtime of interest is before late night events would be included
+			loc_beg = get_local_datetime(k.city, cur_utc=beg_date.replace(tzinfo=utc), locations=locations)
+			loc_end = get_local_datetime(k.city, cur_utc=end_date.replace(tzinfo=utc), locations=locations)
+			if loc_end.day == loc_beg.day and loc_end.hour < 20:
+				continue
 
-		if k.startTime:
-			k.startTime = get_local_datetime(k.city, cur_utc=k.startTime.replace(tzinfo=utc), locations=locations)
-			pretty_startTime = k.startTime.strftime("%I:%M %p")
-			if pretty_startTime[0] == "0":
-				pretty_startTime = pretty_startTime[1:] 
-			k.pretty_startTime = pretty_startTime
-			k.startDate = str(k.startTime.date())
+			k.sort_time= datetime.time(23,59,59)
+			k.pretty_endTime = "Late Night"
+			k.endDate = k.startDate
 		else:
-			k.pretty_startTime = "n/a"
-			k.startDate = "n/a"
+			# don't include items that don't have end times and are not likely to be late night events
+			continue
 		
+		# remove on-going events
+		if k.endTime and (k.endTime - k.startTime) > datetime.timedelta(days=20):
+			continue
+
 		k.pretty_full_Time = "%s - %s" % (k.pretty_startTime, k.pretty_endTime)
 		
 	
@@ -475,8 +493,12 @@ def pullEvents(lat, lng, date=current_time_aware(), max_dist=10):
 				entry[k] = "n/a"
 
 		formatted_events.append(entry)
-	
-	return (formatted_events, conv_to_js_date(date))
+
+	sorted_formatted_events = sorted(formatted_events, key=lambda k: k['sort_time'])
+	for i in sorted_formatted_events:
+		del i['sort_time']
+
+	return (sorted_formatted_events, conv_to_js_date(date))
 
 
 def get_event_detail(id):
@@ -485,6 +507,15 @@ def get_event_detail(id):
 		event = get_parse_event_by_id(id)
 
 		#format event object
+		if event.startTime:
+			event.js_startDate = conv_to_js_date(event.startTime)
+			event.startTime = get_local_datetime(event.city, cur_utc=event.startTime.replace(tzinfo=utc), locations=locations)
+			pretty_startTime = event.startTime.strftime("%I:%M %p")
+			if pretty_startTime[0] == "0":
+				pretty_startTime = pretty_startTime[1:] 
+			event.pretty_startTime = pretty_startTime
+			event.startDate = str(event.startTime.date())
+		
 		if event.endTime:
 			event.js_endDate = conv_to_js_date(event.endTime)
 			event.endTime = get_local_datetime(event.city, cur_utc=event.endTime.replace(tzinfo=utc), locations=locations)
@@ -495,21 +526,9 @@ def get_event_detail(id):
 			event.pretty_endTime = pretty_endTime
 			event.endDate = str(event.endTime.date())
 		else:
-			event.pretty_endTime = "n/a"
-			event.endDate = "n/a"
+			event.pretty_endTime = "Late Night"
+			event.endDate = event.startDate
 
-		if event.startTime:
-			event.js_startDate = conv_to_js_date(event.startTime)
-			event.startTime = get_local_datetime(event.city, cur_utc=event.startTime.replace(tzinfo=utc), locations=locations)
-			pretty_startTime = event.startTime.strftime("%I:%M %p")
-			if pretty_startTime[0] == "0":
-				pretty_startTime = pretty_startTime[1:] 
-			event.pretty_startTime = pretty_startTime
-			event.startDate = str(event.startTime.date())
-		else:
-			event.pretty_startTime = "n/a"
-			event.startDate = "n/a"
-		
 		event.pretty_full_Time = "%s - %s" % (event.pretty_startTime, event.pretty_endTime)
 		
 		# set map data
