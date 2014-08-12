@@ -104,6 +104,9 @@ register("DORr1RM1Gyv4UcoT9FRvMniO9A1CnTqxYJ1ty1m0", "QUs3gOoqhPvHUQpjeLYS3V1rW4
 if search('live', host):
     from settings_live import *
     LIVE = True
+elif search('dev', host):
+    from settings_live import *
+    LIVE = True
 else:
     from settings_local import *
     LIVE = False
