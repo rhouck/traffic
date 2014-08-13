@@ -371,11 +371,7 @@ def pullEvents(lat, lng, date=current_time_aware(), max_dist=10):
 	lng = float(("%.5f" % float(lng)))
 	
 	point = GeoPoint(latitude=lat, longitude=lng)
-	
-	point.type_mapping = {'GeoPoint': point.__class__}
-	
 
-	
 	short = []
 	for attr in dir(point):
 		short.append("obj.%s = %s" % (attr, getattr(point, attr)))
@@ -408,7 +404,7 @@ def pullEvents(lat, lng, date=current_time_aware(), max_dist=10):
 	events = parse_event.Query.filter(location__exists=True, 
 										address__exists=True, 
 										#endTime__exists=True,
-										location__nearSphere=GeoPoint(latitude=lat, longitude=lng),
+										location__nearSphere=point,
 										createdAt__gte=created_date_min, 
 										createdAt__lte=created_date_max, 
 										#endTime__gte=parse_beg_date, 
