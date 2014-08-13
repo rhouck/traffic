@@ -367,8 +367,8 @@ def get_parse_event_by_id(objectId):
 def pullEvents(lat, lng, date=current_time_aware(), max_dist=10):
 	
 	# set current location
-	lat = float(("%.2f" % float(lat)))
-	lng = float(("%.2f" % float(lng)))
+	lat = float(("%.5f" % float(lat)))
+	lng = float(("%.5f" % float(lng)))
 	
 	# get timezone
 	timezone = get_timezone(lat,lng, cur_time=date)
