@@ -375,12 +375,12 @@ def pullEvents(lat, lng, date=current_time_aware(), max_dist=10):
 	point.type_mapping = {'GeoPoint': point.__class__}
 	
 
-	"""
+	
 	short = []
 	for attr in dir(point):
 		short.append("obj.%s = %s" % (attr, getattr(point, attr)))
 	return short, date
-	"""
+	
 	# get timezone
 	timezone = get_timezone(lat,lng, cur_time=date)
 
