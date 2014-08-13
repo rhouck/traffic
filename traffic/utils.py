@@ -367,9 +367,8 @@ def get_parse_event_by_id(objectId):
 def pullEvents(lat, lng, date=current_time_aware(), max_dist=10):
 	
 	# set current location
-	lat = ("%.2f" % float(lat))
-	lng = ("%.2f" % float(lng))
-	cur_loc = GeoPoint(latitude=float(lat), longitude=float(lng))
+	lat = float(("%.2f" % float(lat)))
+	lng = float(("%.2f" % float(lng)))
 	
 	# get timezone
 	timezone = get_timezone(lat,lng, cur_time=date)
@@ -398,7 +397,7 @@ def pullEvents(lat, lng, date=current_time_aware(), max_dist=10):
 	events = parse_event.Query.filter(location__exists=True, 
 										address__exists=True, 
 										#endTime__exists=True,
-										location__nearSphere=cur_loc,
+										location__nearSphere=GeoPoint(latitude=lat, longitude=lng),
 										createdAt__gte=created_date_min, 
 										createdAt__lte=created_date_max, 
 										#endTime__gte=parse_beg_date, 
@@ -413,7 +412,7 @@ def pullEvents(lat, lng, date=current_time_aware(), max_dist=10):
 	for k in events:
 		
 		# calcualte distance from user
-		k.distance = haversine(cur_loc.longitude, cur_loc.latitude, k.location.longitude, k.location.latitude)
+		k.distance = haversine(lng, lat, k.location.longitude, k.location.latitude)
 		
 		# don't include items further away than max distance
 		if k.distance > max_dist:
