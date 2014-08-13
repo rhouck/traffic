@@ -452,9 +452,7 @@ def pullEvents(lat, lng, date=current_time_aware(), max_dist=10):
 			k.pretty_endTime = pretty_endTime
 			k.endDate = str(k.endTime.date())
 			k.sort_time = k.endTime.time()
-			# ensure events ending at midnight are at end of list, not beginning
-			if k.sort_time == datetime.time(0,0):
-				k.sort_time= datetime.time(23,59,58)	
+				
 		elif k.startTime.hour >= 20:
 			# remove items out of range of interest - in this case, dont include late-night events if the endtime of interest is before late night events would be included
 			loc_beg = beg_date.replace(tzinfo=utc).astimezone(tz.gettz(timezone))
@@ -462,7 +460,7 @@ def pullEvents(lat, lng, date=current_time_aware(), max_dist=10):
 			if loc_end.day == loc_beg.day and loc_end.hour < 20:
 				continue
 
-			k.sort_time= datetime.time(23,59,59)
+			k.sort_time = datetime.time(23,57,13)
 			k.pretty_endTime = "Late Night"
 			k.endDate = k.startDate
 		else:
@@ -501,6 +499,20 @@ def pullEvents(lat, lng, date=current_time_aware(), max_dist=10):
 		formatted_events.append(entry)
 
 	sorted_formatted_events = sorted(formatted_events, key=lambda k: k['sort_time'])
+	
+	normal = []
+	late = []
+	no_time = []
+	for i in sorted_formatted_events:
+		if i['sort_time'] < beg_date.astimezone(tz.gettz(timezone)).time():
+			late.append(i)
+		elif i['sort_time'] == datetime.time(23,57,13):
+			no_time.append(i)
+		else:
+			normal.append(i)
+	
+	sorted_formatted_events = normal + late + no_time
+	
 	for i in sorted_formatted_events:
 		del i['sort_time']
 
