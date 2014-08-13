@@ -372,23 +372,6 @@ def pullEvents(lat, lng, date=current_time_aware(), max_dist=10):
 	lng = float(("%.5f" % float(lng)))
 	
 	point = GeoPoint(latitude=lat, longitude=lng)
-	"""
-	type_mapping_man = {
-		'GeoPoint': GeoPoint, 
-		u'Object': EmbeddedObject, 
-		u'Bytes': Binary, 
-		'Relation': Relation, 
-		'File': File, 
-		'Date': Date, 
-		u'Pointer': Pointer,
-		}
-	point.type_mapping = type_mapping_man
-	
-	short = []
-	for attr in dir(point):
-		short.append("obj.%s = %s" % (attr, getattr(point, attr)))
-	return short, date
-	"""
 
 	# get timezone
 	timezone = get_timezone(lat,lng, cur_time=date)
